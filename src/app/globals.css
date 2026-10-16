@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fbfbf9;
+    --foreground: #1c2120;
+    --card: #ffffff;
+    --card-foreground: #1c2120;
+    --forest-950: #061912;
+    --forest-900: #0a261c;
+    --forest-800: #103b2c;
+    --forest-700: #16533f;
+    --forest-600: #1e7055;
+    --emerald-500: #10b981;
+    --emerald-600: #059669;
+    --sand-50: #fbfbf9;
+    --sand-100: #f6f5ee;
+    --sand-200: #eceae1;
+    --sand-300: #dedacf;
+    --sand-400: #b8b3a2;
+    --charcoal-900: #151a18;
+    --charcoal-800: #232b28;
+    --charcoal-700: #35403c;
+    --charcoal-500: #62726b;
+    --charcoal-400: #8c9c95;
+    --border: #e6e4dc;
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f0ea;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9c6bb;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a39f93;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(222, 218, 207, 0.6);
+}
+
+.glass-forest {
+  background: rgba(10, 38, 28, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(22, 83, 63, 0.4);
+}
+
+/* Passport printable certificate rules */
+@media print {
+  nav, footer, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .print-page {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }

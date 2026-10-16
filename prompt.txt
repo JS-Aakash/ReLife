@@ -1,0 +1,81 @@
+# Build ReLife — The Living Digital Passport for Every Product
+
+Build a polished, fully functional, innovative hackathon web app called **ReLife**. Its mission is to give every physical product a permanent digital identity that preserves its ownership, warranty, maintenance, and repair history throughout its lifetime.
+
+Do not build a generic CRUD dashboard. Make it feel like a futuristic product-lifecycle platform that encourages repairing and reusing products rather than replacing them.
+
+## 1. Tech Stack
+Use Next.js with TypeScript, Tailwind CSS, shadcn/ui, Supabase for authentication, PostgreSQL and file storage, and suitable libraries for QR codes and charts. Integrate an AI/LLM API for invoice extraction and repair assistance, with API keys stored securely in environment variables. If credentials are unavailable, implement a functional demo mode with realistic seeded data and clearly separated mock functionality. Never leave the app broken because an API key is missing.
+
+## 2. Core Features
+- **Product Passport:** Register phones, laptops, appliances, bicycles, and other products. Store brand, model, serial number, purchase price/date, warranty expiry, images, condition, and ownership.
+- **QR Identity:** Generate a unique QR code and shareable passport URL for every product. Scanning it opens a carefully designed public-safe profile. Keep private documents and personal details protected.
+- **Document Vault:** Upload invoices, warranty certificates, manuals, repair receipts, and product photos. Organize files by product and document type.
+- **AI Bill Scanner:** Extract product name, brand, model, purchase date, price, seller, and warranty terms from uploaded receipts using OCR/AI. Show editable results and require user confirmation before saving.
+- **Warranty Intelligence:** Display days remaining, expiry alerts, warranty documents, and possible eligibility for repair claims. Let users configure warranty periods when automatic extraction is uncertain.
+- **Repair Timeline:** Record issues, symptoms, diagnosis, repair date, technician, cost, parts replaced, warranty claim, photos, and receipts. Display events in a beautiful chronological timeline.
+- **Service Provider Portal:** Allow a technician or repair shop to submit repair records. Owners can approve or reject them. Clearly distinguish owner-entered, document-backed, and technician-verified records.
+- **Ownership Transfer:** Allow an owner to initiate a transfer to a new user, with recipient acceptance and an auditable ownership history. Never expose private data to buyers by default.
+- **Repair Reminders:** Include maintenance schedules, warranty expiry notifications, and an in-app notification center.
+
+## 3. Unique, Memorable Features
+These features should make the project stand out to hackathon judges.
+
+**A. Product Health Score:** Give each product an explainable condition/maintainability score based on age, repair frequency, recurring faults, repair costs, and available maintenance information. Show the contributing factors instead of presenting an unexplained AI-generated number.
+
+**B. Repair vs. Replace AI Copilot:** Let users describe a fault and receive safe troubleshooting suggestions, estimated repair-cost ranges when supported by data, relevant service history, and a repair-versus-replacement comparison. Clearly label estimates and never invent exact prices or guarantee warranty coverage.
+
+**C. E-Waste Avoidance Tracker:** Show repairs completed, the estimated additional useful life of the product, and estimated waste avoided through repair. Use transparent assumptions, label all estimates, and avoid unsupported environmental claims. Add a personal sustainability dashboard.
+
+**D. Trust and Evidence System:** Give every repair entry a provenance badge: owner-reported, supported by uploaded evidence, or verified by an authorized technician. Track modifications and verification status. Do not claim records are independently verified when they are not.
+
+**E. Smart Resale Passport:** Generate a shareable second-hand product report containing model, age, documented repairs, condition information, and evidence coverage. Redact the owner's identity, address, and private files. Let owners choose exactly what to disclose.
+
+**F. Repairability Insights:** Display recurring faults, parts replaced, maintenance recommendations, and known repairability information when available. Mark missing information honestly. Let users submit corrections.
+
+## 4. Pages and Navigation
+Build these complete screens:
+1. Landing page with a compelling sustainability-focused hero, product-passport illustration, feature highlights, and clear sign-up/demo actions.
+2. Authentication and onboarding.
+3. Main dashboard with product count, upcoming warranty expiries, recent repairs, spending analytics, and sustainability statistics.
+4. My Products page with search, filters, product cards, warranty states, and an Add Product flow.
+5. Product Passport detail page with a visually prominent QR code, warranty status, repair timeline, documents, health score, cost breakdown, and sharing controls.
+6. Add Product wizard supporting manual registration and invoice upload.
+7. AI invoice extraction/review interface.
+8. Repair logging form and service-provider workflow.
+9. Repair Copilot interface.
+10. Warranty and maintenance reminders page.
+11. Sustainability and repair-spending analytics page.
+12. Public passport and resale-report pages with privacy-safe sharing.
+13. Profile, account settings, and notification preferences.
+
+## 5. Visual Design
+Create a premium, modern, sustainability-tech aesthetic with deep forest green, warm off-white backgrounds, charcoal text, subtle gradients, refined typography, generous spacing, rounded cards, tasteful shadows, and clear status indicators.
+
+Use distinctive product cards, beautiful vertical timelines, QR passport visualizations, repair-cost charts, warranty countdowns, evidence badges, and meaningful micro-interactions. Avoid excessive neon, generic AI gradients, cluttered dashboards, and unnecessary animations.
+
+Make the application mobile-first and responsive. Include polished empty states, skeleton loaders, form validation, toast notifications, accessible contrast, and useful error messages. All buttons, menus, forms, filters, charts, and dialogs must perform their intended actions.
+
+## 6. Database and Security
+Create a well-designed relational schema for profiles, products, documents, repairs, repair parts, ownership transfers, service providers, verification events, maintenance reminders, and notifications.
+
+Implement authentication, user-specific row-level security, private file storage, secure uploads, server-side secret handling, and authorization checks. Use unguessable public passport IDs and explicit sharing permissions. Do not put sensitive information into QR URLs. Prevent users from accessing or modifying products and documents they do not own or have permission to access.
+
+Keep a clear audit trail for repair verification and ownership transfers. Validate user inputs and uploaded files.
+
+## 7. Functional Requirements
+- Use realistic seeded demo data for several products, with different warranty statuses, documents, and repair histories.
+- Provide a one-click demo experience so judges can immediately explore the app without extensive registration.
+- Use actual database persistence wherever configured; a refresh must not erase saved products or repairs.
+- Implement real QR generation, document uploads, repair creation, filters, sharing permissions, calculations, and ownership-transfer flows.
+- Provide graceful fallbacks for unavailable AI services and clearly label demo-generated results.
+- Add configurable environment variables and a README explaining setup, database migrations, sample data, and deployment.
+- Include loading, empty, success, and error states; fix broken routes, console errors, and dead buttons.
+- Never fabricate successful AI processing, real technician verification, warranty eligibility, or environmental measurements.
+
+## 8. Build and Delivery
+First establish the project structure and database schema, then implement the entire end-to-end application. Prioritize a working product registration → invoice upload → QR generation → repair entry → timeline → secure sharing journey before polishing advanced features.
+
+Use clean reusable components and maintainable code. Do not stop after generating a mockup or a plan: implement the app, run available checks, fix errors, and ensure the main flows work end to end.
+
+The final result should be impressive in a live hackathon demo: **scan a product's QR code, explore its lifetime history, inspect evidence-backed repairs, ask the AI whether to repair or replace it, and generate a privacy-safe resale passport.**
