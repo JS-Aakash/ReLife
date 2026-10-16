@@ -44,6 +44,22 @@ const aiClient = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null
 // Preferred model list with fallback in case of transient spikes
 const GEMINI_MODELS = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.8-flash', 'gemini-flash-latest'];
 
+// Robust JSON parser to handle markdown fences, whitespace, or extra wrapper chars from AI models
+function parseCleanJson<T = any>(rawText: string): T {
+  let cleaned = rawText.trim();
+  if (cleaned.startsWith('```json')) {
+    cleaned = cleaned.replace(/^```json\s*/i, '').replace(/```$/i, '').trim();
+  } else if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+  }
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+  }
+  return JSON.parse(cleaned);
+}
+
 /**
  * Intelligent Invoice Extractor using Google Gemini API
  */
@@ -96,7 +112,7 @@ If specific details are ambiguous, provide realistic estimates grounded in the m
         });
 
         if (response && response.text) {
-          const parsed = JSON.parse(response.text);
+          const parsed = parseCleanJson(response.text);
           return {
             productName: parsed.productName || 'Verified Product',
             brand: parsed.brand || 'Manufacturer',
@@ -260,7 +276,7 @@ Analyze the failure and return a strict JSON object with this exact structure:
         });
 
         if (response && response.text) {
-          const parsed = JSON.parse(response.text);
+          const parsed = parseCleanJson(response.text);
           return {
             faultSummary: parsed.faultSummary || 'Component Diagnostic Review',
             likelyRootCauses: parsed.likelyRootCauses || ['Component fatigue', 'Operating wear'],
