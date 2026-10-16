@@ -14,8 +14,10 @@ import {
 import { INITIAL_PRODUCTS, INITIAL_REMINDERS, INITIAL_NOTIFICATIONS } from './initial-data';
 import { calculateHealthScore, calculateEnvironmentalImpact } from './calculations';
 import { generateId, generatePublicId } from './utils';
+import { supabase, isSupabaseConfigured } from './supabase';
 
 const STORAGE_KEY = 'relife_state_v1';
+const DEMO_MODE_KEY = 'relife_demo_mode_v1';
 
 interface ReLifeUser {
   id: string;
@@ -33,7 +35,13 @@ interface ReLifeContextType {
   serviceSubmissions: ServiceProviderSubmission[];
   transferRequests: OwnershipTransferRequest[];
   isLoaded: boolean;
+  isSupabaseSynced: boolean;
+  isDemoMode: boolean;
   unreadCount: number;
+  
+  // Demo Mode
+  setDemoMode: (val: boolean) => void;
+  toggleDemoMode: () => void;
   
   // Product actions
   addProduct: (product: Omit<Product, 'id' | 'publicId' | 'healthScore' | 'healthBreakdown' | 'eWasteAvoidedKg' | 'carbonAvoidedKg' | 'estimatedUsefulLifeRemainingYears' | 'originalLifespanYears' | 'documents' | 'repairs' | 'ownershipHistory' | 'status' | 'createdAt' | 'updatedAt'>) => Product;
@@ -91,8 +99,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
   const [serviceSubmissions, setServiceSubmissions] = useState<ServiceProviderSubmission[]>([]);
   const [transferRequests, setTransferRequests] = useState<OwnershipTransferRequest[]>([]);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isSupabaseSynced, setIsSupabaseSynced] = useState<boolean>(false);
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(true);
 
-  // Initialize from LocalStorage
+  // Initialize from LocalStorage & Supabase
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -114,10 +124,33 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           setTransferRequests(parsed.transferRequests);
         }
       }
+
+      const storedDemo = localStorage.getItem(DEMO_MODE_KEY);
+      if (storedDemo !== null) {
+        setIsDemoMode(storedDemo === 'true');
+      }
     } catch (e) {
       console.warn('Could not read from localStorage, using initial demo seed', e);
     } finally {
       setIsLoaded(true);
+    }
+
+    // Attempt Supabase Fetch
+    if (supabase) {
+      (async () => {
+        try {
+          const { data, error } = await supabase.from('products').select('*');
+          if (!error && data && data.length > 0) {
+            setIsSupabaseSynced(true);
+            setIsDemoMode(false);
+          } else if (error && error.code === 'PGRST205') {
+            console.info('Supabase cloud tables not yet created. Operating in robust demo persistence mode.');
+            setIsSupabaseSynced(false);
+          }
+        } catch {
+          setIsSupabaseSynced(false);
+        }
+      })();
     }
   }, []);
 
@@ -133,10 +166,11 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
         transferRequests,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      localStorage.setItem(DEMO_MODE_KEY, String(isDemoMode));
     } catch (e) {
       console.error('Failed to sync state to localStorage', e);
     }
-  }, [products, reminders, notifications, serviceSubmissions, transferRequests, isLoaded]);
+  }, [products, reminders, notifications, serviceSubmissions, transferRequests, isLoaded, isDemoMode]);
 
   // Actions
   const addProduct = (
@@ -217,6 +251,43 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
+    // Write to Supabase if available
+    if (supabase) {
+      supabase
+        .from('products')
+        .insert({
+          id: newProduct.id,
+          public_id: newProduct.publicId,
+          name: newProduct.name,
+          brand: newProduct.brand,
+          model: newProduct.model,
+          serial_number: newProduct.serialNumber,
+          category: newProduct.category,
+          purchase_price: newProduct.purchasePrice,
+          purchase_currency: newProduct.purchaseCurrency,
+          purchase_date: newProduct.purchaseDate,
+          seller: newProduct.seller,
+          warranty_months: newProduct.warrantyMonths,
+          warranty_expiry_date: newProduct.warrantyExpiryDate,
+          condition: newProduct.condition,
+          image_url: newProduct.imageUrl,
+          description: newProduct.description,
+          health_score: newProduct.healthScore,
+          health_breakdown: newProduct.healthBreakdown,
+          e_waste_avoided_kg: newProduct.eWasteAvoidedKg,
+          carbon_avoided_kg: newProduct.carbonAvoidedKg,
+          original_lifespan_years: newProduct.originalLifespanYears,
+          estimated_useful_life_remaining_years: newProduct.estimatedUsefulLifeRemainingYears,
+          resale_disclosure: newProduct.resaleDisclosure,
+          ownership_history: newProduct.ownershipHistory,
+          status: newProduct.status,
+          is_publicly_shared: newProduct.isPubliclyShared,
+        })
+        .then(({ error }) => {
+          if (!error) setIsSupabaseSynced(true);
+        });
+    }
+
     return newProduct;
   };
 
@@ -226,7 +297,6 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
         if (p.id !== id) return p;
         const updated = { ...p, ...updates, updatedAt: new Date().toISOString() };
         
-        // Recalculate health & eco impact if repairs, purchaseDate or price changed
         if (updates.repairs || updates.purchaseDate || updates.purchasePrice) {
           const breakdown = calculateHealthScore(
             updated.purchaseDate,
@@ -240,6 +310,26 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           updated.eWasteAvoidedKg = impact.eWasteAvoidedKg;
           updated.carbonAvoidedKg = impact.carbonAvoidedKg;
         }
+
+        if (supabase) {
+          supabase
+            .from('products')
+            .update({
+              name: updated.name,
+              brand: updated.brand,
+              model: updated.model,
+              condition: updated.condition,
+              health_score: updated.healthScore,
+              health_breakdown: updated.healthBreakdown,
+              e_waste_avoided_kg: updated.eWasteAvoidedKg,
+              carbon_avoided_kg: updated.carbonAvoidedKg,
+              resale_disclosure: updated.resaleDisclosure,
+              is_publicly_shared: updated.isPubliclyShared,
+            })
+            .eq('id', id)
+            .then(() => {});
+        }
+
         return updated;
       })
     );
@@ -248,6 +338,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
   const deleteProduct = (id: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     setReminders((prev) => prev.filter((r) => r.productId !== id));
+
+    if (supabase) {
+      supabase.from('products').delete().eq('id', id).then(() => {});
+    }
   };
 
   const getProductById = (id: string) => products.find((p) => p.id === id);
@@ -270,7 +364,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
         const breakdown = calculateHealthScore(p.purchaseDate, p.category, p.purchasePrice, newRepairs);
         const impact = calculateEnvironmentalImpact(p.category, newRepairs);
 
-        return {
+        const updatedProd = {
           ...p,
           repairs: newRepairs,
           healthScore: breakdown.overallScore,
@@ -282,6 +376,44 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           ),
           updatedAt: nowIso,
         };
+
+        // Sync to Supabase
+        if (supabase) {
+          supabase
+            .from('repairs')
+            .insert({
+              id: newRecord.id,
+              product_id: productId,
+              date: newRecord.date,
+              issue_summary: newRecord.issueSummary,
+              symptoms: newRecord.symptoms,
+              diagnosis: newRecord.diagnosis,
+              technician_or_shop_name: newRecord.technicianOrShopName,
+              cost: newRecord.cost,
+              parts_replaced: newRecord.partsReplaced,
+              warranty_claim: newRecord.warrantyClaim,
+              verification_badge: newRecord.verificationBadge,
+              verification_details: newRecord.verificationDetails,
+              useful_life_extension_months: newRecord.usefulLifeExtensionMonths,
+              owner_approved: newRecord.ownerApproved,
+              notes: newRecord.notes,
+            })
+            .then(() => {});
+
+          supabase
+            .from('products')
+            .update({
+              health_score: updatedProd.healthScore,
+              health_breakdown: updatedProd.healthBreakdown,
+              e_waste_avoided_kg: updatedProd.eWasteAvoidedKg,
+              carbon_avoided_kg: updatedProd.carbonAvoidedKg,
+              estimated_useful_life_remaining_years: updatedProd.estimatedUsefulLifeRemainingYears,
+            })
+            .eq('id', productId)
+            .then(() => {});
+        }
+
+        return updatedProd;
       })
     );
 
@@ -323,6 +455,22 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       })
     );
 
+    if (supabase) {
+      supabase
+        .from('documents')
+        .insert({
+          id: newDoc.id,
+          product_id: productId,
+          title: newDoc.title,
+          file_name: newDoc.fileName,
+          file_size: newDoc.fileSize,
+          file_type: newDoc.fileType,
+          url: newDoc.url,
+          is_verified_receipt: newDoc.isVerifiedReceipt,
+        })
+        .then(() => {});
+    }
+
     return newDoc;
   };
 
@@ -337,19 +485,21 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
         };
       })
     );
+
+    if (supabase) {
+      supabase.from('documents').delete().eq('id', docId).then(() => {});
+    }
   };
 
   const updateResaleDisclosure = (productId: string, settings: Partial<ResaleDisclosureSettings>) => {
     setProducts((prev) =>
       prev.map((p) => {
         if (p.id !== productId) return p;
-        return {
-          ...p,
-          resaleDisclosure: {
-            ...p.resaleDisclosure,
-            ...settings,
-          },
-        };
+        const newSettings = { ...p.resaleDisclosure, ...settings };
+        if (supabase) {
+          supabase.from('products').update({ resale_disclosure: newSettings }).eq('id', productId).then(() => {});
+        }
+        return { ...p, resaleDisclosure: newSettings };
       })
     );
   };
@@ -358,6 +508,9 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setProducts((prev) =>
       prev.map((p) => {
         if (p.id !== productId) return p;
+        if (supabase) {
+          supabase.from('products').update({ is_publicly_shared: isShared }).eq('id', productId).then(() => {});
+        }
         return { ...p, isPubliclyShared: isShared };
       })
     );
@@ -376,7 +529,6 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
 
     setServiceSubmissions((prev) => [newSubmission, ...prev]);
 
-    // Notify owner
     setNotifications((prev) => [
       {
         id: generateId(),
@@ -390,6 +542,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
+    if (supabase) {
+      supabase.from('service_submissions').insert(newSubmission).then(() => {});
+    }
+
     return newSubmission;
   };
 
@@ -397,7 +553,6 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     const sub = serviceSubmissions.find((s) => s.id === submissionId);
     if (!sub) return;
 
-    // Add to product repairs with technician-verified badge
     addRepair(sub.productId, {
       date: sub.repairDate,
       issueSummary: sub.issueSummary,
@@ -422,12 +577,20 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setServiceSubmissions((prev) =>
       prev.map((s) => (s.id === submissionId ? { ...s, status: 'approved' } : s))
     );
+
+    if (supabase) {
+      supabase.from('service_submissions').update({ status: 'approved' }).eq('id', submissionId).then(() => {});
+    }
   };
 
   const rejectTechnicianRepair = (submissionId: string) => {
     setServiceSubmissions((prev) =>
       prev.map((s) => (s.id === submissionId ? { ...s, status: 'rejected' } : s))
     );
+
+    if (supabase) {
+      supabase.from('service_submissions').update({ status: 'rejected' }).eq('id', submissionId).then(() => {});
+    }
   };
 
   // Ownership transfer
@@ -474,6 +637,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
+    if (supabase) {
+      supabase.from('ownership_transfers').insert(request).then(() => {});
+    }
+
     return request;
   };
 
@@ -489,7 +656,6 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       prev.map((p) => {
         if (p.id !== request.productId) return p;
 
-        // Keep immutable repair history & public specs, redact private owner invoices
         const filteredDocs = p.documents.filter((d) => d.fileType !== 'invoice');
 
         const newMilestone = {
@@ -502,10 +668,20 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           transferNote: `Transferred from ${request.fromOwnerName} (${request.transferType})`,
         };
 
+        const updatedHistory = [newMilestone, ...p.ownershipHistory];
+
+        if (supabase) {
+          supabase
+            .from('products')
+            .update({ ownership_history: updatedHistory })
+            .eq('id', p.id)
+            .then(() => {});
+        }
+
         return {
           ...p,
           documents: filteredDocs,
-          ownershipHistory: [newMilestone, ...p.ownershipHistory],
+          ownershipHistory: updatedHistory,
           status: 'active',
           updatedAt: nowIso,
         };
@@ -516,26 +692,38 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       prev.map((t) => (t.token === token ? { ...t, status: 'accepted' } : t))
     );
 
+    if (supabase) {
+      supabase.from('ownership_transfers').update({ status: 'accepted' }).eq('token', token).then(() => {});
+    }
+
     return true;
   };
 
-  // Reminders
   const toggleReminder = (id: string) => {
     setReminders((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, completed: !r.completed } : r))
+      prev.map((r) => {
+        if (r.id !== id) return r;
+        const nextCompleted = !r.completed;
+        if (supabase) {
+          supabase.from('maintenance_reminders').update({ completed: nextCompleted }).eq('id', id).then(() => {});
+        }
+        return { ...r, completed: nextCompleted };
+      })
     );
   };
 
   const addReminder = (data: Omit<MaintenanceReminder, 'id' | 'createdAt'>) => {
     const id = generateId();
-    setReminders((prev) => [
-      {
-        ...data,
-        id,
-        createdAt: new Date().toISOString(),
-      },
-      ...prev,
-    ]);
+    const newRem: MaintenanceReminder = {
+      ...data,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    setReminders((prev) => [newRem, ...prev]);
+
+    if (supabase) {
+      supabase.from('maintenance_reminders').insert(newRem).then(() => {});
+    }
   };
 
   const markNotificationRead = (id: string) => {
@@ -555,6 +743,15 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setNotifications(INITIAL_NOTIFICATIONS);
     setServiceSubmissions([]);
     setTransferRequests([]);
+    setIsDemoMode(true);
+  };
+
+  const toggleDemoMode = () => {
+    setIsDemoMode((prev) => !prev);
+  };
+
+  const setDemoMode = (val: boolean) => {
+    setIsDemoMode(val);
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -569,7 +766,11 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
         serviceSubmissions,
         transferRequests,
         isLoaded,
+        isSupabaseSynced,
+        isDemoMode,
         unreadCount,
+        setDemoMode,
+        toggleDemoMode,
         addProduct,
         updateProduct,
         deleteProduct,

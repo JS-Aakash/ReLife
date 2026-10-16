@@ -14,13 +14,25 @@ import {
   Mail,
   HardDrive,
   Info,
+  Sparkles,
+  ExternalLink,
+  Copy,
+  Cloud,
+  Zap,
 } from 'lucide-react';
 import { isSupabaseConfigured } from '@/lib/supabase';
 
 export default function ProfilePage() {
-  const { currentUser, products, resetToDemoData } = useReLife();
+  const { currentUser, products, resetToDemoData, isSupabaseSynced, isDemoMode, toggleDemoMode } = useReLife();
   const [resetConfirm, setResetConfirm] = useState(false);
   const [savedPreferences, setSavedPreferences] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
+
+  const handleCopySqlLocation = () => {
+    navigator.clipboard.writeText('supabase/schema.sql');
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2500);
+  };
 
   // Preference Toggles
   const [prefs, setPrefs] = useState({
@@ -107,19 +119,74 @@ export default function ProfilePage() {
           </div>
 
           {/* Data Persistence Telemetry */}
-          <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs space-y-3 text-xs">
-            <div className="flex items-center gap-2 font-bold text-stone-900">
-              <Database className="w-4 h-4 text-emerald-700" />
-              <span>Storage Architecture</span>
-            </div>
-            <div className="p-3 rounded-2xl bg-stone-50 border border-stone-200 space-y-1">
-              <span className="font-semibold text-stone-800 block">
-                {isSupabaseConfigured ? 'Supabase Connected' : 'Client Persistent Engine (Active)'}
+          <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs space-y-4 text-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-bold text-stone-900">
+                <Database className="w-4 h-4 text-emerald-700" />
+                <span>Supabase Cloud</span>
+              </div>
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                isSupabaseSynced 
+                  ? 'bg-emerald-100 text-emerald-800' 
+                  : isSupabaseConfigured 
+                  ? 'bg-teal-100 text-teal-800' 
+                  : 'bg-stone-100 text-stone-600'
+              }`}>
+                {isSupabaseSynced ? 'Synced' : isSupabaseConfigured ? 'Connected' : 'Offline'}
               </span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-stone-800 block">PostgreSQL & Storage</span>
+                <span className="text-[10px] text-stone-400 font-mono">ktayfljoyaelstrfrxxb</span>
+              </div>
               <p className="text-[11px] text-stone-500 leading-snug">
-                {isSupabaseConfigured
-                  ? 'Authenticated PostgreSQL & Row-Level Security active.'
-                  : 'State seamlessly synced to browser LocalStorage. Page reloads will not erase your fleet.'}
+                {isSupabaseSynced
+                  ? 'Cloud tables, RLS security policies, and documents bucket are active and synchronizing.'
+                  : 'Authenticated project connected. Operating in high-speed local persistence mode with zero data loss.'}
+              </p>
+
+              <div className="pt-2 border-t border-stone-200/60 flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCopySqlLocation}
+                    className="flex-1 py-1.5 px-2.5 rounded-lg border border-stone-200 bg-white hover:bg-stone-50 font-medium text-[11px] text-stone-700 flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    {copiedSql ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-stone-400" />}
+                    <span>{copiedSql ? 'Path Copied!' : 'Copy Schema File Path'}</span>
+                  </button>
+
+                  <a
+                    href="https://supabase.com/dashboard/project/ktayfljoyaelstrfrxxb/sql/new"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-1.5 px-2.5 rounded-lg border border-stone-200 bg-white hover:bg-stone-50 font-medium text-[11px] text-stone-700 flex items-center justify-center gap-1 transition-colors"
+                    title="Open Supabase SQL Editor"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-stone-400" />
+                  </a>
+                </div>
+                <span className="text-[10px] text-stone-400 italic">
+                  Run <code className="text-emerald-700 font-mono">supabase/schema.sql</code> in SQL Editor for cloud sync
+                </span>
+              </div>
+            </div>
+
+            {/* AI Engine Telemetry */}
+            <div className="pt-2 border-t border-stone-100 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-bold text-stone-900">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Google Gemini Engine</span>
+                </div>
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">
+                  Active
+                </span>
+              </div>
+              <p className="text-[11px] text-stone-500 leading-snug">
+                Official <code className="text-stone-700">@google/genai</code> SDK with server-side routes for safe repair diagnostics & invoice OCR.
               </p>
             </div>
           </div>
@@ -203,13 +270,31 @@ export default function ProfilePage() {
 
           {/* Hackathon Judge & Demo Controls */}
           <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs space-y-4 text-xs">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-emerald-700" />
-              <span>Hackathon Demonstration & Data Management</span>
-            </h2>
+            <div className="flex items-center justify-between pb-2 border-b border-stone-100">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-emerald-700" />
+                <span>Hackathon Demonstration & Demo Mode</span>
+              </h2>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-stone-500 font-medium">Demo Fleet Mode:</span>
+                <button
+                  type="button"
+                  onClick={toggleDemoMode}
+                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    isDemoMode ? 'bg-emerald-700' : 'bg-stone-300'
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                      isDemoMode ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
 
             <p className="text-stone-500 leading-relaxed">
-              Use these tools during live judge evaluations to reset to factory demo seed data or backup your fleet.
+              Judges can explore realistic pre-seeded products across diverse categories (Laptop, Bike, Phone, Vacuum, Headphones) with distinct warranty milestones, receipts, and verified repair logs. You can reset anytime.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">

@@ -348,6 +348,22 @@ function CopilotContent() {
                   </ul>
                 </div>
 
+                {diagnosis.troubleshootingSteps && diagnosis.troubleshootingSteps.length > 0 && (
+                  <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-2">
+                    <h4 className="font-bold text-stone-900 flex items-center gap-1.5">
+                      <Wrench className="w-4 h-4 text-emerald-700" />
+                      <span>Safe Non-Destructive Troubleshooting Steps</span>
+                    </h4>
+                    <ol className="list-decimal list-inside space-y-1 text-stone-600 pl-1">
+                      {diagnosis.troubleshootingSteps.map((step, sIdx) => (
+                        <li key={sIdx} className="leading-relaxed">
+                          {step}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
                 {/* Transparency Disclaimer */}
                 <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 text-[10px] text-stone-500 flex items-start gap-2">
                   <Info className="w-3.5 h-3.5 text-stone-400 shrink-0 mt-0.5" />
