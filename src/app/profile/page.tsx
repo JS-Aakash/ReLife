@@ -166,11 +166,10 @@ export default function ProfilePage() {
                     <button
                       key={key}
                       onClick={() => loginAsDemo(key)}
-                      className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all ${
-                        isActive
-                          ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold'
-                          : 'border-stone-200 hover:bg-stone-50 text-stone-700'
-                      }`}
+                      className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all ${isActive
+                        ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold'
+                        : 'border-stone-200 hover:bg-stone-50 text-stone-700'
+                        }`}
                     >
                       <div>
                         <span className="block text-xs font-semibold">{persona.name}</span>
@@ -180,21 +179,6 @@ export default function ProfilePage() {
                     </button>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* Account Privacy & Session Protection */}
-            <div className="bg-stone-900 text-white rounded-3xl p-5 shadow-sm space-y-3 text-xs">
-              <div className="flex items-center gap-2 text-emerald-400">
-                <ShieldCheck className="w-4 h-4 shrink-0" />
-                <span className="font-bold uppercase tracking-wider text-[11px]">Vault Session Protected</span>
-              </div>
-              <p className="text-stone-300 text-[11px] leading-relaxed">
-                Private ownership documents, invoices, and diagnostic logs are restricted to your authenticated custodian session and hidden from unauthenticated viewers.
-              </p>
-              <div className="pt-1 flex items-center gap-2 text-[10px] text-stone-400">
-                <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>256-Bit Vault Encryption Active</span>
               </div>
             </div>
           </div>
@@ -305,60 +289,6 @@ export default function ProfilePage() {
                   </button>
                 </div>
               </form>
-            </div>
-
-            {/* Fleet Data Management */}
-            <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs space-y-4 text-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-stone-100 gap-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-emerald-700 shrink-0" />
-                  <span>Fleet Catalog & Data Management</span>
-                </h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-stone-500 font-medium whitespace-nowrap">Catalog Sync:</span>
-                  <button
-                    type="button"
-                    onClick={toggleDemoMode}
-                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      isDemoMode ? 'bg-emerald-700' : 'bg-stone-300'
-                    }`}
-                  >
-                    <span
-                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                        isDemoMode ? 'translate-x-4' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-
-              <p className="text-stone-500 leading-relaxed">
-                Manage your product passports, export a complete encrypted JSON backup of your fleet maintenance records, or restore default manufacturer specifications.
-              </p>
-
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className={`w-full sm:w-auto px-4 py-2.5 rounded-xl font-semibold border transition-all flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer ${
-                    resetConfirm
-                      ? 'border-amber-400 bg-amber-50 text-amber-900 animate-pulse'
-                      : 'border-stone-300 text-stone-700 hover:bg-stone-50'
-                  }`}
-                >
-                  <RotateCcw className="w-4 h-4 text-stone-500 shrink-0" />
-                  <span>{resetConfirm ? 'Click again to confirm reset' : 'Restore Default Catalog'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleExportData}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-semibold border border-stone-300 text-stone-700 hover:bg-stone-50 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer"
-                >
-                  <Download className="w-4 h-4 text-stone-500 shrink-0" />
-                  <span>Export Fleet JSON Backup</span>
-                </button>
-              </div>
             </div>
           </div>
         </div>

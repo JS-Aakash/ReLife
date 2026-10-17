@@ -99,7 +99,7 @@ export function Navbar() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`inline-flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isActive
+                    className={`inline-flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${isActive
                       ? 'bg-emerald-100 text-emerald-900 font-semibold shadow-2xs'
                       : 'text-stone-600 hover:text-stone-900 hover:bg-emerald-50'
                       }`}
