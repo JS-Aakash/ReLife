@@ -16,6 +16,7 @@ export function QRCard({ publicId, productName, serialNumber, size = 180 }: QRCa
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
   const [origin, setOrigin] = useState<string>('');
+  const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -64,13 +65,17 @@ export function QRCard({ publicId, productName, serialNumber, size = 180 }: QRCa
       </div>
 
       {/* QR Code Container styled like a physical tamper-evident product tag */}
-      <div className="relative p-3 bg-stone-50 rounded-xl border border-stone-200/90 shadow-inner group">
+      <div
+        onClick={() => setTagModalOpen(true)}
+        className="relative p-3 bg-stone-50 rounded-xl border border-stone-200/90 shadow-inner group cursor-pointer hover:border-emerald-400 hover:shadow-xs transition-all"
+        title="Click to expand printable physical asset sticker"
+      >
         {qrDataUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={qrDataUrl}
             alt={`Passport QR for ${productName}`}
-            className="w-40 h-40 object-contain rounded-lg"
+            className="w-40 h-40 object-contain rounded-lg group-hover:scale-105 transition-transform duration-200"
           />
         ) : (
           <div className="w-40 h-40 flex items-center justify-center text-stone-400">
@@ -78,10 +83,14 @@ export function QRCard({ publicId, productName, serialNumber, size = 180 }: QRCa
           </div>
         )}
 
-        <div className="mt-2 text-[10px] font-mono font-medium text-stone-500 uppercase tracking-wider flex items-center justify-center gap-1">
+        <div className="mt-2 text-[10px] font-mono font-medium text-stone-500 uppercase tracking-wider flex items-center justify-center gap-1 group-hover:text-emerald-800 transition-colors">
           <ShieldCheck className="w-3 h-3 text-emerald-600" />
           <span>{publicId}</span>
         </div>
+
+        <span className="text-[9px] text-emerald-700 font-semibold block mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          Click to expand tag sticker ↗
+        </span>
       </div>
 
       <p className="text-xs text-stone-500 mt-3 max-w-[240px]">
@@ -135,6 +144,70 @@ export function QRCard({ publicId, productName, serialNumber, size = 180 }: QRCa
           <span>→</span>
         </Link>
       </div>
+
+      {/* Printable Asset Tag Modal */}
+      {tagModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 text-center space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+              <span className="text-xs font-bold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Physical Asset Tag</span>
+              </span>
+              <button
+                onClick={() => setTagModalOpen(false)}
+                className="text-stone-400 hover:text-stone-700 text-xs font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Simulated Peel-and-Stick Tag Sticker */}
+            <div className="p-4 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-300 space-y-3">
+              <div className="flex items-center justify-between text-[10px] font-black tracking-widest text-emerald-800 uppercase">
+                <span>RELIFE PASSPORT</span>
+                <span>AUTHENTIC</span>
+              </div>
+
+              {qrDataUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={qrDataUrl}
+                  alt={`Tag for ${productName}`}
+                  className="w-44 h-44 mx-auto rounded-xl border border-stone-200 bg-white p-2 shadow-2xs"
+                />
+              )}
+
+              <div className="space-y-0.5">
+                <h4 className="text-xs font-bold text-stone-900 truncate">{productName}</h4>
+                {serialNumber && (
+                  <p className="font-mono text-[10px] text-stone-500">{serialNumber}</p>
+                )}
+                <span className="font-mono text-[9px] text-emerald-800 font-bold block pt-1">
+                  ID: {publicId}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                onClick={() => window.print()}
+                className="flex-1 py-2 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Print Sticker</span>
+              </button>
+              <button
+                onClick={handleDownload}
+                className="py-2 px-3 rounded-xl border border-stone-300 hover:bg-stone-100 text-stone-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Save PNG</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

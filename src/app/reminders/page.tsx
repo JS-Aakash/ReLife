@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useReLife } from '@/lib/store';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Clock,
   CheckCircle2,
@@ -15,12 +16,14 @@ import {
   Filter,
   Check,
   X,
+  Sparkles,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { MaintenanceReminder } from '@/lib/types';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function RemindersPage() {
+  const router = useRouter();
   const { reminders, products, toggleReminder, addReminder } = useReLife();
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('pending');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -130,23 +133,28 @@ export default function RemindersPage() {
             return (
               <div
                 key={reminder.id}
-                className={`bg-white rounded-2xl border p-4 sm:p-5 transition-all shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                onClick={() => router.push(`/products/${reminder.productId}`)}
+                className={`bg-white rounded-2xl border p-4 sm:p-5 transition-all shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer group ${
                   reminder.completed
                     ? 'border-stone-200 opacity-60 bg-stone-50/50'
                     : isWarranty
-                    ? 'border-amber-200 hover:border-amber-300'
-                    : 'border-stone-200 hover:border-stone-300'
+                    ? 'border-amber-200 hover:border-amber-400 hover:shadow-md'
+                    : 'border-stone-200 hover:border-emerald-300 hover:shadow-md'
                 }`}
               >
                 <div className="flex items-start gap-4 min-w-0">
                   {/* Complete Checkbox */}
                   <button
-                    onClick={() => toggleReminder(reminder.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleReminder(reminder.id);
+                    }}
                     className={`mt-1 w-5 h-5 rounded-lg border flex items-center justify-center transition-colors shrink-0 ${
                       reminder.completed
                         ? 'bg-emerald-700 border-emerald-700 text-white'
                         : 'border-stone-300 hover:border-emerald-600 bg-white'
                     }`}
+                    title={reminder.completed ? 'Mark incomplete' : 'Mark complete'}
                   >
                     {reminder.completed && <Check className="w-3.5 h-3.5" />}
                   </button>
@@ -170,7 +178,7 @@ export default function RemindersPage() {
                     </div>
 
                     <h3
-                      className={`text-sm font-bold text-stone-900 ${
+                      className={`text-sm font-bold text-stone-900 group-hover:text-emerald-800 transition-colors ${
                         reminder.completed ? 'line-through text-stone-500' : ''
                       }`}
                     >
@@ -192,11 +200,20 @@ export default function RemindersPage() {
                   </div>
                 </div>
 
-                {/* Right Action */}
-                <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100 shrink-0">
+                {/* Right Actions */}
+                <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100 shrink-0" onClick={(e) => e.stopPropagation()}>
+                  <Link
+                    href={`/copilot?productId=${reminder.productId}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 hover:border-emerald-300 hover:bg-emerald-50 text-stone-700 hover:text-emerald-800 text-xs font-medium transition-colors shadow-2xs whitespace-nowrap shrink-0"
+                    title="Diagnose with AI Copilot"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                    <span>Diagnose</span>
+                  </Link>
+
                   <Link
                     href={`/products/${reminder.productId}`}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-800 hover:underline px-3 py-1.5 whitespace-nowrap shrink-0"
+                    className="inline-flex items-center gap-1 text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white px-3 py-1.5 rounded-xl whitespace-nowrap shrink-0 shadow-2xs transition-colors"
                   >
                     <span>View Passport</span>
                     <ArrowRight className="w-3.5 h-3.5 shrink-0" />

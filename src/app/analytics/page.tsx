@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useReLife } from '@/lib/store';
 import Link from 'next/link';
 import {
@@ -15,13 +15,18 @@ import {
   Package,
   Wrench,
   ArrowRight,
+  Printer,
+  Download,
+  X,
+  FileCheck,
 } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { CATEGORY_ENVIRONMENTAL_BENCHMARKS } from '@/lib/calculations';
 import { ProductCategory } from '@/lib/types';
 
 export default function AnalyticsPage() {
-  const { products } = useReLife();
+  const { products, currentUser } = useReLife();
+  const [certModalOpen, setCertModalOpen] = useState(false);
 
   const totalProducts = products.length;
   const totalRepairs = products.reduce((acc, p) => acc + p.repairs.length, 0);
@@ -73,9 +78,9 @@ export default function AnalyticsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="pb-4 border-b border-stone-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
             <Leaf className="w-4 h-4 text-emerald-700" />
           </div>
           <div>
@@ -87,6 +92,14 @@ export default function AnalyticsPage() {
             </p>
           </div>
         </div>
+
+        <button
+          onClick={() => setCertModalOpen(true)}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors whitespace-nowrap shrink-0"
+        >
+          <Printer className="w-3.5 h-3.5 shrink-0" />
+          <span>Export ESG Certificate</span>
+        </button>
       </div>
 
       {/* Hero Metric Cards */}
@@ -144,14 +157,20 @@ export default function AnalyticsPage() {
             </span>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {activeCategories.map(([category, data]) => {
               const percentage = totalEWaste > 0 ? (data.eWasteKg / totalEWaste) * 100 : 0;
 
               return (
-                <div key={category} className="space-y-1.5 text-xs">
+                <Link
+                  key={category}
+                  href="/products"
+                  className="block p-3 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-emerald-200 transition-all group cursor-pointer space-y-1.5 text-xs"
+                >
                   <div className="flex items-center justify-between font-semibold">
-                    <span className="capitalize text-stone-800">{category} ({data.count} items)</span>
+                    <span className="capitalize text-stone-800 group-hover:text-emerald-800 transition-colors">
+                      {category} ({data.count} items)
+                    </span>
                     <span className="font-mono text-emerald-800">
                       {data.eWasteKg.toFixed(1)} kg ({percentage.toFixed(0)}%)
                     </span>
@@ -160,16 +179,16 @@ export default function AnalyticsPage() {
                   {/* Horizontal Bar */}
                   <div className="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-emerald-700 rounded-full transition-all duration-700"
+                      className="h-full bg-emerald-700 rounded-full transition-all duration-700 group-hover:bg-emerald-600"
                       style={{ width: `${Math.max(5, percentage)}%` }}
                     />
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-stone-400">
                     <span>{data.repairs} documented service events</span>
-                    <span>{data.carbonKg.toFixed(0)} kg CO₂e saved</span>
+                    <span>{data.carbonKg.toFixed(0)} kg CO₂e saved • View fleet →</span>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -254,6 +273,95 @@ export default function AnalyticsPage() {
           </div>
         </div>
       </div>
+
+      {/* Certified ESG & Circular Economy Audit Modal */}
+      {certModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-stone-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            <div className="px-5 py-3.5 bg-emerald-950 text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2">
+                <FileCheck className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  Verified ESG Circular Impact Audit
+                </span>
+              </div>
+              <button
+                onClick={() => setCertModalOpen(false)}
+                className="p-1 rounded-lg text-stone-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 sm:p-8 overflow-y-auto space-y-6 bg-stone-50/50">
+              <div className="bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 space-y-6 shadow-sm relative">
+                <div className="text-center space-y-1 pb-4 border-b border-stone-200">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                    Official Environmental Attestation
+                  </span>
+                  <h2 className="text-xl font-black text-stone-900 tracking-tight mt-1">
+                    Circular Economy Certificate
+                  </h2>
+                  <p className="text-xs text-stone-500">
+                    Awarded to <strong className="text-stone-800">{currentUser?.name || 'Verified Custodian'}</strong> for proactive asset stewardship
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-center">
+                  <div className="p-3 rounded-xl bg-teal-50 border border-teal-100">
+                    <span className="text-2xl font-black text-teal-900 block">{totalEWaste.toFixed(1)} kg</span>
+                    <span className="text-[10px] uppercase font-bold text-teal-700">E-Waste Diverted</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                    <span className="text-2xl font-black text-emerald-900 block">{totalCarbon.toFixed(0)} kg</span>
+                    <span className="text-[10px] uppercase font-bold text-emerald-700">CO₂e Avoided</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs text-stone-600">
+                  <div className="flex justify-between py-1 border-b border-stone-100">
+                    <span>Registered Fleet Size:</span>
+                    <span className="font-bold text-stone-900">{totalProducts} Assets</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-stone-100">
+                    <span>Service Events Executed:</span>
+                    <span className="font-bold text-stone-900">{totalRepairs} Documented</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-stone-100">
+                    <span>Total Lifespan Extended:</span>
+                    <span className="font-bold text-stone-900">+{totalMonthsExtended} Months</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span>Capital Preserved:</span>
+                    <span className="font-bold text-emerald-800">{formatCurrency(estimatedDollarsSaved)}</span>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-stone-200 flex items-center justify-between text-[10px] text-stone-400">
+                  <span>Audit ID: RELIFE-ESG-{Date.now().toString().slice(-6)}</span>
+                  <span>Issued: {formatDate(new Date().toISOString())}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-5 py-3.5 bg-stone-100 border-t border-stone-200 flex items-center justify-between text-xs">
+              <button
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-800 text-white font-semibold hover:bg-emerald-900 transition-colors"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Print / Save PDF</span>
+              </button>
+              <button
+                onClick={() => setCertModalOpen(false)}
+                className="px-3.5 py-1.5 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-200 font-semibold transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

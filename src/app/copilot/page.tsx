@@ -38,40 +38,73 @@ function CopilotContent() {
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
 
-  // Suggested quick prompts
-  const samplePrompts = [
-    {
-      title: 'Swelling / Draining Battery',
-      text: 'Battery health degraded below 75%. Laptop trackpad is clicking stiffly and battery drains from 100% to 20% in an hour.',
-      productId: 'prod-macbook-pro-16',
-    },
-    {
-      title: 'Chain Slipping / Drivetrain Wear',
-      text: 'Chain is skipping on the cassette cogs under hard pedal acceleration. Gears hesitate when shifting.',
-      productId: 'prod-specialized-sirrus',
-    },
-    {
-      title: 'Airway Motor Pulsing',
-      text: 'Vacuum motor cuts out and pulses intermittently on boost mode. Red warning indicator flashes on display.',
-      productId: 'prod-dyson-v15',
-    },
-    {
-      title: 'Intermittent Audio / Swivel Creak',
-      text: 'Audio cuts out occasionally in right ear cup when tilting head. Headband hinge makes creaking friction noise.',
-      productId: 'prod-sony-xm5',
-    },
-  ];
+  // Dynamic suggested quick prompts based on user's current fleet
+  const samplePrompts = React.useMemo(() => {
+    if (products.length === 0) {
+      return [
+        {
+          title: 'Swelling / Rapid Battery Drain',
+          text: 'Battery health degraded below 75%. Device runs unusually hot and drains from 100% to 20% in an hour.',
+          productId: 'custom',
+        },
+      ];
+    }
 
-  const handleDiagnose = async (overridePrompt?: string) => {
+    return products.slice(0, 4).map((p) => {
+      if (p.category === 'laptop' || p.category === 'smartphone') {
+        return {
+          title: `${p.brand}: Battery & Thermal Throttling`,
+          text: `Battery health degraded below 78%. ${p.name} runs unusually hot under moderate load and battery drains rapidly.`,
+          productId: p.id,
+        };
+      }
+      if (p.category === 'camera') {
+        return {
+          title: `${p.brand}: Sensor Shutter & IBIS Error`,
+          text: `Sensor stabilization mechanism makes a clicking sound on startup. Shutter occasionally throws camera error code.`,
+          productId: p.id,
+        };
+      }
+      if (p.category === 'bicycle') {
+        return {
+          title: `${p.brand}: Drivetrain Skipping & Hydraulic Bleed`,
+          text: `Rear derailleur skipping under load on steep climbs. Hydraulic disc brake lever feels spongy.`,
+          productId: p.id,
+        };
+      }
+      if (p.category === 'appliance') {
+        return {
+          title: `${p.brand}: Motor Pulsing & Filter Restriction`,
+          text: `Motor cuts out intermittently in high-output mode with warning indicator. Airflow feels restricted.`,
+          productId: p.id,
+        };
+      }
+      if (p.category === 'audio') {
+        return {
+          title: `${p.brand}: Driver Distortion & Hinge Friction`,
+          text: `Intermittent crackle in right driver during bass peaks. Hinge mechanism exhibits mechanical friction.`,
+          productId: p.id,
+        };
+      }
+      return {
+        title: `${p.brand}: Routine Diagnostic & Inspection`,
+        text: `Periodic preventative diagnostic and component wear inspection to ensure optimal efficiency and safety.`,
+        productId: p.id,
+      };
+    });
+  }, [products]);
+
+  const handleDiagnose = async (overridePrompt?: string, overrideProduct?: any) => {
     const promptToUse = overridePrompt || faultDescription;
     if (!promptToUse.trim()) return;
 
     setLoading(true);
     setDiagnosis(null);
 
-    const productName = selectedProduct ? selectedProduct.name : customDeviceName || 'Electronic Device';
-    const category = selectedProduct ? selectedProduct.category : customCategory;
-    const price = selectedProduct ? selectedProduct.purchasePrice : Number(customPrice) || 800;
+    const targetProduct = overrideProduct || selectedProduct;
+    const productName = targetProduct ? targetProduct.name : customDeviceName || 'Electronic Device';
+    const category = targetProduct ? targetProduct.category : customCategory;
+    const price = targetProduct ? targetProduct.purchasePrice : Number(customPrice) || 800;
 
     try {
       const response = await fetch('/api/ai/copilot', {
@@ -216,9 +249,10 @@ function CopilotContent() {
                   key={sample.title}
                   type="button"
                   onClick={() => {
+                    const prod = products.find((p) => p.id === sample.productId);
                     setSelectedProductId(sample.productId);
                     setFaultDescription(sample.text);
-                    handleDiagnose(sample.text);
+                    handleDiagnose(sample.text, prod);
                   }}
                   className="w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-emerald-600 hover:bg-emerald-50/30 transition-all text-xs group"
                 >
@@ -370,13 +404,19 @@ function CopilotContent() {
                   <span>{diagnosis.disclaimer}</span>
                 </div>
 
-                {/* Log Repair Shortcut */}
+                {/* Log Repair Shortcut & View Passport */}
                 {selectedProduct && (
-                  <div className="pt-2 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span className="text-stone-500 text-xs">Proceeding with repair?</span>
+                  <div className="pt-2 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <Link
+                      href={`/products/${selectedProduct.id}`}
+                      className="text-stone-600 hover:text-emerald-800 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    >
+                      <span>← View {selectedProduct.name} Passport</span>
+                    </Link>
+
                     <Link
                       href={`/products/${selectedProduct.id}/repair`}
-                      className="px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs flex items-center gap-1.5 whitespace-nowrap shrink-0 justify-center"
+                      className="px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs flex items-center gap-1.5 whitespace-nowrap shrink-0 justify-center shadow-2xs transition-colors"
                     >
                       <Wrench className="w-3.5 h-3.5 shrink-0" />
                       <span>Log this repair to passport →</span>

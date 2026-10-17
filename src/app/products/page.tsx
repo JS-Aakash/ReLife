@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useReLife } from '@/lib/store';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Search,
   Filter,
@@ -17,6 +18,7 @@ import {
   Copy,
   Check,
   Package,
+  Sparkles,
 } from 'lucide-react';
 import { HealthGauge } from '@/components/ui/health-gauge';
 import { WarrantyBadge, CategoryBadge } from '@/components/ui/badge';
@@ -27,6 +29,7 @@ import { InvoiceScannerModal } from '@/components/scanner/invoice-scanner-modal'
 import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function ProductsPage() {
+  const router = useRouter();
   const { products } = useReLife();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -35,14 +38,34 @@ export default function ProductsPage() {
   const [scannerOpen, setScannerOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const categories: { label: string; value: string }[] = [
-    { label: 'All Assets', value: 'all' },
-    { label: 'Laptops', value: 'laptop' },
-    { label: 'Smartphones', value: 'smartphone' },
-    { label: 'Bicycles', value: 'bicycle' },
-    { label: 'Appliances', value: 'appliance' },
-    { label: 'Audio', value: 'audio' },
-  ];
+  const categories = useMemo(() => {
+    const counts: Record<string, number> = {};
+    products.forEach((p) => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+
+    const categoryLabels: Record<string, string> = {
+      laptop: 'Laptops',
+      smartphone: 'Smartphones',
+      bicycle: 'Bicycles',
+      appliance: 'Appliances',
+      audio: 'Audio',
+      camera: 'Photography',
+      gaming: 'Gaming',
+      tablet: 'Tablets',
+      other: 'Specialized Assets',
+    };
+
+    const uniqueCats = Object.keys(counts);
+
+    return [
+      { label: `All Assets (${products.length})`, value: 'all' },
+      ...uniqueCats.map((catKey) => ({
+        label: `${categoryLabels[catKey] || catKey.charAt(0).toUpperCase() + catKey.slice(1)} (${counts[catKey]})`,
+        value: catKey,
+      })),
+    ];
+  }, [products]);
 
   // Filtering
   const filteredProducts = products.filter((product) => {
@@ -205,7 +228,8 @@ export default function ProductsPage() {
             return (
               <div
                 key={product.id}
-                className="bg-white rounded-3xl border border-stone-200 p-5 shadow-2xs hover:shadow-md hover:border-stone-300 transition-all flex flex-col justify-between group"
+                onClick={() => router.push(`/products/${product.id}`)}
+                className="bg-white rounded-3xl border border-stone-200 p-5 shadow-2xs hover:shadow-md hover:border-emerald-300 transition-all flex flex-col justify-between group cursor-pointer"
               >
                 <div className="space-y-4">
                   {/* Image & Category */}
@@ -241,7 +265,7 @@ export default function ProductsPage() {
                   </div>
 
                   {/* Serial Number & Warranty Metadata */}
-                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-100 flex items-center justify-between text-xs">
+                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-100 flex items-center justify-between text-xs" onClick={(e) => e.stopPropagation()}>
                     <div>
                       <span className="text-[10px] uppercase font-bold text-stone-400 block">
                         Serial / Hardware ID
@@ -279,8 +303,15 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Card Action Footer */}
-                <div className="mt-5 pt-3.5 border-t border-stone-100 flex items-center justify-between gap-2">
+                <div className="mt-5 pt-3.5 border-t border-stone-100 flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-1.5">
+                    <Link
+                      href={`/copilot?productId=${product.id}`}
+                      className="p-2 rounded-xl border border-stone-200 hover:border-emerald-300 hover:bg-emerald-50 text-stone-600 hover:text-emerald-800 transition-colors"
+                      title="Diagnose with AI Copilot"
+                    >
+                      <Sparkles className="w-4 h-4 text-emerald-700" />
+                    </Link>
                     <Link
                       href={`/passport/${product.publicId}`}
                       target="_blank"

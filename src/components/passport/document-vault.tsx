@@ -15,6 +15,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { DocumentPreviewModal } from './document-preview-modal';
 
 interface DocumentVaultProps {
   productId: string;
@@ -23,7 +24,9 @@ interface DocumentVaultProps {
 }
 
 export function DocumentVault({ productId, documents, isOwner = true }: DocumentVaultProps) {
-  const { addDocument, deleteDocument } = useReLife();
+  const { addDocument, deleteDocument, getProductById } = useReLife();
+  const product = getProductById(productId);
+  const [previewDoc, setPreviewDoc] = useState<DocumentItem | null>(null);
   const [filterType, setFilterType] = useState<string>('all');
   const [uploadModalOpen, setUploadModalOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
@@ -125,55 +128,66 @@ export function DocumentVault({ productId, documents, isOwner = true }: Document
           {filteredDocs.map((doc) => (
             <div
               key={doc.id}
-              className="bg-white rounded-xl border border-stone-200 p-3.5 flex items-start justify-between gap-3 shadow-2xs hover:border-stone-300 transition-colors"
-            >
-              <div className="flex items-start gap-2.5 min-w-0">
-                <div className="p-2 rounded-lg bg-emerald-50 text-emerald-800 shrink-0 mt-0.5">
-                  <FileText className="w-4 h-4" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-100">
-                      {getTypeLabel(doc.fileType)}
-                    </span>
-                    {doc.isVerifiedReceipt && (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-blue-700">
-                        <FileCheck className="w-3 h-3 text-blue-600" />
-                        Verified
-                      </span>
-                    )}
+              onClick={() => setPreviewDoc(doc)}
+                className="bg-white rounded-xl border border-stone-200 p-3.5 flex items-start justify-between gap-3 shadow-2xs hover:border-emerald-300 hover:shadow-xs transition-all cursor-pointer group"
+              >
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <div className="p-2 rounded-lg bg-emerald-50 text-emerald-800 group-hover:bg-emerald-100 transition-colors shrink-0 mt-0.5">
+                    <FileText className="w-4 h-4" />
                   </div>
-                  <h4 className="text-xs font-semibold text-stone-900 truncate" title={doc.title}>
-                    {doc.title}
-                  </h4>
-                  <p className="text-[11px] text-stone-400 truncate">
-                    {doc.fileName} • {doc.fileSize} • {formatDate(doc.uploadDate)}
-                  </p>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-100">
+                        {getTypeLabel(doc.fileType)}
+                      </span>
+                      {doc.isVerifiedReceipt && (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-blue-700">
+                          <FileCheck className="w-3 h-3 text-blue-600" />
+                          Verified
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="text-xs font-semibold text-stone-900 truncate group-hover:text-emerald-800 transition-colors" title={doc.title}>
+                      {doc.title}
+                    </h4>
+                    <p className="text-[11px] text-stone-400 truncate">
+                      {doc.fileName} • {doc.fileSize} • {formatDate(doc.uploadDate)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={() => setPreviewDoc(doc)}
+                    className="p-1.5 text-stone-400 hover:text-emerald-800 hover:bg-stone-100 rounded-md transition-colors"
+                    title="View Document"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                  {isOwner && (
+                    <button
+                      onClick={() => deleteDocument(productId, doc.id)}
+                      className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                      title="Delete Document"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
-
-              <div className="flex items-center gap-1 shrink-0">
-                <button
-                  onClick={() => alert(`Viewing file: ${doc.fileName}\nDocument encrypted in secure vault.`)}
-                  className="p-1.5 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-md transition-colors"
-                  title="View Document"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                </button>
-                {isOwner && (
-                  <button
-                    onClick={() => deleteDocument(productId, doc.id)}
-                    className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                    title="Delete Document"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
+
+      {/* Document Preview Modal */}
+      <DocumentPreviewModal
+        isOpen={!!previewDoc}
+        document={previewDoc}
+        productName={product?.name}
+        productSerial={product?.serialNumber}
+        productBrand={product?.brand}
+        onClose={() => setPreviewDoc(null)}
+      />
 
       {/* Upload Modal */}
       {uploadModalOpen && (

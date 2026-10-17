@@ -4,12 +4,23 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useReLife } from '@/lib/store';
 import { Bell, CheckCheck, Clock, ShieldAlert, Wrench, ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { timeAgo } from '@/lib/utils';
+import { AppNotification } from '@/lib/types';
 
 export function NotificationDropdown() {
+  const router = useRouter();
   const { notifications, unreadCount, markNotificationRead, markAllNotificationsRead } = useReLife();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleNotificationClick = (notif: AppNotification) => {
+    markNotificationRead(notif.id);
+    if (notif.actionUrl) {
+      setIsOpen(false);
+      router.push(notif.actionUrl);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -80,17 +91,17 @@ export function NotificationDropdown() {
               notifications.map((notif) => (
                 <div
                   key={notif.id}
-                  onClick={() => markNotificationRead(notif.id)}
-                  className={`p-3.5 flex items-start gap-3 transition-colors cursor-pointer hover:bg-stone-50 ${
+                  onClick={() => handleNotificationClick(notif)}
+                  className={`p-3.5 flex items-start gap-3 transition-all cursor-pointer hover:bg-emerald-50/40 group ${
                     !notif.read ? 'bg-emerald-50/30' : ''
                   }`}
                 >
-                  <div className="mt-0.5 p-1.5 rounded-lg bg-stone-100">
+                  <div className="mt-0.5 p-1.5 rounded-lg bg-stone-100 group-hover:bg-white transition-colors">
                     {getIcon(notif.type)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-0.5">
-                      <h4 className={`text-xs font-medium truncate ${!notif.read ? 'text-stone-900 font-semibold' : 'text-stone-700'}`}>
+                      <h4 className={`text-xs font-medium truncate group-hover:text-emerald-800 transition-colors ${!notif.read ? 'text-stone-900 font-semibold' : 'text-stone-700'}`}>
                         {notif.title}
                       </h4>
                       <span className="text-[10px] text-stone-400 shrink-0 ml-2">
@@ -101,14 +112,10 @@ export function NotificationDropdown() {
                       {notif.message}
                     </p>
                     {notif.actionUrl && (
-                      <Link
-                        href={notif.actionUrl}
-                        onClick={() => setIsOpen(false)}
-                        className="inline-flex items-center gap-1 text-[11px] text-emerald-700 hover:text-emerald-800 font-medium mt-1.5"
-                      >
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-semibold mt-1.5 group-hover:underline">
                         <span>View Details</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
+                        <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                      </span>
                     )}
                   </div>
                   {!notif.read && (
