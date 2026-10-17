@@ -89,29 +89,35 @@ export default function ProductPassportDetailPage() {
     <ProtectedRoute title="Private Product Custodian Vault" description="Sign in to view original purchase bills, private maintenance records, and initiate ownership transfers.">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Top Navigation & Breadcrumbs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
-          <div className="flex items-center gap-3">
+        <div className="space-y-4 pb-5 border-b border-stone-200">
+          {/* Row 1: Back Button + ID + Category Badge + Product Name in single line */}
+          <div className="flex items-start sm:items-center gap-3">
             <Link
               href="/products"
-              className="p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-600 transition-colors"
+              className="p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-600 transition-colors shrink-0 mt-0.5 sm:mt-0"
+              title="Back to Products"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                   {product.publicId}
                 </span>
-                <CategoryBadge category={product.category} />
               </div>
-              <h1 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight mt-0.5">
-                {product.name}
-              </h1>
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 mt-1 min-w-0">
+                <div className="shrink-0">
+                  <CategoryBadge category={product.category} />
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight truncate">
+                  {product.name}
+                </h1>
+              </div>
             </div>
           </div>
 
-          {/* Action Controls */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Row 2: Action Controls in next row */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             <Link
               href={`/warranty-rescue?productId=${product.id}`}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-50 border border-amber-300 text-amber-900 hover:bg-amber-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
@@ -167,7 +173,7 @@ export default function ProductPassportDetailPage() {
 
             <button
               onClick={handleDelete}
-              className={`p-2 rounded-xl border transition-colors shrink-0 ${deleteConfirm
+              className={`p-2 rounded-xl border transition-colors shrink-0 sm:ml-auto ${deleteConfirm
                 ? 'border-red-500 bg-red-50 text-red-700'
                 : 'border-stone-200 text-stone-400 hover:text-red-600 hover:bg-red-50'
                 }`}
