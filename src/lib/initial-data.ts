@@ -1049,7 +1049,7 @@ export const VIKRAM_INITIAL_PRODUCTS: Product[] = [
     warrantyMonths: 36,
     warrantyExpiryDate: '2026-04-10',
     condition: 'mint',
-    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1597733336794-12d05021d510?auto=format&fit=crop&w=1000&q=80',
     description: 'Precision micro-soldering platform equipped with IoT connectivity, ESD safety certification, and active smart tip telemetry.',
     originalLifespanYears: 12,
     estimatedUsefulLifeRemainingYears: 11.2,

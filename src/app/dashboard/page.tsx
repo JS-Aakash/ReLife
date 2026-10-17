@@ -218,6 +218,9 @@ export default function DashboardPage() {
                         src={product.imageUrl}
                         alt={product.name}
                         className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-stone-200 shadow-2xs shrink-0 group-hover:scale-105 transition-transform duration-200"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1597733336794-12d05021d510?auto=format&fit=crop&w=1000&q=80';
+                        }}
                       />
                       <div className="space-y-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">

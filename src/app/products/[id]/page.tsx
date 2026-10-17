@@ -159,6 +159,9 @@ export default function ProductPassportDetailPage() {
                 src={product.imageUrl}
                 alt={product.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1597733336794-12d05021d510?auto=format&fit=crop&w=1000&q=80';
+                }}
               />
               <span className="absolute bottom-2 left-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-stone-900/80 text-white backdrop-blur-xs">
                 Condition: {product.condition}

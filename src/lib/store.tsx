@@ -194,7 +194,16 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       const savedNotifs = localStorage.getItem(userNotifsKey);
 
       if (savedProducts) {
-        setProducts(JSON.parse(savedProducts));
+        const parsed = JSON.parse(savedProducts);
+        const healed = Array.isArray(parsed)
+          ? parsed.map((p: any) => {
+              if (p.imageUrl?.includes('photo-1581092335397-9583fe92d232')) {
+                return { ...p, imageUrl: 'https://images.unsplash.com/photo-1597733336794-12d05021d510?auto=format&fit=crop&w=1000&q=80' };
+              }
+              return p;
+            })
+          : parsed;
+        setProducts(healed);
       } else if (userId === DEMO_PERSONAS.aarav.id || userId === 'usr-aarav-sharma' || userId === 'usr-elena-rostova') {
         setProducts(AARAV_INITIAL_PRODUCTS);
       } else if (userId === DEMO_PERSONAS.priya.id || userId === 'usr-priya-patel' || userId === 'usr-liam-sterling') {
