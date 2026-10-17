@@ -94,8 +94,8 @@ const printingTransformKeyframes = [
 ];
 
 const printingKeyframeTimes = [
-  0, 0.75, 0.105, 0.18, 0.21, 0.285, 0.315, 0.39, 0.42, 0.495, 0.525, 0.6,
-  0.63, 0.305, 0.335, 0.365, 0.395, 0.425, 0.455, 0.485,
+  0, 0.075, 0.105, 0.18, 0.21, 0.285, 0.315, 0.39, 0.42, 0.495, 0.525, 0.6,
+  0.63, 0.705, 0.735, 0.81, 0.84, 0.915, 0.945, 1,
 ];
 
 const statusLabels: Record<ReceiptPrinterStage, ReactNode> = {
@@ -374,7 +374,7 @@ function ReceiptPrinterOutput({
         transition={{
           opacity: { duration: animate ? 0.16 : 0, ease: easeOut },
           transform: {
-            duration: shouldMove ? 6.5 : 0,
+            duration: shouldMove ? 3.65 : 0,
             ease: shouldUseSteppedFeed ? "linear" : easeInOut,
             times: shouldUseSteppedFeed ? printingKeyframeTimes : undefined,
           },

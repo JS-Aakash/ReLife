@@ -138,6 +138,6 @@ body {
 }
 
 .animate-receipt-feed {
-  animation: receiptSteppedFeed 5.2s linear forwards;
+  animation: receiptSteppedFeed 3.65s linear forwards;
   will-change: transform;
 }

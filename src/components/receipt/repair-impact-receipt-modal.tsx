@@ -22,7 +22,6 @@ import {
 import { TactileButton } from '@/components/TactileButton';
 import { Product, RepairRecord, ServiceProviderSubmission } from '@/lib/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import confetti from 'canvas-confetti';
 
 export interface RepairImpactReceiptData {
   product: Product;
@@ -44,23 +43,14 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
   useEffect(() => {
     if (isOpen) {
       setStage('processing');
-      // Progression: Processing (1.2s) -> Slow stepped printing (5.2s) -> Complete at 6.5s
+      // Progression (30% faster): Processing (800ms) -> Stepped printing (3.65s) -> Complete at 4.45s
       const timer1 = setTimeout(() => {
         setStage('printing');
-      }, 1200);
+      }, 800);
 
       const timer2 = setTimeout(() => {
         setStage('complete');
-        try {
-          confetti({
-            particleCount: 50,
-            spread: 50,
-            origin: { y: 0.7 },
-          });
-        } catch {
-          // ignore in test environments
-        }
-      }, 6500);
+      }, 4450);
 
       return () => {
         clearTimeout(timer1);
@@ -138,19 +128,10 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
 
   const replayAnimation = () => {
     setStage('processing');
-    setTimeout(() => setStage('printing'), 800);
+    setTimeout(() => setStage('printing'), 500);
     setTimeout(() => {
       setStage('complete');
-      try {
-        confetti({
-          particleCount: 50,
-          spread: 50,
-          origin: { y: 0.7 },
-        });
-      } catch {
-        // ignore in test environments
-      }
-    }, 6000);
+    }, 4150);
   };
 
   return (

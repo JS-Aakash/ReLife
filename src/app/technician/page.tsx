@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useReLife } from '@/lib/store';
 import Link from 'next/link';
 import {
@@ -20,10 +20,14 @@ import {
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { RepairPart, ServiceProviderSubmission, Product } from '@/lib/types';
-import confetti from 'canvas-confetti';
 import { RepairImpactReceiptModal, RepairImpactReceiptData } from '@/components/receipt/repair-impact-receipt-modal';
 
 export default function TechnicianPortalPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     products,
     serviceSubmissions,
@@ -33,7 +37,13 @@ export default function TechnicianPortalPage() {
     currentUser,
   } = useReLife();
 
-  const [selectedProductId, setSelectedProductId] = useState(products[0]?.id || '');
+  const [selectedProductId, setSelectedProductId] = useState('');
+  useEffect(() => {
+    if (products.length > 0 && !selectedProductId) {
+      setSelectedProductId(products[0].id);
+    }
+  }, [products, selectedProductId]);
+
   const [shopName, setShopName] = useState('Zenith Diagnostics & Precision Micro-Repairs');
   const [technicianName, setTechnicianName] = useState(
     currentUser?.name
@@ -110,11 +120,6 @@ export default function TechnicianPortalPage() {
   const handleApprove = (id: string) => {
     const sub = serviceSubmissions.find((s) => s.id === id);
     const result = approveTechnicianRepair(id);
-    confetti({
-      particleCount: 30,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
     if (result && result.repair && result.product) {
       setReceiptData({
         product: result.product,
@@ -190,7 +195,7 @@ export default function TechnicianPortalPage() {
                 <h1 className="text-2xl font-black text-stone-900 tracking-tight">
                   Authorized Service Provider & Technician Portal
                 </h1>
-                {pendingApprovalsCount > 0 && (
+                {mounted && pendingApprovalsCount > 0 && (
                   <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
                     {pendingApprovalsCount} Pending Approval
                   </span>
@@ -418,7 +423,7 @@ export default function TechnicianPortalPage() {
                 </h3>
               </div>
               <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full">
-                {serviceSubmissions.filter((s) => s.status === 'pending_owner_approval').length} Pending
+                {mounted ? serviceSubmissions.filter((s) => s.status === 'pending_owner_approval').length : 0} Pending
               </span>
             </div>
 
@@ -426,7 +431,11 @@ export default function TechnicianPortalPage() {
               When a technician submits a record, the product owner must review and grant permission to seal the record into the permanent ledger.
             </p>
 
-            {serviceSubmissions.length === 0 ? (
+            {!mounted ? (
+              <div className="p-8 rounded-2xl bg-stone-50 border border-stone-200 text-center text-stone-400">
+                Loading approval queue...
+              </div>
+            ) : serviceSubmissions.length === 0 ? (
               <div className="p-8 rounded-2xl bg-stone-50 border border-stone-200 text-center text-stone-400">
                 No technician submissions pending. Try submitting a repair on the left to see the workflow in action!
               </div>

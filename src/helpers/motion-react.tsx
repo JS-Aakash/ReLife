@@ -39,7 +39,7 @@ function MotionDiv({ animate, initial, exit, transition, className, style, child
   const transformStyle = isKeyframes ? undefined : (animate?.transform as string | undefined);
   const opacityStyle = animate?.opacity !== undefined ? animate.opacity : style?.opacity;
 
-  const durationSec = transition?.transform?.duration ?? 5.2;
+  const durationSec = transition?.transform?.duration ?? 3.65;
 
   return (
     <div

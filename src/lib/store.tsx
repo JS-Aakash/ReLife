@@ -156,19 +156,20 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [reminders, setReminders] = useState<MaintenanceReminder[]>([]);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [serviceSubmissions, setServiceSubmissions] = useState<ServiceProviderSubmission[]>(() => {
-    if (typeof window !== 'undefined') {
+  const [serviceSubmissions, setServiceSubmissions] = useState<ServiceProviderSubmission[]>(INITIAL_SERVICE_SUBMISSIONS);
+
+  // Load saved service submissions from localStorage once on client mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
       const saved = localStorage.getItem('relife_service_submissions_v2');
       if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch (e) {
-          console.warn('Failed to parse saved submissions', e);
-        }
+        setServiceSubmissions(JSON.parse(saved));
       }
+    } catch (e) {
+      console.warn('Failed to parse saved submissions', e);
     }
-    return INITIAL_SERVICE_SUBMISSIONS;
-  });
+  }, []);
   const [transferRequests, setTransferRequests] = useState<OwnershipTransferRequest[]>([]);
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
