@@ -42,7 +42,20 @@ const geminiApiKey = process.env.GEMINI_API_KEY;
 const aiClient = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null;
 
 // Preferred model list with fallback in case of transient spikes
-const GEMINI_MODELS = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.8-flash', 'gemini-flash-latest'];
+const GEMINI_MODELS = ['gemini-flash-latest', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+
+function normalizeCategory(raw?: string): ProductCategory {
+  const cat = (raw || '').toLowerCase().trim();
+  if (cat.includes('laptop') || cat.includes('notebook') || cat.includes('macbook') || cat.includes('computer') || cat.includes('pc')) return 'laptop';
+  if (cat.includes('phone') || cat.includes('mobile') || cat.includes('iphone') || cat.includes('pixel') || cat.includes('galaxy') || cat.includes('cellular')) return 'smartphone';
+  if (cat.includes('tablet') || cat.includes('ipad') || cat.includes('kindle')) return 'tablet';
+  if (cat.includes('bike') || cat.includes('bicycle') || cat.includes('cycling') || cat.includes('scooter')) return 'bicycle';
+  if (cat.includes('audio') || cat.includes('headphone') || cat.includes('earbud') || cat.includes('speaker') || cat.includes('soundbar') || cat.includes('airpods')) return 'audio';
+  if (cat.includes('camera') || cat.includes('lens') || cat.includes('dslr') || cat.includes('optics') || cat.includes('mirrorless')) return 'camera';
+  if (cat.includes('gaming') || cat.includes('playstation') || cat.includes('xbox') || cat.includes('nintendo') || cat.includes('console')) return 'gaming';
+  if (cat.includes('appliance') || cat.includes('vacuum') || cat.includes('purifier') || cat.includes('blender') || cat.includes('kitchen') || cat.includes('fridge') || cat.includes('microwave')) return 'appliance';
+  return 'other';
+}
 
 // Robust JSON parser to handle markdown fences, whitespace, or extra wrapper chars from AI models
 function parseCleanJson<T = any>(rawText: string): T {
@@ -72,33 +85,63 @@ export async function extractInvoiceData(
       try {
         const parts: any[] = [];
 
-        // If it's a data URL image
-        if (imageBase64OrText && imageBase64OrText.startsWith('data:')) {
-          const [mimePart, base64Data] = imageBase64OrText.split(';base64,');
-          const mimeType = mimePart.replace('data:', '');
-          parts.push({
-            inlineData: {
-              mimeType,
-              data: base64Data,
-            },
-          });
+        // Check for base64 image data URL or raw base64
+        if (imageBase64OrText) {
+          if (imageBase64OrText.startsWith('data:')) {
+            const [mimePart, base64Data] = imageBase64OrText.split(';base64,');
+            const mimeType = mimePart.replace('data:', '') || 'image/jpeg';
+            if (base64Data) {
+              parts.push({
+                inlineData: {
+                  mimeType,
+                  data: base64Data,
+                },
+              });
+            }
+          } else if (
+            imageBase64OrText.length > 200 &&
+            !imageBase64OrText.includes('\n') &&
+            !imageBase64OrText.includes(' ')
+          ) {
+            // Raw base64 string
+            parts.push({
+              inlineData: {
+                mimeType: 'image/jpeg',
+                data: imageBase64OrText,
+              },
+            });
+          } else if (imageBase64OrText.trim().length > 0) {
+            // Textual invoice payload or transcript
+            parts.push({
+              text: `DOCUMENT TEXT CONTENT:\n${imageBase64OrText.slice(0, 12000)}`,
+            });
+          }
         }
 
-        const promptText = `You are ReLife's document OCR AI engine. Analyze this invoice or purchase receipt (file: ${fileName || 'receipt'}) and extract key hardware purchase metadata.
+        const promptText = `You are ReLife's document OCR and hardware verification AI engine.
+Analyze this invoice, purchase receipt, bill, or product photo (file: ${fileName || 'receipt'}).
+EXTRACT the actual hardware product, manufacturer, and transaction details shown in the image/document.
+
+CRITICAL INSTRUCTIONS:
+1. Carefully read and inspect all visible text, product titles, brand logos, line items, serial numbers, and prices.
+2. DO NOT hallucinate, invent, or default to MacBook Pro or Apple unless Apple / MacBook is explicitly written or shown on this document/photo.
+3. If this document is for a smartphone, camera, appliance, audio gear, bicycle, tool, or other device, extract its EXACT product name, brand, model, and category.
+4. If the image is a photo of a physical product or serial plate, read the brand and model directly off the label or chassis.
+
 Return a valid, strict JSON object with this exact structure:
 {
-  "productName": "string (e.g. MacBook Pro 16, Specialized Sirrus, iPhone 15 Pro)",
-  "brand": "string (e.g. Apple, Specialized, Dyson, Sony)",
-  "model": "string (e.g. A2485, V15 Detect, WH-1000XM5)",
-  "serialNumber": "string (hardware serial or blank if not found)",
-  "purchaseDate": "YYYY-MM-DD",
+  "productName": "Exact product name (e.g. Fluke 87V Multimeter, Sony WH-1000XM5, Trek FX 3, Samsung Galaxy S24, Dyson V15)",
+  "brand": "Manufacturer brand name",
+  "model": "Model number or spec variant",
+  "serialNumber": "Serial number if found, or leave empty string",
+  "purchaseDate": "YYYY-MM-DD (date from receipt, or today's date if not visible)",
   "purchasePrice": 0.00,
   "purchaseCurrency": "USD",
-  "seller": "string (store or merchant name)",
+  "seller": "Store / merchant / retailer name",
   "warrantyMonths": 12,
   "category": "laptop" | "smartphone" | "tablet" | "bicycle" | "appliance" | "audio" | "camera" | "gaming" | "other"
 }
-If specific details are ambiguous, provide realistic estimates grounded in the manufacturer conventions.`;
+Output strictly valid JSON.`;
 
         parts.push({ text: promptText });
 
@@ -113,17 +156,26 @@ If specific details are ambiguous, provide realistic estimates grounded in the m
 
         if (response && response.text) {
           const parsed = parseCleanJson(response.text);
+          const rawProductName = (parsed.productName || '').trim();
+          const cleanProductName = rawProductName && !rawProductName.toLowerCase().includes('not a legible')
+            ? rawProductName
+            : fileName?.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Verified Hardware Asset';
+
           return {
-            productName: parsed.productName || 'Verified Product',
-            brand: parsed.brand || 'Manufacturer',
-            model: parsed.model || parsed.productName || 'Standard Model',
-            serialNumber: parsed.serialNumber || `SN-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-            purchaseDate: parsed.purchaseDate || new Date().toISOString().split('T')[0],
-            purchasePrice: Number(parsed.purchasePrice) || 0,
+            productName: cleanProductName,
+            brand: (parsed.brand && parsed.brand !== 'Unknown') ? parsed.brand : 'Hardware Manufacturer',
+            model: (parsed.model && parsed.model !== 'Unknown') ? parsed.model : cleanProductName,
+            serialNumber: (parsed.serialNumber && parsed.serialNumber !== 'Unknown' && parsed.serialNumber.trim() !== '')
+              ? parsed.serialNumber
+              : `SN-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+            purchaseDate: parsed.purchaseDate && parsed.purchaseDate.match(/^\d{4}-\d{2}-\d{2}$/)
+              ? parsed.purchaseDate
+              : new Date().toISOString().split('T')[0],
+            purchasePrice: Number(parsed.purchasePrice) > 0 ? Number(parsed.purchasePrice) : 299,
             purchaseCurrency: parsed.purchaseCurrency || 'USD',
-            seller: parsed.seller || 'Retailer',
-            warrantyMonths: Number(parsed.warrantyMonths) || 12,
-            category: parsed.category || 'other',
+            seller: (parsed.seller && parsed.seller !== 'Unknown') ? parsed.seller : 'Authorized Retailer',
+            warrantyMonths: Number(parsed.warrantyMonths) > 0 ? Number(parsed.warrantyMonths) : 12,
+            category: normalizeCategory(parsed.category),
             confidenceScore: 0.98,
             source: 'ai_vision',
           };

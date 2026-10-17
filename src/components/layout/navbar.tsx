@@ -95,11 +95,10 @@ export function Navbar() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 xl:px-3 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                      isActive
-                        ? 'bg-stone-100 text-stone-900 font-semibold shadow-2xs'
-                        : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
-                    }`}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 xl:px-3 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isActive
+                      ? 'bg-stone-100 text-stone-900 font-semibold shadow-2xs'
+                      : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+                      }`}
                   >
                     <Icon
                       className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-emerald-700' : 'text-stone-400'}`}
@@ -117,7 +116,7 @@ export function Navbar() {
           </div>
 
           {/* Right Header Actions */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-0.5 shrink-0">
             {/* Notification Dropdown */}
             <NotificationDropdown />
 
@@ -188,11 +187,10 @@ export function Navbar() {
                           loginAsDemo('aarav');
                           setUserDropdownOpen(false);
                         }}
-                        className={`w-full px-3 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors ${
-                          activePersonaKey === 'aarav' || activePersonaKey === 'elena'
-                            ? 'bg-emerald-50 text-emerald-900 font-bold'
-                            : 'hover:bg-stone-50 text-stone-700'
-                        }`}
+                        className={`w-full px-3 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors ${activePersonaKey === 'aarav' || activePersonaKey === 'elena'
+                          ? 'bg-emerald-50 text-emerald-900 font-bold'
+                          : 'hover:bg-stone-50 text-stone-700'
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
@@ -208,11 +206,10 @@ export function Navbar() {
                           loginAsDemo('priya');
                           setUserDropdownOpen(false);
                         }}
-                        className={`w-full px-3 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors ${
-                          activePersonaKey === 'priya' || activePersonaKey === 'liam'
-                            ? 'bg-emerald-50 text-emerald-900 font-bold'
-                            : 'hover:bg-stone-50 text-stone-700'
-                        }`}
+                        className={`w-full px-3 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors ${activePersonaKey === 'priya' || activePersonaKey === 'liam'
+                          ? 'bg-emerald-50 text-emerald-900 font-bold'
+                          : 'hover:bg-stone-50 text-stone-700'
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
@@ -228,11 +225,10 @@ export function Navbar() {
                           loginAsDemo('vikram');
                           setUserDropdownOpen(false);
                         }}
-                        className={`w-full px-3 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors ${
-                          activePersonaKey === 'vikram' || activePersonaKey === 'alex'
-                            ? 'bg-emerald-50 text-emerald-900 font-bold'
-                            : 'hover:bg-stone-50 text-stone-700'
-                        }`}
+                        className={`w-full px-3 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors ${activePersonaKey === 'vikram' || activePersonaKey === 'alex'
+                          ? 'bg-emerald-50 text-emerald-900 font-bold'
+                          : 'hover:bg-stone-50 text-stone-700'
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
@@ -367,11 +363,10 @@ export function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium ${
-                  isActive
-                    ? 'bg-emerald-50 text-emerald-900 font-semibold'
-                    : 'text-stone-700 hover:bg-stone-50'
-                }`}
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium ${isActive
+                  ? 'bg-emerald-50 text-emerald-900 font-semibold'
+                  : 'text-stone-700 hover:bg-stone-50'
+                  }`}
               >
                 <div className="flex items-center gap-2.5">
                   <Icon

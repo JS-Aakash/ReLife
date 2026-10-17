@@ -22,11 +22,13 @@ import {
 import Link from 'next/link';
 import { InvoiceScannerModal } from '@/components/scanner/invoice-scanner-modal';
 import { ProtectedRoute } from '@/components/auth/protected-route';
+import { ExtractedInvoiceData } from '@/lib/ai-service';
 
 export default function NewProductPage() {
   const router = useRouter();
   const { addProduct } = useReLife();
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [autoFilledNotice, setAutoFilledNotice] = useState<string | null>(null);
 
   // Form State
   const [name, setName] = useState('');
@@ -43,6 +45,21 @@ export default function NewProductPage() {
   const [warrantyMonths, setWarrantyMonths] = useState('12');
   const [imageUrl, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
+
+  const handleAutoFill = (data: ExtractedInvoiceData) => {
+    if (data.productName) setName(data.productName);
+    if (data.brand) setBrand(data.brand);
+    if (data.model) setModel(data.model);
+    if (data.serialNumber) setSerialNumber(data.serialNumber);
+    if (data.category) setCategory(data.category);
+    if (data.purchasePrice) setPurchasePrice(String(data.purchasePrice));
+    if (data.purchaseDate) setPurchaseDate(data.purchaseDate);
+    if (data.seller) setSeller(data.seller);
+    if (data.warrantyMonths) setWarrantyMonths(String(data.warrantyMonths));
+    setDescription(`Extracted via AI Document Scanner from ${data.seller || 'purchase receipt'}. Digital passport credentials established.`);
+    setAutoFilledNotice(`Auto-filled: ${data.brand ? data.brand + ' ' : ''}${data.productName} (${data.category})`);
+    setScannerOpen(false);
+  };
 
   // Default images by category
   const defaultImages: Record<ProductCategory, string> = {
@@ -148,6 +165,28 @@ export default function NewProductPage() {
           <span>Auto-Fill from Receipt (AI)</span>
         </button>
       </div>
+
+      {/* Auto-filled Notification Banner */}
+      {autoFilledNotice && (
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-950 flex items-center justify-between text-xs animate-in fade-in shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-emerald-200 text-emerald-800 flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4 text-emerald-700" />
+            </div>
+            <div>
+              <span className="font-bold">Hardware specs auto-populated from receipt!</span>
+              <p className="text-[11px] text-emerald-700 mt-0.5">{autoFilledNotice}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setAutoFilledNotice(null)}
+            className="text-emerald-700 hover:text-emerald-900 font-bold px-2 py-1 rounded-lg hover:bg-emerald-100/60 transition-colors cursor-pointer"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -334,7 +373,11 @@ export default function NewProductPage() {
       </form>
 
       {/* Bill Scanner Modal */}
-      <InvoiceScannerModal isOpen={scannerOpen} onClose={() => setScannerOpen(false)} />
+      <InvoiceScannerModal
+        isOpen={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onExtracted={handleAutoFill}
+      />
     </div>
     </ProtectedRoute>
   );
