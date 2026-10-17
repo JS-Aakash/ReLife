@@ -27,7 +27,7 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { isAuthenticated, authLoading, currentUser, loginAsDemo } = useReLife();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authTab, setAuthTab] = useState<'signin' | 'signup' | 'demo'>('signin');
+  const [authTab, setAuthTab] = useState<'signin' | 'signup'>('signin');
 
   if (authLoading) {
     return (
@@ -72,13 +72,13 @@ export function ProtectedRoute({
 
         {/* Action Buttons */}
         <div className="space-y-2.5 pt-2">
-          {/* Quick Judge Access */}
+          {/* Quick Profile Access */}
           <button
             onClick={() => loginAsDemo('elena')}
-            className="w-full py-3 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+            className="w-full py-3 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors whitespace-nowrap"
           >
-            <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span>Explore as Judge (Elena Rostova - 3 Products)</span>
+            <span>Sign In as Elena Rostova (Registered Owner)</span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
 
           <div className="grid grid-cols-2 gap-2">
@@ -87,7 +87,7 @@ export function ProtectedRoute({
                 setAuthTab('signin');
                 setAuthModalOpen(true);
               }}
-              className="py-2.5 rounded-xl border border-stone-300 hover:bg-stone-50 text-stone-700 font-semibold text-xs transition-colors"
+              className="py-2.5 rounded-xl border border-stone-300 hover:bg-stone-50 text-stone-700 font-semibold text-xs transition-colors whitespace-nowrap"
             >
               Sign In
             </button>
@@ -97,7 +97,7 @@ export function ProtectedRoute({
                 setAuthTab('signup');
                 setAuthModalOpen(true);
               }}
-              className="py-2.5 rounded-xl border border-stone-300 hover:bg-stone-50 text-stone-700 font-semibold text-xs transition-colors"
+              className="py-2.5 rounded-xl border border-stone-300 hover:bg-stone-50 text-stone-700 font-semibold text-xs transition-colors whitespace-nowrap"
             >
               Create Account
             </button>

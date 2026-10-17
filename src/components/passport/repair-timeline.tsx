@@ -46,9 +46,9 @@ export function RepairTimeline({ productId, repairs, isOwner = true }: RepairTim
         {isOwner && (
           <Link
             href={`/products/${productId}/repair`}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white transition-colors whitespace-nowrap shrink-0"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5 shrink-0" />
             <span>Log First Repair or Service</span>
           </Link>
         )}
@@ -73,9 +73,9 @@ export function RepairTimeline({ productId, repairs, isOwner = true }: RepairTim
         {isOwner && (
           <Link
             href={`/products/${productId}/repair`}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white transition-colors shadow-2xs whitespace-nowrap shrink-0"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5 shrink-0" />
             <span>Log Repair</span>
           </Link>
         )}

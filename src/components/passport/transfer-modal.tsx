@@ -156,13 +156,13 @@ export function TransferModal({ product, isOpen, onClose }: TransferModalProps) 
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3.5 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50"
+                className="px-3.5 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50 whitespace-nowrap shrink-0"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs"
+                className="px-4 py-2 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs whitespace-nowrap shrink-0"
               >
                 Generate Transfer Link
               </button>
@@ -205,14 +205,14 @@ export function TransferModal({ product, isOpen, onClose }: TransferModalProps) 
               <Link
                 href={generatedLink.replace(/^https?:\/\/[^/]+/, '')}
                 target="_blank"
-                className="text-xs font-medium text-emerald-700 hover:underline flex items-center gap-1"
+                className="text-xs font-medium text-emerald-700 hover:underline flex items-center gap-1 whitespace-nowrap"
               >
-                <span>Test Claim Page as Recipient</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Open Recipient Acceptance Page</span>
+                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
               </Link>
               <button
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-xs font-medium bg-stone-900 text-white"
+                className="px-4 py-2 rounded-xl text-xs font-medium bg-stone-900 text-white whitespace-nowrap shrink-0"
               >
                 Done
               </button>

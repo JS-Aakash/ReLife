@@ -92,17 +92,17 @@ export function QRCard({ publicId, productName, serialNumber, size = 180 }: QRCa
       <div className="flex items-center gap-2 mt-4 w-full">
         <button
           onClick={handleCopy}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors shadow-2xs"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors shadow-2xs whitespace-nowrap shrink-0"
           title="Copy public link"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>Copied!</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5 text-stone-500" />
+              <Copy className="w-3.5 h-3.5 text-stone-500 shrink-0" />
               <span>Copy Link</span>
             </>
           )}

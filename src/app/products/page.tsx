@@ -93,20 +93,20 @@ export default function ProductsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             onClick={() => setScannerOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors shadow-2xs whitespace-nowrap shrink-0"
           >
-            <Scan className="w-3.5 h-3.5 text-emerald-700" />
+            <Scan className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span>AI Bill Scan</span>
           </button>
 
           <Link
             href="/products/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 shrink-0" />
             <span>Register Product</span>
           </Link>
         </div>
@@ -300,7 +300,7 @@ export default function ProductsPage() {
 
                   <Link
                     href={`/products/${product.id}`}
-                    className="flex-1 py-2 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs text-center transition-colors shadow-2xs"
+                    className="flex-1 py-2 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs text-center transition-colors shadow-2xs whitespace-nowrap"
                   >
                     Open Passport →
                   </Link>

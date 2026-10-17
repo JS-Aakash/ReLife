@@ -377,15 +377,15 @@ export function InvoiceScannerModal({ isOpen, onClose, onExtracted }: InvoiceSca
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50"
+                className="px-4 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50 whitespace-nowrap shrink-0"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs flex items-center gap-1.5"
+                className="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs flex items-center gap-1.5 whitespace-nowrap shrink-0"
               >
-                <Check className="w-4 h-4" />
+                <Check className="w-4 h-4 shrink-0" />
                 <span>Confirm & Create Passport</span>
               </button>
             </div>

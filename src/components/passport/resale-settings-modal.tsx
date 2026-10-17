@@ -130,17 +130,17 @@ export function ResaleSettingsModal({ product, isOpen, onClose }: ResaleSettings
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50"
+              className="px-3.5 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50 whitespace-nowrap shrink-0"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white flex items-center gap-1.5 shadow-xs"
+              className="px-4 py-2 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white flex items-center gap-1.5 shadow-xs whitespace-nowrap shrink-0"
             >
               {saved ? (
                 <>
-                  <Check className="w-3.5 h-3.5" />
+                  <Check className="w-3.5 h-3.5 shrink-0" />
                   <span>Saved!</span>
                 </>
               ) : (

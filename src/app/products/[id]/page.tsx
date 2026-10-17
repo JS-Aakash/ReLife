@@ -108,40 +108,40 @@ export default function ProductPassportDetailPage() {
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={() => setResaleModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors shadow-2xs whitespace-nowrap shrink-0"
             title="Configure Resale Disclosures"
           >
-            <Sliders className="w-3.5 h-3.5 text-stone-500" />
-            <span className="hidden sm:inline">Resale Settings</span>
+            <Sliders className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+            <span>Resale Settings</span>
           </button>
 
           <button
             onClick={() => setTransferModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors shadow-2xs whitespace-nowrap shrink-0"
             title="Initiate Ownership Transfer"
           >
-            <ArrowRightLeft className="w-3.5 h-3.5 text-stone-500" />
+            <ArrowRightLeft className="w-3.5 h-3.5 text-stone-500 shrink-0" />
             <span>Transfer Custody</span>
           </button>
 
           <Link
             href={`/products/${product.id}/repair`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white transition-colors shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white transition-colors shadow-xs whitespace-nowrap shrink-0"
           >
-            <Wrench className="w-3.5 h-3.5" />
+            <Wrench className="w-3.5 h-3.5 shrink-0" />
             <span>Log Repair</span>
           </Link>
 
           <button
             onClick={handleDelete}
-            className={`p-2 rounded-xl border transition-colors ${
+            className={`p-2 rounded-xl border transition-colors shrink-0 ${
               deleteConfirm
                 ? 'border-red-500 bg-red-50 text-red-700'
                 : 'border-stone-200 text-stone-400 hover:text-red-600 hover:bg-red-50'
             }`}
             title="Delete Passport"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-4 h-4 shrink-0" />
           </button>
         </div>
       </div>
@@ -261,7 +261,7 @@ export default function ProductPassportDetailPage() {
 
           {/* Tabs for Timeline, Documents, and Ownership Chain */}
           <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs space-y-6">
-            <div className="flex items-center gap-2 border-b border-stone-200 pb-3">
+            <div className="flex items-center gap-2 border-b border-stone-200 pb-3 overflow-x-auto">
               {[
                 { key: 'repairs', label: `Repair Ledger (${product.repairs.length})`, icon: Wrench },
                 { key: 'documents', label: `Document Vault (${product.documents.length})`, icon: FileText },
@@ -270,13 +270,13 @@ export default function ProductPassportDetailPage() {
                 <button
                   key={key}
                   onClick={() => setActiveTab(key as any)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
                     activeTab === key
                       ? 'bg-stone-900 text-white'
                       : 'text-stone-600 hover:bg-stone-100'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
                   <span>{label}</span>
                 </button>
               ))}
@@ -360,10 +360,10 @@ export default function ProductPassportDetailPage() {
 
             <Link
               href={`/copilot?productId=${product.id}`}
-              className="w-full py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-xs"
+              className="w-full py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-xs whitespace-nowrap"
             >
               <span>Diagnose {product.brand} Now</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="w-3.5 h-3.5 shrink-0" />
             </Link>
           </div>
 

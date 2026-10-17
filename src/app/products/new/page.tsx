@@ -140,9 +140,9 @@ export default function NewProductPage() {
         <button
           type="button"
           onClick={() => setScannerOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 transition-all shadow-xs shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 transition-all shadow-xs shrink-0 whitespace-nowrap"
         >
-          <Sparkles className="w-4 h-4 text-emerald-700" />
+          <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
           <span>Auto-Fill from Receipt (AI)</span>
         </button>
       </div>
@@ -307,9 +307,9 @@ export default function NewProductPage() {
 
           <button
             type="submit"
-            className="px-6 py-3 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-bold text-xs transition-colors shadow-sm shrink-0 flex items-center justify-center gap-2"
+            className="px-6 py-3 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-bold text-xs transition-colors shadow-sm shrink-0 flex items-center justify-center gap-2 whitespace-nowrap"
           >
-            <Check className="w-4 h-4" />
+            <Check className="w-4 h-4 shrink-0" />
             <span>Establish Passport</span>
           </button>
         </div>

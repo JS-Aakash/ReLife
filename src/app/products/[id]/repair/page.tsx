@@ -315,9 +315,9 @@ export default function LogRepairPage() {
             <button
               type="button"
               onClick={handleAddPart}
-              className="inline-flex items-center gap-1 text-emerald-800 font-semibold hover:underline"
+              className="inline-flex items-center gap-1 text-emerald-800 font-semibold hover:underline whitespace-nowrap shrink-0"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5 shrink-0" />
               <span>Add Part</span>
             </button>
           </div>
@@ -405,15 +405,15 @@ export default function LogRepairPage() {
         <div className="flex items-center justify-end gap-3 pt-2">
           <Link
             href={`/products/${product.id}`}
-            className="px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-50 font-semibold"
+            className="px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-50 font-semibold whitespace-nowrap shrink-0"
           >
             Cancel
           </Link>
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold shadow-xs transition-colors flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold shadow-xs transition-colors flex items-center gap-2 whitespace-nowrap shrink-0"
           >
-            <ShieldCheck className="w-4 h-4" />
+            <ShieldCheck className="w-4 h-4 shrink-0" />
             <span>Seal Record to Passport</span>
           </button>
         </div>

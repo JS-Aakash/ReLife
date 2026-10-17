@@ -235,10 +235,10 @@ export default function ClaimTransferPage() {
                 <button
                   type="submit"
                   disabled={!confirmCheckbox || !newOwnerName || !newOwnerEmail}
-                  className="w-full py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50"
+                  className="w-full py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50 whitespace-normal sm:whitespace-nowrap"
                 >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Accept & Claim Digital Product Passport</span>
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>Accept Custody & Claim Passport</span>
                 </button>
               </div>
             </form>

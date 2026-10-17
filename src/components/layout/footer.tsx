@@ -87,7 +87,7 @@ export function Footer() {
         </div>
 
         <div className="pt-6 border-t border-stone-200/60 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-400 gap-3">
-          <p>© 2026 ReLife. Engineered for Hackathon Demonstration.</p>
+          <p>© 2026 ReLife Platform. The Open Standard for Living Digital Product Passports.</p>
           <p className="flex items-center gap-1">
             Built with care for a circular and repairable future.
           </p>

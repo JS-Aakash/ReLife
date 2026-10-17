@@ -311,9 +311,9 @@ export default function TechnicianPortalPage() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                  className="w-full py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors whitespace-nowrap shrink-0"
                 >
-                  <ShieldCheck className="w-4 h-4" />
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
                   <span>Transmit Verified Service Record to Owner</span>
                 </button>
               </div>
@@ -380,18 +380,18 @@ export default function TechnicianPortalPage() {
                     </div>
 
                     {sub.status === 'pending_owner_approval' && (
-                      <div className="pt-2 border-t border-stone-200 flex items-center justify-end gap-2">
+                      <div className="pt-2 border-t border-stone-200 flex flex-wrap items-center justify-end gap-2">
                         <button
                           onClick={() => rejectTechnicianRepair(sub.id)}
-                          className="px-3 py-1.5 rounded-lg border border-stone-200 hover:bg-stone-100 text-stone-600 font-medium"
+                          className="px-3 py-1.5 rounded-lg border border-stone-200 hover:bg-stone-100 text-stone-600 font-medium whitespace-nowrap shrink-0"
                         >
                           Reject
                         </button>
                         <button
                           onClick={() => handleApprove(sub.id)}
-                          className="px-4 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold flex items-center gap-1.5 shadow-2xs"
+                          className="px-4 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold flex items-center gap-1.5 shadow-2xs whitespace-nowrap shrink-0"
                         >
-                          <Check className="w-3.5 h-3.5" />
+                          <Check className="w-3.5 h-3.5 shrink-0" />
                           <span>Approve & Seal to Passport</span>
                         </button>
                       </div>

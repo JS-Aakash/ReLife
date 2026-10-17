@@ -89,9 +89,9 @@ export function DocumentVault({ productId, documents, isOwner = true }: Document
         {isOwner && (
           <button
             onClick={() => setUploadModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white transition-colors shadow-2xs shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white transition-colors shadow-2xs whitespace-nowrap shrink-0"
           >
-            <Upload className="w-3.5 h-3.5" />
+            <Upload className="w-3.5 h-3.5 shrink-0" />
             <span>Upload Document</span>
           </button>
         )}
@@ -241,13 +241,13 @@ export function DocumentVault({ productId, documents, isOwner = true }: Document
                 <button
                   type="button"
                   onClick={() => setUploadModalOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50 whitespace-nowrap shrink-0"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white"
+                  className="px-4 py-1.5 rounded-lg text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white whitespace-nowrap shrink-0"
                 >
                   Save to Vault
                 </button>

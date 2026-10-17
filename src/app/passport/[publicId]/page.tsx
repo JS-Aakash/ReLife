@@ -254,7 +254,7 @@ export default function PublicPassportPage() {
 
           <Link
             href={`/resale/${product.publicId}`}
-            className="px-5 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-bold text-xs shrink-0 text-center transition-colors shadow-sm"
+            className="px-5 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-bold text-xs shrink-0 text-center transition-colors shadow-sm whitespace-nowrap"
           >
             Inspect Resale Passport →
           </Link>

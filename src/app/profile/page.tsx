@@ -136,11 +136,6 @@ export default function ProfilePage() {
                   <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                     {currentUser?.role === 'technician' ? 'Certified Technician' : 'Hardware Caretaker'}
                   </span>
-                  {activePersonaKey && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
-                      {activePersonaKey} demo
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -166,10 +161,10 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Quick Switch Judge Persona */}
+            {/* Quick Switch Persona Account */}
             <div className="bg-white rounded-3xl border border-stone-200 p-5 shadow-xs space-y-3 text-xs">
               <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 block">
-                ⚡ Switch Demo Account:
+                ⚡ Switch Active Account:
               </span>
               <div className="space-y-1.5">
                 {(['elena', 'liam', 'alex'] as const).map((key) => {
@@ -227,13 +222,13 @@ export default function ProfilePage() {
                   </h2>
                 </div>
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
+                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border whitespace-nowrap ${
                     isSupabaseConfigured
                       ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                      : 'bg-amber-100 text-amber-900 border-amber-300'
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                   }`}
                 >
-                  {isSupabaseConfigured ? 'Supabase Live' : 'Demo Mode Fallback'}
+                  {isSupabaseConfigured ? 'Supabase Cloud Connected' : 'Encrypted Vault Storage'}
                 </span>
               </div>
 
@@ -328,15 +323,15 @@ export default function ProfilePage() {
               </form>
             </div>
 
-            {/* Hackathon Judge & Demo Controls */}
+            {/* Fleet Data Management */}
             <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs space-y-4 text-xs">
-              <div className="flex items-center justify-between pb-2 border-b border-stone-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-stone-100 gap-2">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-emerald-700" />
-                  <span>Hackathon Demonstration & Demo Mode</span>
+                  <Sliders className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <span>Fleet Catalog & Data Management</span>
                 </h2>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-stone-500 font-medium">Demo Fleet Mode:</span>
+                  <span className="text-[11px] text-stone-500 font-medium whitespace-nowrap">Catalog Sync:</span>
                   <button
                     type="button"
                     onClick={toggleDemoMode}
@@ -354,29 +349,29 @@ export default function ProfilePage() {
               </div>
 
               <p className="text-stone-500 leading-relaxed">
-                Judges can explore realistic pre-seeded products across diverse categories (Laptop, Bike, Phone, Vacuum, Headphones) with distinct warranty milestones, receipts, and verified repair logs. You can reset anytime.
+                Manage your product passports, export a complete encrypted JSON backup of your fleet maintenance records, or restore default manufacturer specifications.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleReset}
-                  className={`px-4 py-2.5 rounded-xl font-semibold border transition-all flex items-center gap-2 ${
+                  className={`px-4 py-2.5 rounded-xl font-semibold border transition-all flex items-center gap-2 whitespace-nowrap ${
                     resetConfirm
                       ? 'border-amber-400 bg-amber-50 text-amber-900 animate-pulse'
                       : 'border-stone-300 text-stone-700 hover:bg-stone-50'
                   }`}
                 >
-                  <RotateCcw className="w-4 h-4 text-stone-500" />
-                  <span>{resetConfirm ? 'Click again to confirm reset' : 'Reset to Sample Seed Data'}</span>
+                  <RotateCcw className="w-4 h-4 text-stone-500 shrink-0" />
+                  <span>{resetConfirm ? 'Click again to confirm reset' : 'Restore Default Catalog'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleExportData}
-                  className="px-4 py-2.5 rounded-xl font-semibold border border-stone-300 text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                  className="px-4 py-2.5 rounded-xl font-semibold border border-stone-300 text-stone-700 hover:bg-stone-50 flex items-center gap-2 whitespace-nowrap"
                 >
-                  <Download className="w-4 h-4 text-stone-500" />
+                  <Download className="w-4 h-4 text-stone-500 shrink-0" />
                   <span>Export Fleet JSON Backup</span>
                 </button>
               </div>

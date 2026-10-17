@@ -70,25 +70,25 @@ export default function LandingPage() {
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2">
                 <Link
                   href="/dashboard"
-                  className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2 group"
+                  className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2 group whitespace-nowrap shrink-0"
                 >
-                  <span>Explore Demo Fleet</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <span>Open Passport Vault</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                 </Link>
 
                 <button
                   onClick={() => setScannerOpen(true)}
-                  className="px-5 py-3 rounded-2xl bg-stone-800/80 hover:bg-stone-800 border border-stone-700 text-stone-200 font-semibold text-sm transition-all flex items-center gap-2"
+                  className="px-5 py-3 rounded-2xl bg-stone-800/80 hover:bg-stone-800 border border-stone-700 text-stone-200 font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0"
                 >
-                  <Scan className="w-4 h-4 text-emerald-400" />
+                  <Scan className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>Scan Receipt with AI</span>
                 </button>
 
                 <Link
                   href="/copilot"
-                  className="px-5 py-3 rounded-2xl bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/50 text-emerald-300 font-semibold text-sm transition-all flex items-center gap-2"
+                  className="px-5 py-3 rounded-2xl bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/50 text-emerald-300 font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0"
                 >
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                  <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>Repair Copilot</span>
                 </Link>
               </div>
@@ -221,7 +221,7 @@ export default function LandingPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            Hackathon Highlights
+            Core Architectural Capabilities
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Not a Generic CRUD App. A Purpose-Built Lifecycle Platform.
@@ -341,19 +341,19 @@ export default function LandingPage() {
 
       {/* Featured Fleet Preview */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-xl font-bold text-stone-900">Pre-Seeded Sample Fleet</h3>
+            <h3 className="text-xl font-bold text-stone-900">Active Custodian Fleet</h3>
             <p className="text-xs text-stone-500">
-              Explore live products ready for instant demonstration.
+              Inspect live product passports across consumer electronics, mobility, and appliances.
             </p>
           </div>
           <Link
             href="/products"
-            className="text-xs font-semibold text-emerald-800 hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-emerald-800 hover:underline flex items-center gap-1 whitespace-nowrap"
           >
             <span>View All ({products.length})</span>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4 shrink-0" />
           </Link>
         </div>
 

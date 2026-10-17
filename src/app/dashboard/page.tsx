@@ -81,17 +81,17 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2.5 shrink-0">
           <button
             onClick={() => setScannerOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors shadow-2xs whitespace-nowrap shrink-0"
           >
-            <Scan className="w-3.5 h-3.5 text-emerald-700" />
+            <Scan className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span>AI Bill Scanner</span>
           </button>
 
           <Link
             href="/products/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 shrink-0" />
             <span>Add Product</span>
           </Link>
         </div>
@@ -216,7 +216,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/products/${product.id}`}
-                        className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition-colors border border-emerald-200/80 shadow-2xs"
+                        className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition-colors border border-emerald-200/80 shadow-2xs whitespace-nowrap shrink-0"
                       >
                         Passport
                       </Link>
@@ -332,10 +332,10 @@ export default function DashboardPage() {
             </p>
             <Link
               href="/copilot"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-400 text-stone-950 hover:bg-emerald-300 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-400 text-stone-950 hover:bg-emerald-300 transition-colors shadow-xs whitespace-nowrap shrink-0"
             >
               <span>Consult Copilot</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 shrink-0" />
             </Link>
           </div>
         </div>

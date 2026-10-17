@@ -189,16 +189,16 @@ function CopilotContent() {
               type="button"
               onClick={() => handleDiagnose()}
               disabled={loading || !faultDescription.trim()}
-              className="w-full py-2.5 px-4 rounded-xl bg-emerald-800 hover:bg-emerald-900 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-xs"
+              className="w-full py-2.5 px-4 rounded-xl bg-emerald-800 hover:bg-emerald-900 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-xs whitespace-nowrap shrink-0"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
                   <span>Evaluating Diagnostic Matrix...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 shrink-0" />
                   <span>Analyze & Compare Options</span>
                 </>
               )}
@@ -372,13 +372,13 @@ function CopilotContent() {
 
                 {/* Log Repair Shortcut */}
                 {selectedProduct && (
-                  <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
+                  <div className="pt-2 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <span className="text-stone-500 text-xs">Proceeding with repair?</span>
                     <Link
                       href={`/products/${selectedProduct.id}/repair`}
-                      className="px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs flex items-center gap-1.5"
+                      className="px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs flex items-center gap-1.5 whitespace-nowrap shrink-0 justify-center"
                     >
-                      <Wrench className="w-3.5 h-3.5" />
+                      <Wrench className="w-3.5 h-3.5 shrink-0" />
                       <span>Log this repair to passport →</span>
                     </Link>
                   </div>

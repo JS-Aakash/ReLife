@@ -89,9 +89,9 @@ export default function RemindersPage() {
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors shrink-0"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors shrink-0 whitespace-nowrap"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 shrink-0" />
           <span>New Schedule</span>
         </button>
       </div>
@@ -106,7 +106,7 @@ export default function RemindersPage() {
           <button
             key={key}
             onClick={() => setFilter(key as any)}
-            className={`px-3.5 py-1.5 rounded-xl font-medium transition-colors ${
+            className={`px-3.5 py-1.5 rounded-xl font-medium transition-colors whitespace-nowrap shrink-0 ${
               filter === key
                 ? 'bg-stone-900 text-white font-semibold'
                 : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
@@ -196,10 +196,10 @@ export default function RemindersPage() {
                 <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100 shrink-0">
                   <Link
                     href={`/products/${reminder.productId}`}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-800 hover:underline px-3 py-1.5"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-800 hover:underline px-3 py-1.5 whitespace-nowrap shrink-0"
                   >
                     <span>View Passport</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </Link>
                 </div>
               </div>
