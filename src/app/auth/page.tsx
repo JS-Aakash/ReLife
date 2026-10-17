@@ -123,17 +123,15 @@ export default function AuthPage() {
           <div className="flex border-b border-stone-200 bg-stone-50/60 p-1 text-xs font-semibold text-stone-600">
             <button
               onClick={() => { setTab('signin'); setErrorMessage(null); }}
-              className={`flex-1 py-2.5 rounded-xl transition-all whitespace-nowrap ${
-                tab === 'signin' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
-              }`}
+              className={`flex-1 py-2.5 rounded-xl transition-all whitespace-nowrap ${tab === 'signin' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
+                }`}
             >
               Sign In
             </button>
             <button
               onClick={() => { setTab('signup'); setErrorMessage(null); }}
-              className={`flex-1 py-2.5 rounded-xl transition-all whitespace-nowrap ${
-                tab === 'signup' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
-              }`}
+              className={`flex-1 py-2.5 rounded-xl transition-all whitespace-nowrap ${tab === 'signup' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
+                }`}
             >
               Create Account
             </button>
@@ -210,22 +208,20 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => setRole('consumer')}
-                      className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${
-                        role === 'consumer'
+                      className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${role === 'consumer'
                           ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
                           : 'border-stone-200 text-stone-600 hover:bg-stone-50'
-                      }`}
+                        }`}
                     >
                       Hardware Caretaker
                     </button>
                     <button
                       type="button"
                       onClick={() => setRole('technician')}
-                      className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${
-                        role === 'technician'
+                      className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${role === 'technician'
                           ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
                           : 'border-stone-200 text-stone-600 hover:bg-stone-50'
-                      }`}
+                        }`}
                     >
                       Certified Technician
                     </button>
@@ -319,11 +315,10 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => handlePersonaSelect('aarav')}
-                      className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${
-                        activePersonaKey === 'aarav' || activePersonaKey === 'elena'
+                      className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${activePersonaKey === 'aarav' || activePersonaKey === 'elena'
                           ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                           : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
-                      }`}
+                        }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -349,11 +344,10 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => handlePersonaSelect('priya')}
-                      className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${
-                        activePersonaKey === 'priya' || activePersonaKey === 'liam'
+                      className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${activePersonaKey === 'priya' || activePersonaKey === 'liam'
                           ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                           : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
-                      }`}
+                        }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -379,11 +373,10 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => handlePersonaSelect('vikram')}
-                      className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${
-                        activePersonaKey === 'vikram' || activePersonaKey === 'alex'
+                      className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${activePersonaKey === 'vikram' || activePersonaKey === 'alex'
                           ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                           : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
-                      }`}
+                        }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img

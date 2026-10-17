@@ -135,7 +135,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
               <Shield className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-emerald-400 block">
+              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-emerald-300 block">
                 ReLife Vault Access
               </span>
               <h2 className="text-base font-black tracking-tight text-white leading-tight">
@@ -143,37 +143,21 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
               </h2>
             </div>
           </div>
-
-          <p className="text-[11px] text-emerald-200/80 leading-snug mt-1.5">
-            Access your private digital product passports, invoices, warranty alerts, and repair ledger.
-          </p>
-
-          {/* Cloud Sync Status Badge */}
-          <div className="mt-2 flex items-center gap-1.5 text-[10px] text-emerald-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <span>
-              {isSupabaseConfigured
-                ? 'Cloud Vault Connected & Encrypted'
-                : 'Secure Encrypted Vault Active'}
-            </span>
-          </div>
         </div>
 
         {/* Tab Selection */}
         <div className="flex border-b border-stone-200 bg-stone-50 p-1 text-xs font-semibold text-stone-600 shrink-0">
           <button
             onClick={() => { setTab('signin'); setErrorMessage(null); }}
-            className={`flex-1 py-2 rounded-xl transition-all whitespace-nowrap ${
-              tab === 'signin' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
-            }`}
+            className={`flex-1 py-2 rounded-xl transition-all whitespace-nowrap ${tab === 'signin' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
+              }`}
           >
             Sign In
           </button>
           <button
             onClick={() => { setTab('signup'); setErrorMessage(null); }}
-            className={`flex-1 py-2 rounded-xl transition-all whitespace-nowrap ${
-              tab === 'signup' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
-            }`}
+            className={`flex-1 py-2 rounded-xl transition-all whitespace-nowrap ${tab === 'signup' ? 'bg-white text-stone-900 shadow-2xs font-bold' : 'hover:text-stone-900'
+              }`}
           >
             Create Account
           </button>
@@ -250,22 +234,20 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                   <button
                     type="button"
                     onClick={() => setRole('consumer')}
-                    className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${
-                      role === 'consumer'
-                        ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
-                        : 'border-stone-200 text-stone-600 hover:bg-stone-50'
-                    }`}
+                    className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${role === 'consumer'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
+                      : 'border-stone-200 text-stone-600 hover:bg-stone-50'
+                      }`}
                   >
                     Hardware Caretaker
                   </button>
                   <button
                     type="button"
                     onClick={() => setRole('technician')}
-                    className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${
-                      role === 'technician'
-                        ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
-                        : 'border-stone-200 text-stone-600 hover:bg-stone-50'
-                    }`}
+                    className={`py-2 px-3 rounded-xl border text-center font-semibold transition-all whitespace-nowrap ${role === 'technician'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
+                      : 'border-stone-200 text-stone-600 hover:bg-stone-50'
+                      }`}
                   >
                     Certified Technician
                   </button>
@@ -300,11 +282,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                   <button
                     type="button"
                     onClick={() => autofillPreset('aarav')}
-                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${
-                      email === 'aarav.sharma@relife.in'
-                        ? 'bg-emerald-100 border-emerald-400 text-emerald-900 shadow-2xs'
-                        : 'bg-white border-stone-200 text-stone-700 hover:border-emerald-300'
-                    }`}
+                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${email === 'aarav.sharma@relife.in'
+                      ? 'bg-emerald-100 border-emerald-400 text-emerald-900 shadow-2xs'
+                      : 'bg-white border-stone-200 text-stone-700 hover:border-emerald-300'
+                      }`}
                     title="Aarav Sharma (Registered Owner)"
                   >
                     Aarav (Owner)
@@ -312,11 +293,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                   <button
                     type="button"
                     onClick={() => autofillPreset('priya')}
-                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${
-                      email === 'priya.patel@relife.in'
-                        ? 'bg-blue-100 border-blue-400 text-blue-900 shadow-2xs'
-                        : 'bg-white border-stone-200 text-stone-700 hover:border-blue-300'
-                    }`}
+                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${email === 'priya.patel@relife.in'
+                      ? 'bg-blue-100 border-blue-400 text-blue-900 shadow-2xs'
+                      : 'bg-white border-stone-200 text-stone-700 hover:border-blue-300'
+                      }`}
                     title="Priya Patel (Fleet Operations Lead)"
                   >
                     Priya (Fleet)
@@ -324,11 +304,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                   <button
                     type="button"
                     onClick={() => autofillPreset('vikram')}
-                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${
-                      email === 'vikram.malhotra@zenithrepairs.in'
-                        ? 'bg-amber-100 border-amber-400 text-amber-900 shadow-2xs'
-                        : 'bg-white border-stone-200 text-stone-700 hover:border-amber-300'
-                    }`}
+                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${email === 'vikram.malhotra@zenithrepairs.in'
+                      ? 'bg-amber-100 border-amber-400 text-amber-900 shadow-2xs'
+                      : 'bg-white border-stone-200 text-stone-700 hover:border-amber-300'
+                      }`}
                     title="Vikram Malhotra (Certified Technician)"
                   >
                     Vikram (Tech)
@@ -393,11 +372,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                   <button
                     type="button"
                     onClick={() => handlePersonaSelect('aarav')}
-                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${
-                      activePersonaKey === 'aarav' || activePersonaKey === 'elena'
-                        ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
-                        : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
-                    }`}
+                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${activePersonaKey === 'aarav' || activePersonaKey === 'elena'
+                      ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
+                      : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
+                      }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -421,11 +399,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                   <button
                     type="button"
                     onClick={() => handlePersonaSelect('priya')}
-                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${
-                      activePersonaKey === 'priya' || activePersonaKey === 'liam'
-                        ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
-                        : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
-                    }`}
+                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${activePersonaKey === 'priya' || activePersonaKey === 'liam'
+                      ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
+                      : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
+                      }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -449,11 +426,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                   <button
                     type="button"
                     onClick={() => handlePersonaSelect('vikram')}
-                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${
-                      activePersonaKey === 'vikram' || activePersonaKey === 'alex'
-                        ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
-                        : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
-                    }`}
+                    className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${activePersonaKey === 'vikram' || activePersonaKey === 'alex'
+                      ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
+                      : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
+                      }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img

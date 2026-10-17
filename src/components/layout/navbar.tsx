@@ -67,29 +67,29 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 bg-white/95 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
           {/* Logo & Navigation */}
-          <div className="flex items-center gap-6 lg:gap-8 min-w-0">
-            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-800 to-teal-950 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
-                <Shield className="w-5 h-5 text-emerald-400" />
+          <div className="flex items-center gap-2.5 lg:gap-3 xl:gap-6 min-w-0">
+            <Link href="/" className="flex items-center gap-2 group shrink-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-800 to-teal-950 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
               </div>
               <div className="shrink-0">
-                <span className="font-extrabold text-lg tracking-tight text-stone-900 flex items-center gap-1">
+                <span className="font-extrabold text-base sm:text-lg tracking-tight text-stone-900 flex items-center gap-1">
                   Re<span className="text-emerald-700">Life</span>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-800 bg-emerald-100/70 px-1.5 py-0.5 rounded ml-1">
+                  <span className="text-[9px] uppercase font-bold tracking-widest text-emerald-800 bg-emerald-100/70 px-1 py-0.5 rounded ml-0.5 hidden sm:inline-block">
                     Passport
                   </span>
                 </span>
-                <p className="text-[10px] text-stone-400 font-medium -mt-1 hidden sm:block">
+                <p className="text-[9px] text-stone-400 font-medium -mt-1 hidden xl:block">
                   Digital Product Passport
                 </p>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 shrink-0">
               {navLinks.map((link) => {
                 const isActive =
                   pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -98,9 +98,9 @@ export function Navbar() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 xl:px-3 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isActive
-                      ? 'bg-stone-100 text-stone-900 font-semibold shadow-2xs'
-                      : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+                    className={`inline-flex items-center gap-1 px-2 py-1.5 xl:px-2.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isActive
+                      ? 'bg-emerald-100 text-emerald-900 font-semibold shadow-2xs'
+                      : 'text-stone-600 hover:text-stone-900 hover:bg-emerald-50'
                       }`}
                   >
                     <Icon
@@ -119,15 +119,15 @@ export function Navbar() {
           </div>
 
           {/* Right Header Actions */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             {/* Scan Tag / NFC Button */}
             <button
               onClick={() => setHardwareScannerOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors shadow-2xs whitespace-nowrap shrink-0"
-              title="Scan Optical QR Code or Simulate Physical NFC Tap"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-emerald-100 text-stone-700 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+              title="Scan Optical QR Code or Simulate Physical NFC Tag"
             >
               <Scan className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-              <span className="hidden md:inline">Scan Tag / NFC</span>
+              <span className="hidden xl:inline">Scan Tag / NFC</span>
             </button>
 
             {/* Notification Dropdown */}
@@ -136,10 +136,11 @@ export function Navbar() {
             {/* Add Product Button */}
             <Link
               href="/products/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs transition-colors whitespace-nowrap shrink-0"
+              title="Register New Product"
             >
-              <Plus className="w-4 h-4 shrink-0" />
-              <span className="hidden sm:inline">Add Product</span>
+              <Plus className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden xl:inline">Add Product</span>
             </Link>
 
             {/* User Auth Profile / Dropdown */}
@@ -147,7 +148,7 @@ export function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-stone-100 transition-colors border border-transparent hover:border-stone-200"
+                  className="flex items-center gap-1.5 p-1 sm:p-1.5 rounded-xl hover:bg-stone-100 transition-colors border border-transparent hover:border-stone-200"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -156,14 +157,14 @@ export function Navbar() {
                     className="w-7 h-7 rounded-full object-cover border border-emerald-600/50 shrink-0"
                   />
                   <div className="hidden xl:block text-left text-xs leading-none">
-                    <span className="font-bold text-stone-900 block truncate max-w-[110px]">
+                    <span className="font-bold text-stone-900 block truncate max-w-[80px] 2xl:max-w-[110px]">
                       {currentUser.name}
                     </span>
                     <span className="text-[10px] text-stone-400 capitalize">
                       {currentUser.role === 'technician' ? 'Technician' : 'Verified Owner'}
                     </span>
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                  <ChevronDown className="w-3 h-3 text-stone-400 shrink-0" />
                 </button>
 
                 {/* Dropdown Menu */}

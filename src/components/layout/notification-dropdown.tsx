@@ -49,10 +49,10 @@ export function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition-colors focus:outline-none"
+        className="hover:bg-emerald-100 relative p-2 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-emerald-100 transition-colors focus:outline-none"
         aria-label="Notifications"
       >
-        <Bell className="w-5 h-5" />
+        <Bell className="w-5 h-5 " />
         {unreadCount > 0 && (
           <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-600 text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -92,9 +92,8 @@ export function NotificationDropdown() {
                 <div
                   key={notif.id}
                   onClick={() => handleNotificationClick(notif)}
-                  className={`p-3.5 flex items-start gap-3 transition-all cursor-pointer hover:bg-emerald-50/40 group ${
-                    !notif.read ? 'bg-emerald-50/30' : ''
-                  }`}
+                  className={`p-3.5 flex items-start gap-3 transition-all cursor-pointer hover:bg-emerald-50/40 group ${!notif.read ? 'bg-emerald-50/30' : ''
+                    }`}
                 >
                   <div className="mt-0.5 p-1.5 rounded-lg bg-stone-100 group-hover:bg-white transition-colors">
                     {getIcon(notif.type)}
