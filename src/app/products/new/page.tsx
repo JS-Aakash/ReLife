@@ -57,6 +57,8 @@ export default function NewProductPage() {
     other: 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=800&q=80',
   };
 
+  const hasStartedInput = Boolean(name.trim() || brand.trim() || purchasePrice);
+
   const previewHealth = calculateHealthScore(
     purchaseDate || new Date().toISOString().split('T')[0],
     category,
@@ -295,19 +297,35 @@ export default function NewProductPage() {
         <div className="bg-emerald-950 text-white rounded-3xl p-6 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 block">
-              Estimated Baseline Health
+              {hasStartedInput ? 'Estimated Baseline Health' : 'Dynamic Lifecycle Health Engine'}
             </span>
             <h3 className="text-base font-bold">
-              Projected Health Score: {previewHealth.overallScore} / 100 ({previewHealth.tier})
+              {hasStartedInput ? (
+                <>
+                  Projected Health Score: <span className="text-emerald-400 font-extrabold">{previewHealth.overallScore} / 100</span>{' '}
+                  <span className="text-stone-300 font-normal">({previewHealth.tier})</span>
+                </>
+              ) : (
+                <span className="text-stone-300">
+                  Health Score: <span className="text-emerald-400 font-semibold">Calculated on input</span>
+                </span>
+              )}
             </h3>
             <p className="text-xs text-stone-300 max-w-lg">
-              Calculated dynamically based on category lifecycle expectations and purchase age. Adding verified repairs will further enhance its score.
+              {hasStartedInput
+                ? `Calculated dynamically from ${category} lifecycle benchmarks and ${condition} condition. Adding verified maintenance records will further improve durability rating.`
+                : 'Enter your hardware title, brand, and condition above to preview the real-time health score & lifecycle longevity projection.'}
             </p>
           </div>
 
           <button
             type="submit"
-            className="px-6 py-3 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-bold text-xs transition-colors shadow-sm shrink-0 flex items-center justify-center gap-2 whitespace-nowrap"
+            disabled={!name.trim() || !brand.trim()}
+            className={`px-6 py-3 rounded-2xl font-bold text-xs transition-all shadow-sm shrink-0 flex items-center justify-center gap-2 whitespace-nowrap ${
+              name.trim() && brand.trim()
+                ? 'bg-emerald-400 hover:bg-emerald-300 text-stone-950 cursor-pointer'
+                : 'bg-emerald-950/60 border border-emerald-800 text-emerald-400/60 cursor-not-allowed'
+            }`}
           >
             <Check className="w-4 h-4 shrink-0" />
             <span>Establish Passport</span>

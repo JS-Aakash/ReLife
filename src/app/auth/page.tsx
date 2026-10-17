@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useReLife } from '@/lib/store';
 import { useRouter } from 'next/navigation';
-import { DEMO_PERSONAS } from '@/lib/auth-personas';
+import { DEMO_PERSONAS, DemoPersonaKey } from '@/lib/auth-personas';
 import {
   Shield,
   Lock,
@@ -77,7 +77,7 @@ export default function AuthPage() {
     }
   };
 
-  const handlePersonaSelect = (personaKey: 'elena' | 'liam' | 'alex') => {
+  const handlePersonaSelect = (personaKey: DemoPersonaKey) => {
     loginAsDemo(personaKey);
     setSuccessMessage(`Signed in as ${DEMO_PERSONAS[personaKey].name}! Redirecting...`);
     setTimeout(() => {
@@ -102,7 +102,7 @@ export default function AuthPage() {
             {tab === 'signup' ? 'Create Custodian Account' : 'Sign In to Custodian Vault'}
           </h1>
           <p className="text-xs text-stone-500 max-w-sm mx-auto leading-relaxed">
-            Enforced with PostgreSQL Row Level Security (RLS) so you only access your own products, verified repair history, and invoices.
+            Access your private digital product passports, verified repair milestones, and confidential invoices.
           </p>
         </div>
 
@@ -112,7 +112,7 @@ export default function AuthPage() {
           <div className="bg-stone-50 border-b border-stone-200 px-4 py-2.5 flex items-center justify-between text-[11px] text-stone-600">
             <span className="flex items-center gap-1.5 font-medium">
               <span className={`w-2 h-2 rounded-full shrink-0 ${isSupabaseConfigured ? 'bg-emerald-500' : 'bg-emerald-600'}`} />
-              {isSupabaseConfigured ? 'Supabase Auth & RLS Connected' : 'Encrypted Storage Vault Active'}
+              {isSupabaseConfigured ? 'Cloud Vault Connected' : 'Encrypted Storage Vault Active'}
             </span>
             <span className="text-[10px] uppercase font-mono tracking-wider text-stone-400">
               Zero Leakage
@@ -272,12 +272,12 @@ export default function AuthPage() {
                       <button
                         type="button"
                         onClick={() => {
-                          setEmail('elena@relife-demo.org');
-                          setPassword('demo123');
+                          setEmail('aarav.sharma@relife.in');
+                          setPassword('custodian2026!');
                         }}
                         className="text-[10px] text-emerald-700 hover:underline font-semibold whitespace-nowrap"
                       >
-                        Auto-fill Elena Credentials
+                        Auto-fill Aarav Credentials
                       </button>
                     </div>
                     <div className="relative">
@@ -318,90 +318,90 @@ export default function AuthPage() {
                   <div className="space-y-2">
                     <button
                       type="button"
-                      onClick={() => handlePersonaSelect('elena')}
+                      onClick={() => handlePersonaSelect('aarav')}
                       className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${
-                        activePersonaKey === 'elena'
+                        activePersonaKey === 'aarav' || activePersonaKey === 'elena'
                           ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                           : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
                       }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={DEMO_PERSONAS.elena.avatar}
-                        alt={DEMO_PERSONAS.elena.name}
+                        src={DEMO_PERSONAS.aarav.avatar}
+                        alt={DEMO_PERSONAS.aarav.name}
                         className="w-9 h-9 rounded-full object-cover border border-emerald-500/40 shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
                           <h4 className="text-xs font-bold text-stone-900 group-hover:text-emerald-900 truncate">
-                            {DEMO_PERSONAS.elena.name}
+                            {DEMO_PERSONAS.aarav.name}
                           </h4>
                           <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 shrink-0">
                             Registered Owner
                           </span>
                         </div>
                         <p className="text-[10px] text-stone-500 truncate">
-                          3 Passports • 2 Verified Repairs • Invoices
+                          4 Passports • 2 Verified Repairs • Invoices
                         </p>
                       </div>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => handlePersonaSelect('liam')}
+                      onClick={() => handlePersonaSelect('priya')}
                       className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${
-                        activePersonaKey === 'liam'
+                        activePersonaKey === 'priya' || activePersonaKey === 'liam'
                           ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                           : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
                       }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={DEMO_PERSONAS.liam.avatar}
-                        alt={DEMO_PERSONAS.liam.name}
+                        src={DEMO_PERSONAS.priya.avatar}
+                        alt={DEMO_PERSONAS.priya.name}
                         className="w-9 h-9 rounded-full object-cover border border-stone-300 shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
                           <h4 className="text-xs font-bold text-stone-900 group-hover:text-emerald-900 truncate">
-                            {DEMO_PERSONAS.liam.name}
+                            {DEMO_PERSONAS.priya.name}
                           </h4>
                           <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-100 text-blue-900 shrink-0">
-                            Prospective Buyer
+                            Fleet Lead
                           </span>
                         </div>
                         <p className="text-[10px] text-stone-500 truncate">
-                          Recipient Account • Ready for Custody Transfer
+                          4 Passports • Mobile & Imaging Fleet
                         </p>
                       </div>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => handlePersonaSelect('alex')}
+                      onClick={() => handlePersonaSelect('vikram')}
                       className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center gap-3 group ${
-                        activePersonaKey === 'alex'
+                        activePersonaKey === 'vikram' || activePersonaKey === 'alex'
                           ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                           : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
                       }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={DEMO_PERSONAS.alex.avatar}
-                        alt={DEMO_PERSONAS.alex.name}
+                        src={DEMO_PERSONAS.vikram.avatar}
+                        alt={DEMO_PERSONAS.vikram.name}
                         className="w-9 h-9 rounded-full object-cover border border-amber-400 shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
                           <h4 className="text-xs font-bold text-stone-900 group-hover:text-emerald-900 truncate">
-                            {DEMO_PERSONAS.alex.name}
+                            {DEMO_PERSONAS.vikram.name}
                           </h4>
                           <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 shrink-0">
                             Technician
                           </span>
                         </div>
                         <p className="text-[10px] text-stone-500 truncate">
-                          Authorized Service Provider & Inspection Lab
+                          4 Lab Assets • Pending Service Submissions
                         </p>
                       </div>
                     </button>
@@ -412,14 +412,14 @@ export default function AuthPage() {
           </div>
         </div>
 
-        {/* Security & RLS Notice */}
+        {/* Security & Vault Privacy Notice */}
         <div className="p-4 rounded-2xl bg-white border border-stone-200/80 text-center space-y-1 text-xs">
           <div className="flex items-center justify-center gap-1.5 text-emerald-800 font-bold">
             <ShieldCheck className="w-4 h-4 shrink-0" />
-            <span>PostgreSQL Row Level Security Guaranteed</span>
+            <span>Zero-Knowledge Custodian Privacy Guaranteed</span>
           </div>
           <p className="text-[11px] text-stone-500 max-w-xs mx-auto">
-            Ownership and documents are cryptographically and relationally isolated to your authenticated ID.
+            Ownership records and documents are cryptographically isolated to your authenticated custodian identity.
           </p>
         </div>
       </div>

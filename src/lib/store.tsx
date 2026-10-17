@@ -12,8 +12,22 @@ import {
   ResaleDisclosureSettings,
   ReLifeUser,
 } from './types';
-import { INITIAL_PRODUCTS, INITIAL_REMINDERS, INITIAL_NOTIFICATIONS } from './initial-data';
-import { DEMO_PERSONAS, DEFAULT_DEMO_USER } from './auth-personas';
+import {
+  INITIAL_PRODUCTS,
+  INITIAL_REMINDERS,
+  INITIAL_NOTIFICATIONS,
+  AARAV_INITIAL_PRODUCTS,
+  AARAV_INITIAL_REMINDERS,
+  AARAV_INITIAL_NOTIFICATIONS,
+  PRIYA_INITIAL_PRODUCTS,
+  PRIYA_INITIAL_REMINDERS,
+  PRIYA_INITIAL_NOTIFICATIONS,
+  VIKRAM_INITIAL_PRODUCTS,
+  VIKRAM_INITIAL_REMINDERS,
+  VIKRAM_INITIAL_NOTIFICATIONS,
+  INITIAL_SERVICE_SUBMISSIONS,
+} from './initial-data';
+import { DEMO_PERSONAS, DEFAULT_DEMO_USER, DemoPersonaKey } from './auth-personas';
 import { calculateHealthScore, calculateEnvironmentalImpact } from './calculations';
 import { generateId, generatePublicId } from './utils';
 import {
@@ -35,7 +49,7 @@ interface ReLifeContextType {
   currentUser: ReLifeUser | null;
   isAuthenticated: boolean;
   authLoading: boolean;
-  activePersonaKey: 'elena' | 'liam' | 'alex' | 'custom' | null;
+  activePersonaKey: DemoPersonaKey | 'custom' | null;
   serviceSubmissions: ServiceProviderSubmission[];
   transferRequests: OwnershipTransferRequest[];
   isLoaded: boolean;
@@ -52,7 +66,7 @@ interface ReLifeContextType {
     role?: 'consumer' | 'technician'
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
-  loginAsDemo: (personaKey: 'elena' | 'liam' | 'alex') => void;
+  loginAsDemo: (personaKey: DemoPersonaKey) => void;
 
   // Demo Mode controls
   setDemoMode: (val: boolean) => void;
@@ -134,12 +148,24 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<ReLifeUser | null>(DEFAULT_DEMO_USER);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
-  const [activePersonaKey, setActivePersonaKey] = useState<'elena' | 'liam' | 'alex' | 'custom' | null>('elena');
+  const [activePersonaKey, setActivePersonaKey] = useState<DemoPersonaKey | 'custom' | null>('aarav');
 
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [reminders, setReminders] = useState<MaintenanceReminder[]>(INITIAL_REMINDERS);
   const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
-  const [serviceSubmissions, setServiceSubmissions] = useState<ServiceProviderSubmission[]>([]);
+  const [serviceSubmissions, setServiceSubmissions] = useState<ServiceProviderSubmission[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('relife_service_submissions_v2');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.warn('Failed to parse saved submissions', e);
+        }
+      }
+    }
+    return INITIAL_SERVICE_SUBMISSIONS;
+  });
   const [transferRequests, setTransferRequests] = useState<OwnershipTransferRequest[]>([]);
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -169,26 +195,36 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
 
       if (savedProducts) {
         setProducts(JSON.parse(savedProducts));
-      } else if (userId === DEMO_PERSONAS.elena.id) {
-        // Elena starts with rich initial products
-        setProducts(INITIAL_PRODUCTS);
+      } else if (userId === DEMO_PERSONAS.aarav.id || userId === 'usr-aarav-sharma' || userId === 'usr-elena-rostova') {
+        setProducts(AARAV_INITIAL_PRODUCTS);
+      } else if (userId === DEMO_PERSONAS.priya.id || userId === 'usr-priya-patel' || userId === 'usr-liam-sterling') {
+        setProducts(PRIYA_INITIAL_PRODUCTS);
+      } else if (userId === DEMO_PERSONAS.vikram.id || userId === 'usr-vikram-malhotra' || userId === 'usr-alex-rivera-tech') {
+        setProducts(VIKRAM_INITIAL_PRODUCTS);
       } else {
-        // New users or Liam start with a clean personal slate
         setProducts([]);
       }
 
       if (savedReminders) {
         setReminders(JSON.parse(savedReminders));
-      } else if (userId === DEMO_PERSONAS.elena.id) {
-        setReminders(INITIAL_REMINDERS);
+      } else if (userId === DEMO_PERSONAS.aarav.id || userId === 'usr-aarav-sharma' || userId === 'usr-elena-rostova') {
+        setReminders(AARAV_INITIAL_REMINDERS);
+      } else if (userId === DEMO_PERSONAS.priya.id || userId === 'usr-priya-patel' || userId === 'usr-liam-sterling') {
+        setReminders(PRIYA_INITIAL_REMINDERS);
+      } else if (userId === DEMO_PERSONAS.vikram.id || userId === 'usr-vikram-malhotra' || userId === 'usr-alex-rivera-tech') {
+        setReminders(VIKRAM_INITIAL_REMINDERS);
       } else {
         setReminders([]);
       }
 
       if (savedNotifs) {
         setNotifications(JSON.parse(savedNotifs));
-      } else if (userId === DEMO_PERSONAS.elena.id) {
-        setNotifications(INITIAL_NOTIFICATIONS);
+      } else if (userId === DEMO_PERSONAS.aarav.id || userId === 'usr-aarav-sharma' || userId === 'usr-elena-rostova') {
+        setNotifications(AARAV_INITIAL_NOTIFICATIONS);
+      } else if (userId === DEMO_PERSONAS.priya.id || userId === 'usr-priya-patel' || userId === 'usr-liam-sterling') {
+        setNotifications(PRIYA_INITIAL_NOTIFICATIONS);
+      } else if (userId === DEMO_PERSONAS.vikram.id || userId === 'usr-vikram-malhotra' || userId === 'usr-alex-rivera-tech') {
+        setNotifications(VIKRAM_INITIAL_NOTIFICATIONS);
       } else {
         setNotifications([
           {
@@ -334,16 +370,16 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           setCurrentUser(parsedUser);
           setIsAuthenticated(true);
           setIsDemoMode(savedDemo !== null ? savedDemo === 'true' : Boolean(parsedUser.isDemoUser));
-          setActivePersonaKey(savedPersona || (parsedUser.isDemoUser ? 'elena' : 'custom'));
+          setActivePersonaKey((savedPersona as DemoPersonaKey) || (parsedUser.isDemoUser ? 'aarav' : 'custom'));
           await loadUserData(parsedUser);
         } else if (isMounted) {
-          // Default to Elena Rostova so judges instantly explore full demo records
+          // Default to Aarav Sharma so users instantly explore full records
           setCurrentUser(DEFAULT_DEMO_USER);
           setIsAuthenticated(true);
           setIsDemoMode(true);
-          setActivePersonaKey('elena');
+          setActivePersonaKey('aarav');
           localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(DEFAULT_DEMO_USER));
-          localStorage.setItem(ACTIVE_PERSONA_KEY, 'elena');
+          localStorage.setItem(ACTIVE_PERSONA_KEY, 'aarav');
           await loadUserData(DEFAULT_DEMO_USER);
         }
       } catch (err) {
@@ -564,9 +600,11 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setAuthLoading(false);
   };
 
-  // Auth Action: Instant Judge Demo Persona Login
-  const loginAsDemo = (personaKey: 'elena' | 'liam' | 'alex') => {
-    const persona = DEMO_PERSONAS[personaKey];
+  // Auth Action: Instant Demo Persona Login
+  const loginAsDemo = (personaKey: DemoPersonaKey) => {
+    const effectiveKey = (personaKey === 'elena' ? 'aarav' : personaKey === 'liam' ? 'priya' : personaKey === 'alex' ? 'vikram' : personaKey) as 'aarav' | 'priya' | 'vikram';
+    const persona = DEMO_PERSONAS[effectiveKey];
+    if (!persona) return;
     const userObj: ReLifeUser = {
       id: persona.id,
       name: persona.name,
@@ -578,10 +616,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(userObj);
     setIsAuthenticated(true);
     setIsDemoMode(true);
-    setActivePersonaKey(personaKey);
+    setActivePersonaKey(effectiveKey);
     localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(userObj));
     localStorage.setItem(DEMO_MODE_KEY, 'true');
-    localStorage.setItem(ACTIVE_PERSONA_KEY, personaKey);
+    localStorage.setItem(ACTIVE_PERSONA_KEY, effectiveKey);
     loadUserData(userObj);
   };
 
@@ -1035,8 +1073,8 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     if (!product) throw new Error('Product not found');
 
     const token = 'trans_' + Math.random().toString(36).substring(2, 10);
-    const fromOwnerName = currentUser ? currentUser.name : 'Elena Rostova';
-    const fromOwnerEmail = currentUser ? currentUser.email : 'elena@relife-demo.org';
+    const fromOwnerName = currentUser ? currentUser.name : 'Aarav Sharma';
+    const fromOwnerEmail = currentUser ? currentUser.email : 'aarav.sharma@relife.in';
     const fromOwnerId = currentUser ? currentUser.id : undefined;
 
     const request: OwnershipTransferRequest = {
@@ -1243,14 +1281,17 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetToDemoData = () => {
-    loginAsDemo('elena');
-    localStorage.removeItem(`relife_products_${DEMO_PERSONAS.elena.id}`);
-    localStorage.removeItem(`relife_reminders_${DEMO_PERSONAS.elena.id}`);
-    localStorage.removeItem(`relife_notifs_${DEMO_PERSONAS.elena.id}`);
-    setProducts(INITIAL_PRODUCTS);
-    setReminders(INITIAL_REMINDERS);
-    setNotifications(INITIAL_NOTIFICATIONS);
-    setServiceSubmissions([]);
+    loginAsDemo('aarav');
+    Object.values(DEMO_PERSONAS).forEach((p) => {
+      localStorage.removeItem(`relife_products_${p.id}`);
+      localStorage.removeItem(`relife_reminders_${p.id}`);
+      localStorage.removeItem(`relife_notifs_${p.id}`);
+    });
+    localStorage.removeItem('relife_service_submissions_v2');
+    setProducts(AARAV_INITIAL_PRODUCTS);
+    setReminders(AARAV_INITIAL_REMINDERS);
+    setNotifications(AARAV_INITIAL_NOTIFICATIONS);
+    setServiceSubmissions(INITIAL_SERVICE_SUBMISSIONS);
     setTransferRequests([]);
   };
 

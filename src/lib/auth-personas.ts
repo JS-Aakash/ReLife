@@ -1,40 +1,70 @@
 import { DemoPersona, ReLifeUser } from './types';
 
-export const DEMO_PERSONAS: Record<'elena' | 'liam' | 'alex', DemoPersona> = {
-  elena: {
-    id: 'usr-elena-rostova',
-    name: 'Elena Rostova',
-    email: 'elena@relife-demo.org',
-    role: 'consumer',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-    badge: 'Hardware Caretaker (Owner)',
-    description: 'Manages 3 verified heirloom products (MacBook Pro, Specialized Sirrus, Dyson V15) with complete repair records.',
+export const DEMO_PERSONAS = {
+  aarav: {
+    id: 'usr-aarav-sharma',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@relife.in',
+    role: 'consumer' as const,
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80',
+    badge: 'Hardware Custodian (Owner)',
+    description: 'Manages 4 verified personal assets (MacBook Pro M3, Specialized Bike, Sony XM5, Dyson Vacuum) with certified repair records.',
   },
-  liam: {
-    id: 'usr-liam-sterling',
-    name: 'Liam Sterling',
-    email: 'liam@relife-demo.org',
-    role: 'consumer',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-    badge: 'Prospective Buyer / Recipient',
-    description: 'Fresh account ready to receive ownership transfers, claim digital passports, and explore gear.',
+  priya: {
+    id: 'usr-priya-patel',
+    name: 'Priya Patel',
+    email: 'priya.patel@relife.in',
+    role: 'consumer' as const,
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
+    badge: 'Sustainable Fleet Lead',
+    description: 'Oversees 4 verified mobile & imaging assets (iPhone 15 Pro, iPad Pro M2, Dell XPS 15, Fujifilm X-T5).',
   },
-  alex: {
-    id: 'usr-alex-rivera-tech',
-    name: 'Alex Rivera',
-    email: 'alex@apexrepairs.com',
-    role: 'technician',
+  vikram: {
+    id: 'usr-vikram-malhotra',
+    name: 'Vikram Malhotra',
+    email: 'vikram.malhotra@zenithrepairs.in',
+    role: 'technician' as const,
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
     badge: 'Certified Master Technician',
-    description: 'Authorized service provider with permissions to submit certified repair records to customer passports.',
+    description: 'Lead engineer at Zenith Diagnostics with an active diagnostic equipment fleet and authorized customer verification queue.',
   },
-};
+  // Backward compatibility aliases
+  elena: {
+    id: 'usr-aarav-sharma',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@relife.in',
+    role: 'consumer' as const,
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80',
+    badge: 'Hardware Custodian (Owner)',
+    description: 'Manages 4 verified personal assets with complete repair records.',
+  },
+  liam: {
+    id: 'usr-priya-patel',
+    name: 'Priya Patel',
+    email: 'priya.patel@relife.in',
+    role: 'consumer' as const,
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
+    badge: 'Sustainable Fleet Lead',
+    description: 'Oversees 4 verified mobile & imaging assets.',
+  },
+  alex: {
+    id: 'usr-vikram-malhotra',
+    name: 'Vikram Malhotra',
+    email: 'vikram.malhotra@zenithrepairs.in',
+    role: 'technician' as const,
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+    badge: 'Certified Master Technician',
+    description: 'Lead engineer at Zenith Diagnostics.',
+  },
+} as const;
+
+export type DemoPersonaKey = 'aarav' | 'priya' | 'vikram' | 'elena' | 'liam' | 'alex';
 
 export const DEFAULT_DEMO_USER: ReLifeUser = {
-  id: DEMO_PERSONAS.elena.id,
-  name: DEMO_PERSONAS.elena.name,
-  email: DEMO_PERSONAS.elena.email,
-  avatar: DEMO_PERSONAS.elena.avatar,
-  role: DEMO_PERSONAS.elena.role,
+  id: DEMO_PERSONAS.aarav.id,
+  name: DEMO_PERSONAS.aarav.name,
+  email: DEMO_PERSONAS.aarav.email,
+  avatar: DEMO_PERSONAS.aarav.avatar,
+  role: DEMO_PERSONAS.aarav.role,
   isDemoUser: true,
 };

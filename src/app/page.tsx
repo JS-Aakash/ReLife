@@ -296,7 +296,7 @@ export default function LandingPage() {
               href="/resale/rl-macbook-pro-16-c02g"
               className="pt-2 text-xs font-medium text-emerald-800 flex items-center gap-1 hover:underline"
             >
-              <span>View Sample Resale Report</span>
+              <span>View Verified Resale Report</span>
               <span>→</span>
             </Link>
           </div>

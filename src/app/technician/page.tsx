@@ -28,12 +28,19 @@ export default function TechnicianPortalPage() {
     submitTechnicianRepair,
     approveTechnicianRepair,
     rejectTechnicianRepair,
+    currentUser,
   } = useReLife();
 
   const [selectedProductId, setSelectedProductId] = useState(products[0]?.id || '');
-  const [shopName, setShopName] = useState('Apex Velo & Tech Works');
-  const [technicianName, setTechnicianName] = useState('Marcus Vance (Certified Master Technician)');
-  const [technicianContact, setTechnicianContact] = useState('service@apexvelo.com');
+  const [shopName, setShopName] = useState('Zenith Diagnostics & Precision Micro-Repairs');
+  const [technicianName, setTechnicianName] = useState(
+    currentUser?.name
+      ? `${currentUser.name} (Certified Master Technician)`
+      : 'Vikram Malhotra (Certified Master Electronics Technician)'
+  );
+  const [technicianContact, setTechnicianContact] = useState(
+    currentUser?.email || 'service@zenithrepairs.in'
+  );
   const [issueSummary, setIssueSummary] = useState('');
   const [diagnosis, setDiagnosis] = useState('');
   const [laborCost, setLaborCost] = useState('85');

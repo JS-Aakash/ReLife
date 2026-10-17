@@ -23,7 +23,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({
   children,
   title = 'Authentication Required',
-  description = 'This custodian vault and private repair records are protected by PostgreSQL Row Level Security (RLS). Sign in to view and manage your verified products.',
+  description = 'This custodian vault and private repair records are protected with secure session authentication. Sign in to view and manage your verified products.',
 }: ProtectedRouteProps) {
   const { isAuthenticated, authLoading, currentUser, loginAsDemo } = useReLife();
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -34,7 +34,7 @@ export function ProtectedRoute({
       <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4">
         <div className="w-10 h-10 border-3 border-emerald-800 border-t-transparent rounded-full animate-spin" />
         <p className="text-xs text-stone-500 font-mono tracking-wider uppercase">
-          Verifying Custodian Session & RLS Permissions...
+          Verifying Custodian Session & Credentials...
         </p>
       </div>
     );
@@ -53,7 +53,7 @@ export function ProtectedRoute({
 
         <div className="space-y-2">
           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-            Row Level Security Active
+            Secure Vault Protected
           </span>
           <h1 className="text-2xl font-black text-stone-900 tracking-tight">{title}</h1>
           <p className="text-xs text-stone-500 leading-relaxed max-w-sm mx-auto">{description}</p>
@@ -74,10 +74,10 @@ export function ProtectedRoute({
         <div className="space-y-2.5 pt-2">
           {/* Quick Profile Access */}
           <button
-            onClick={() => loginAsDemo('elena')}
+            onClick={() => loginAsDemo('aarav')}
             className="w-full py-3 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors whitespace-nowrap"
           >
-            <span>Sign In as Elena Rostova (Registered Owner)</span>
+            <span>Sign In as Aarav Sharma (Registered Owner)</span>
             <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
 

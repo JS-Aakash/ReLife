@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useReLife } from '@/lib/store';
-import { DEMO_PERSONAS } from '@/lib/auth-personas';
+import { DEMO_PERSONAS, DemoPersonaKey } from '@/lib/auth-personas';
 import {
   Shield,
   Lock,
@@ -86,7 +86,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
     }
   };
 
-  const handlePersonaSelect = (personaKey: 'elena' | 'liam' | 'alex') => {
+  const handlePersonaSelect = (personaKey: DemoPersonaKey) => {
     loginAsDemo(personaKey);
     setSuccessMessage(`Signed in as ${DEMO_PERSONAS[personaKey].name}!`);
     setTimeout(() => {
@@ -131,7 +131,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <span>
               {isSupabaseConfigured
-                ? 'Supabase Cloud Auth & Row Level Security Active'
+                ? 'Cloud Vault Connected & Encrypted'
                 : 'Secure Encrypted Vault Active'}
             </span>
           </div>
@@ -276,7 +276,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                     <input
                       type="email"
                       required
-                      placeholder="elena@relife-demo.org"
+                      placeholder="aarav.sharma@relife.in"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-stone-300 focus:outline-emerald-600 text-xs text-stone-900"
@@ -290,12 +290,12 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                     <button
                       type="button"
                       onClick={() => {
-                        setEmail('elena@relife-demo.org');
-                        setPassword('demo123');
+                        setEmail('aarav.sharma@relife.in');
+                        setPassword('custodian2026!');
                       }}
                       className="text-[10px] text-emerald-700 hover:underline font-semibold whitespace-nowrap"
                     >
-                      Fill Elena Credentials
+                      Fill Aarav Credentials
                     </button>
                   </div>
                   <div className="relative">
@@ -335,84 +335,84 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                 <div className="space-y-1.5">
                   <button
                     type="button"
-                    onClick={() => handlePersonaSelect('elena')}
+                    onClick={() => handlePersonaSelect('aarav')}
                     className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${
-                      activePersonaKey === 'elena'
+                      activePersonaKey === 'aarav' || activePersonaKey === 'elena'
                         ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                         : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={DEMO_PERSONAS.elena.avatar}
-                      alt={DEMO_PERSONAS.elena.name}
+                      src={DEMO_PERSONAS.aarav.avatar}
+                      alt={DEMO_PERSONAS.aarav.name}
                       className="w-8 h-8 rounded-full object-cover border border-emerald-500/40 shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-bold text-stone-900 truncate">Elena Rostova</span>
+                        <span className="text-xs font-bold text-stone-900 truncate">{DEMO_PERSONAS.aarav.name}</span>
                         <span className="text-[9px] font-extrabold uppercase px-1 py-0.2 rounded bg-emerald-100 text-emerald-900 shrink-0">
                           Owner
                         </span>
                       </div>
                       <span className="text-[10px] text-stone-400 block truncate">
-                        3 Passports • Verified Repairs
+                        4 Passports • 2 Verified Repairs
                       </span>
                     </div>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => handlePersonaSelect('liam')}
+                    onClick={() => handlePersonaSelect('priya')}
                     className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${
-                      activePersonaKey === 'liam'
+                      activePersonaKey === 'priya' || activePersonaKey === 'liam'
                         ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                         : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={DEMO_PERSONAS.liam.avatar}
-                      alt={DEMO_PERSONAS.liam.name}
+                      src={DEMO_PERSONAS.priya.avatar}
+                      alt={DEMO_PERSONAS.priya.name}
                       className="w-8 h-8 rounded-full object-cover border border-stone-300 shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-bold text-stone-900 truncate">Liam Sterling</span>
+                        <span className="text-xs font-bold text-stone-900 truncate">{DEMO_PERSONAS.priya.name}</span>
                         <span className="text-[9px] font-extrabold uppercase px-1 py-0.2 rounded bg-blue-100 text-blue-900 shrink-0">
-                          Buyer
+                          Fleet Lead
                         </span>
                       </div>
                       <span className="text-[10px] text-stone-400 block truncate">
-                        Recipient Account • Ready for Custody Transfer
+                        4 Passports • Mobile & Imaging Fleet
                       </span>
                     </div>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => handlePersonaSelect('alex')}
+                    onClick={() => handlePersonaSelect('vikram')}
                     className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 group ${
-                      activePersonaKey === 'alex'
+                      activePersonaKey === 'vikram' || activePersonaKey === 'alex'
                         ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
                         : 'border-stone-200 hover:border-emerald-300 hover:bg-stone-50'
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={DEMO_PERSONAS.alex.avatar}
-                      alt={DEMO_PERSONAS.alex.name}
+                      src={DEMO_PERSONAS.vikram.avatar}
+                      alt={DEMO_PERSONAS.vikram.name}
                       className="w-8 h-8 rounded-full object-cover border border-amber-400 shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-bold text-stone-900 truncate">Alex Rivera</span>
+                        <span className="text-xs font-bold text-stone-900 truncate">{DEMO_PERSONAS.vikram.name}</span>
                         <span className="text-[9px] font-extrabold uppercase px-1 py-0.2 rounded bg-amber-100 text-amber-900 shrink-0">
                           Technician
                         </span>
                       </div>
                       <span className="text-[10px] text-stone-400 block truncate">
-                        Certified Technician Portal
+                        4 Lab Assets • Service Verification
                       </span>
                     </div>
                   </button>

@@ -44,14 +44,6 @@ export default function ProfilePage() {
 
   const [resetConfirm, setResetConfirm] = useState(false);
   const [savedPreferences, setSavedPreferences] = useState(false);
-  const [copiedSql, setCopiedSql] = useState(false);
-
-  const handleCopySqlLocation = () => {
-    navigator.clipboard.writeText('supabase/migrations/20261017_supabase_auth_rls.sql');
-    setCopiedSql(true);
-    setTimeout(() => setCopiedSql(false), 2500);
-  };
-
   // Preference Toggles
   const [prefs, setPrefs] = useState({
     warrantyAlerts: true,
@@ -97,10 +89,10 @@ export default function ProfilePage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
           <div>
             <h1 className="text-2xl font-black text-stone-900 tracking-tight">
-              Account & Platform Security
+              Custodian Profile & Security
             </h1>
             <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
-              Manage your custodian identity, cryptographic privacy policies, and database synchronization.
+              Manage your verified custodian credentials, alert preferences, and fleet privacy settings.
             </p>
           </div>
 
@@ -145,8 +137,8 @@ export default function ProfilePage() {
                   <span className="font-bold text-stone-800">{products.length}</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-stone-50">
-                  <span className="text-[10px] text-stone-400 uppercase font-bold block">RLS Status</span>
-                  <span className="font-bold text-emerald-700">Enforced</span>
+                  <span className="text-[10px] text-stone-400 uppercase font-bold block">Vault Status</span>
+                  <span className="font-bold text-emerald-700">Secured</span>
                 </div>
               </div>
 
@@ -167,9 +159,9 @@ export default function ProfilePage() {
                 ⚡ Switch Active Account:
               </span>
               <div className="space-y-1.5">
-                {(['elena', 'liam', 'alex'] as const).map((key) => {
+                {(['aarav', 'priya', 'vikram'] as const).map((key) => {
                   const persona = DEMO_PERSONAS[key];
-                  const isActive = activePersonaKey === key;
+                  const isActive = activePersonaKey === key || (key === 'aarav' && activePersonaKey === 'elena');
                   return (
                     <button
                       key={key}
@@ -191,66 +183,58 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Row Level Security Guarantee Box */}
+            {/* Account Privacy & Session Protection */}
             <div className="bg-stone-900 text-white rounded-3xl p-5 shadow-sm space-y-3 text-xs">
               <div className="flex items-center gap-2 text-emerald-400">
                 <ShieldCheck className="w-4 h-4 shrink-0" />
-                <span className="font-bold uppercase tracking-wider text-[11px]">PostgreSQL RLS Active</span>
+                <span className="font-bold uppercase tracking-wider text-[11px]">Vault Session Protected</span>
               </div>
               <p className="text-stone-300 text-[11px] leading-relaxed">
-                Database policies restrict records to <code className="text-emerald-300">auth.uid() = user_id</code>. Confidential invoices are strictly hidden from public QR scans.
+                Private ownership documents, invoices, and diagnostic logs are restricted to your authenticated custodian session and hidden from unauthenticated viewers.
               </p>
-              <button
-                onClick={handleCopySqlLocation}
-                className="w-full py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
-              >
-                <Copy className="w-3.5 h-3.5" />
-                <span>{copiedSql ? 'Copied Migration Path!' : 'Copy RLS Migration File'}</span>
-              </button>
+              <div className="pt-1 flex items-center gap-2 text-[10px] text-stone-400">
+                <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>256-Bit Vault Encryption Active</span>
+              </div>
             </div>
           </div>
 
           {/* Right Column: Settings & Database Controls (8 Cols) */}
           <div className="md:col-span-8 space-y-6">
-            {/* Database & Cloud Sync Status */}
+            {/* Custodian Verification & Security Status */}
             <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-stone-100">
                 <div className="flex items-center gap-2">
-                  <Database className="w-4 h-4 text-emerald-700" />
+                  <Shield className="w-4 h-4 text-emerald-700" />
                   <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">
-                    Supabase Cloud & Storage Sync
+                    Custodian Verification & Security
                   </h2>
                 </div>
-                <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border whitespace-nowrap ${
-                    isSupabaseConfigured
-                      ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                      : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                  }`}
-                >
-                  {isSupabaseConfigured ? 'Supabase Cloud Connected' : 'Encrypted Vault Storage'}
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full border whitespace-nowrap bg-emerald-50 text-emerald-800 border-emerald-200">
+                  Verified Identity
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Database URL</span>
-                  <span className="font-mono text-stone-700 block truncate">
-                    {process.env.NEXT_PUBLIC_SUPABASE_URL || 'Configured via .env'}
+                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Account Status</span>
+                  <span className="font-semibold text-stone-800 flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    Active Hardware Custodian
                   </span>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Row Level Security</span>
+                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Privacy Standard</span>
                   <span className="font-semibold text-emerald-800 flex items-center gap-1">
                     <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    Strict User Isolation
+                    Encrypted Asset Isolation
                   </span>
                 </div>
               </div>
 
               <p className="text-xs text-stone-500 leading-relaxed">
-                Each product passport, repair milestone, and document in the vault is associated with the owner&apos;s unique UUID. Row Level Security ensures that API queries return only the records belonging to the authenticated custodian.
+                Your products, maintenance milestones, and confidential purchase invoices are cryptographically associated with your verified custodian identity. Public QR passports exclusively show owner-approved specifications and verification badges.
               </p>
             </div>
 
