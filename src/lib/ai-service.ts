@@ -42,7 +42,8 @@ const geminiApiKey = process.env.GEMINI_API_KEY;
 const aiClient = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null;
 
 // Preferred model list with fallback in case of transient spikes
-const GEMINI_MODELS = ['gemini-flash-latest', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+// gemini-3.1-flash-lite has 500 requests/day quota, followed by gemini-3.6-flash
+const GEMINI_MODELS = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-flash-latest'];
 
 function normalizeCategory(raw?: string): ProductCategory {
   const cat = (raw || '').toLowerCase().trim();
