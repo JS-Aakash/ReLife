@@ -16,10 +16,12 @@ import {
   Info,
   Building,
   UserCheck,
+  Receipt,
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { RepairPart } from '@/lib/types';
+import { RepairPart, ServiceProviderSubmission, Product } from '@/lib/types';
 import confetti from 'canvas-confetti';
+import { RepairImpactReceiptModal, RepairImpactReceiptData } from '@/components/receipt/repair-impact-receipt-modal';
 
 export default function TechnicianPortalPage() {
   const {
@@ -102,30 +104,102 @@ export default function TechnicianPortalPage() {
     setTimeout(() => setSubmittedSuccess(false), 4000);
   };
 
+  const [receiptData, setReceiptData] = useState<RepairImpactReceiptData | null>(null);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
   const handleApprove = (id: string) => {
-    approveTechnicianRepair(id);
+    const sub = serviceSubmissions.find((s) => s.id === id);
+    const result = approveTechnicianRepair(id);
     confetti({
       particleCount: 70,
       spread: 60,
       origin: { y: 0.6 },
     });
+    if (result && result.repair && result.product) {
+      setReceiptData({
+        product: result.product,
+        repair: result.repair,
+        submission: sub,
+      });
+      setIsReceiptModalOpen(true);
+    }
   };
+
+  const handleViewReceipt = (sub: ServiceProviderSubmission) => {
+    const prod = products.find((p) => p.id === sub.productId) || {
+      id: sub.productId,
+      publicId: sub.publicId,
+      name: sub.productName,
+      brand: 'Certified Asset',
+      model: sub.productName,
+      category: 'Electronics',
+      purchasePrice: sub.totalCost * 4,
+      purchaseCurrency: 'USD',
+      purchaseDate: sub.repairDate,
+      seller: sub.shopName,
+      warrantyMonths: 12,
+      condition: 'good',
+      imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=80',
+      repairs: [],
+    } as unknown as Product;
+
+    setReceiptData({
+      product: prod,
+      repair: {
+        id: sub.id,
+        productId: sub.productId,
+        date: sub.repairDate,
+        issueSummary: sub.issueSummary,
+        symptoms: 'Verified by authorized service center.',
+        diagnosis: sub.diagnosis,
+        technicianOrShopName: `${sub.shopName} (${sub.technicianName})`,
+        serviceProviderId: sub.id,
+        cost: sub.totalCost,
+        partsReplaced: sub.partsReplaced,
+        warrantyClaim: sub.warrantyClaim,
+        verificationBadge: 'technician-verified',
+        verificationDetails: {
+          verifiedBy: sub.technicianName,
+          shopName: sub.shopName,
+          verifiedAt: new Date().toISOString(),
+          verificationNotes: sub.notes,
+        },
+        usefulLifeExtensionMonths: 24,
+        ownerApproved: true,
+      },
+      submission: sub,
+    });
+    setIsReceiptModalOpen(true);
+  };
+
+  const pendingApprovalsCount = serviceSubmissions.filter(
+    (s) => s.status === 'pending_owner_approval'
+  ).length;
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
       <div className="pb-4 border-b border-stone-200">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
-            <ShieldCheck className="w-4 h-4 text-emerald-700" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-black text-stone-900 tracking-tight">
-              Authorized Service Provider & Technician Portal
-            </h1>
-            <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
-              Independent workshops and authorized technicians can submit digitally certified repair records for customer validation.
-            </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4 text-emerald-700" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-black text-stone-900 tracking-tight">
+                  Authorized Service Provider & Technician Portal
+                </h1>
+                {pendingApprovalsCount > 0 && (
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
+                    {pendingApprovalsCount} Pending Approval
+                  </span>
+                )}
+              </div>
+              <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
+                Independent workshops and authorized technicians can submit digitally certified repair records for customer validation.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -408,6 +482,18 @@ export default function TechnicianPortalPage() {
                         </button>
                       </div>
                     )}
+
+                    {sub.status === 'approved' && (
+                      <div className="pt-2 border-t border-stone-200 flex justify-end">
+                        <button
+                          onClick={() => handleViewReceipt(sub)}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        >
+                          <Receipt className="w-3.5 h-3.5" />
+                          <span>View Impact Receipt</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -415,6 +501,13 @@ export default function TechnicianPortalPage() {
           </div>
         </div>
       </div>
+
+      {/* Repair Impact Receipt Modal */}
+      <RepairImpactReceiptModal
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        data={receiptData}
+      />
     </div>
   );
 }

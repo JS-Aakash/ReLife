@@ -24,7 +24,36 @@
     --charcoal-500: #62726b;
     --charcoal-400: #8c9c95;
     --border: #e6e4dc;
+    --color-grayscale-1: #fcfcfc;
+    --color-grayscale-2: #f9f9f9;
+    --color-grayscale-3: #f0f0f0;
+    --color-grayscale-4: #e8e8e8;
+    --color-grayscale-5: #e0e0e0;
+    --color-grayscale-6: #d9d9d9;
+    --color-grayscale-7: #cecece;
+    --color-grayscale-8: #8e8e8e;
+    --color-grayscale-9: #707070;
+    --color-grayscale-10: #555555;
+    --color-grayscale-11: #383838;
+    --color-grayscale-12: #161616;
+    --color-green-9: #10b981;
   }
+}
+
+@theme {
+  --color-grayscale-1: #fcfcfc;
+  --color-grayscale-2: #f9f9f9;
+  --color-grayscale-3: #f0f0f0;
+  --color-grayscale-4: #e8e8e8;
+  --color-grayscale-5: #e0e0e0;
+  --color-grayscale-6: #d9d9d9;
+  --color-grayscale-7: #cecece;
+  --color-grayscale-8: #8e8e8e;
+  --color-grayscale-9: #707070;
+  --color-grayscale-10: #555555;
+  --color-grayscale-11: #383838;
+  --color-grayscale-12: #161616;
+  --color-green-9: #10b981;
 }
 
 body {
@@ -82,4 +111,32 @@ body {
     margin: 0 !important;
     padding: 0 !important;
   }
+}
+
+/* Stepped Receipt Printer Paper Animation */
+@keyframes receiptSteppedFeed {
+  0% { transform: translateY(calc(-100% + 2px)); }
+  7.5% { transform: translateY(-91%); }
+  10.5% { transform: translateY(-91%); }
+  18% { transform: translateY(-81%); }
+  21% { transform: translateY(-81%); }
+  28.5% { transform: translateY(-70%); }
+  31.5% { transform: translateY(-70%); }
+  39% { transform: translateY(-58%); }
+  42% { transform: translateY(-58%); }
+  49.5% { transform: translateY(-45%); }
+  52.5% { transform: translateY(-45%); }
+  60% { transform: translateY(-32%); }
+  63% { transform: translateY(-32%); }
+  70.5% { transform: translateY(-20%); }
+  73.5% { transform: translateY(-20%); }
+  81% { transform: translateY(-10%); }
+  84% { transform: translateY(-10%); }
+  91.5% { transform: translateY(-3%); }
+  94.5% { transform: translateY(-3%); }
+  100% { transform: translateY(0%); }
+}
+
+.animate-receipt-feed {
+  animation: receiptSteppedFeed 1.75s linear forwards;
 }

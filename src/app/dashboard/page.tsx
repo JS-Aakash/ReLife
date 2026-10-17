@@ -33,7 +33,7 @@ import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { products, reminders, toggleReminder } = useReLife();
+  const { products, reminders, serviceSubmissions, toggleReminder } = useReLife();
   const [scannerOpen, setScannerOpen] = useState(false);
   const [hardwareScannerOpen, setHardwareScannerOpen] = useState(false);
 
@@ -52,6 +52,12 @@ export default function DashboardPage() {
     const info = getWarrantyInfo(p.warrantyExpiryDate);
     return info.status === 'expiring_soon';
   });
+
+  // Pending reminders and service approvals
+  const pendingReminders = reminders.filter((r) => !r.completed);
+  const pendingApprovals = serviceSubmissions.filter(
+    (s) => s.status === 'pending_owner_approval'
+  );
 
   // Recent repairs across all products
   const allRepairsWithProduct = products
@@ -122,6 +128,32 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Pending Technician Approvals Banner */}
+        {pendingApprovals.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="p-2 rounded-xl bg-amber-100 text-amber-800 shrink-0">
+                <ShieldAlert className="w-5 h-5 text-amber-700" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-amber-950">
+                  {pendingApprovals.length} Certified Service Record{pendingApprovals.length > 1 ? 's' : ''} Awaiting Owner Approval
+                </h4>
+                <p className="text-xs text-amber-800/90 mt-0.5">
+                  Authorized repair centers submitted digital service records. Review itemized diagnosis and seal directly to your product passport.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/technician"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-900 hover:bg-amber-950 text-white shadow-xs transition-colors shrink-0 whitespace-nowrap"
+            >
+              <span>Review & Seal ({pendingApprovals.length})</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
+
         {/* KPI Statistic Cards - Interactive Clickable Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* Card 1: Assets */}
@@ -144,22 +176,24 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          {/* Card 2: Warranty Alert */}
+          {/* Card 2: Action & Schedules */}
           <Link
             href="/reminders"
             className="bg-white rounded-2xl border border-stone-200 p-4 shadow-2xs space-y-1 hover:border-amber-400 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer block group"
           >
             <div className="flex items-center justify-between text-stone-500">
               <span className="text-xs font-semibold uppercase tracking-wider group-hover:text-amber-800 transition-colors">
-                Expiring Warranties
+                Pending Schedules
               </span>
-              <div className={`p-1.5 rounded-lg ${expiringProducts.length > 0 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-600'}`}>
+              <div className={`p-1.5 rounded-lg ${pendingReminders.length > 0 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-600'}`}>
                 <Clock className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-black text-amber-700">{expiringProducts.length}</div>
+            <div className="text-2xl font-black text-amber-700">
+              {pendingReminders.length} <span className="text-sm font-bold text-amber-800">Pending</span>
+            </div>
             <div className="flex items-center justify-between text-[11px] text-stone-400 pt-0.5">
-              <span>{expiringProducts.length > 0 ? '<30 days action' : 'All protected'}</span>
+              <span>{expiringProducts.length > 0 ? `${expiringProducts.length} warranty alert` : `${pendingReminders.length} maintenance tasks`}</span>
               <span className="text-amber-700 font-semibold group-hover:translate-x-0.5 transition-transform">Schedule →</span>
             </div>
           </Link>
@@ -319,6 +353,11 @@ export default function DashboardPage() {
                   <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900">
                     Maintenance Schedules
                   </h3>
+                  {pendingReminders.length > 0 && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
+                      {pendingReminders.length} Pending
+                    </span>
+                  )}
                 </div>
                 <Link href="/reminders" className="text-xs text-emerald-800 font-semibold hover:underline">
                   View all ({reminders.length})

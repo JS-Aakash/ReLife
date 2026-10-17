@@ -19,7 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "motion/react": ["./src/helpers/motion-react.tsx"],
+      "@phosphor-icons/react": ["./src/helpers/phosphor-icons.tsx"],
+      "@phosphor-icons/react/dist/ssr": ["./src/helpers/phosphor-icons.tsx"]
     }
   },
   "include": [

@@ -15,8 +15,11 @@ import {
   FileText,
   AlertCircle,
   Plus,
+  Receipt,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useReLife } from '@/lib/store';
+import { RepairImpactReceiptModal } from '@/components/receipt/repair-impact-receipt-modal';
 
 interface RepairTimelineProps {
   productId: string;
@@ -25,6 +28,9 @@ interface RepairTimelineProps {
 }
 
 export function RepairTimeline({ productId, repairs, isOwner = true }: RepairTimelineProps) {
+  const { getProductById } = useReLife();
+  const product = getProductById(productId);
+  const [selectedReceiptRepair, setSelectedReceiptRepair] = useState<RepairRecord | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(
     repairs.length > 0 ? repairs[0].id : null
   );
@@ -134,13 +140,28 @@ export function RepairTimeline({ productId, repairs, isOwner = true }: RepairTim
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100">
+                  <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100">
                     <div className="text-right">
                       <span className="text-xs text-stone-400 block">Total Cost</span>
                       <span className="text-sm font-bold text-stone-900">
                         {repair.cost > 0 ? formatCurrency(repair.cost) : 'Free / Under Warranty'}
                       </span>
                     </div>
+
+                    {product && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedReceiptRepair(repair);
+                        }}
+                        title="View & Share Repair Impact Receipt"
+                        className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold flex items-center gap-1 transition-colors shrink-0"
+                      >
+                        <Receipt className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Receipt</span>
+                      </button>
+                    )}
+
                     <button
                       className="p-1 rounded-md text-stone-400 hover:text-stone-700 hover:bg-stone-100"
                       aria-label="Expand details"
@@ -247,6 +268,15 @@ export function RepairTimeline({ productId, repairs, isOwner = true }: RepairTim
           );
         })}
       </div>
+
+      {/* Repair Impact Receipt Modal */}
+      {product && (
+        <RepairImpactReceiptModal
+          isOpen={!!selectedReceiptRepair}
+          onClose={() => setSelectedReceiptRepair(null)}
+          data={selectedReceiptRepair ? { product, repair: selectedReceiptRepair } : null}
+        />
+      )}
     </div>
   );
 }

@@ -120,7 +120,9 @@ interface ReLifeContextType {
   submitTechnicianRepair: (
     submission: Omit<ServiceProviderSubmission, 'id' | 'submittedAt' | 'status'>
   ) => ServiceProviderSubmission;
-  approveTechnicianRepair: (submissionId: string) => void;
+  approveTechnicianRepair: (
+    submissionId: string
+  ) => { repair: RepairRecord; product: Product } | null | void;
   rejectTechnicianRepair: (submissionId: string) => void;
 
   // Ownership Transfer (Chain of Custody)
@@ -466,6 +468,16 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       console.warn('Failed to save to localStorage partition:', e);
     }
   }, [products, reminders, notifications, currentUser, isLoaded, isDemoMode]);
+
+  // Sync service submissions to LocalStorage whenever updated
+  useEffect(() => {
+    if (!isLoaded || typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('relife_service_submissions_v2', JSON.stringify(serviceSubmissions));
+    } catch (e) {
+      console.warn('Failed to sync serviceSubmissions to localStorage:', e);
+    }
+  }, [serviceSubmissions, isLoaded]);
 
   // Auth Action: Sign In
   const login = async (email: string, password = ''): Promise<{ success: boolean; error?: string }> => {
@@ -1017,7 +1029,15 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       submittedAt: nowIso,
     };
 
-    setServiceSubmissions((prev) => [newSubmission, ...prev]);
+    const updatedSubmissions = [newSubmission, ...serviceSubmissions];
+    setServiceSubmissions(updatedSubmissions);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('relife_service_submissions_v2', JSON.stringify(updatedSubmissions));
+      } catch (err) {
+        console.warn('Failed to store submission in localStorage:', err);
+      }
+    }
 
     setNotifications((prev) => [
       {
@@ -1042,9 +1062,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
 
   const approveTechnicianRepair = (submissionId: string) => {
     const sub = serviceSubmissions.find((s) => s.id === submissionId);
-    if (!sub) return;
+    if (!sub) return null;
 
-    addRepair(sub.productId, {
+    // 1. Add verified repair record to the product's living passport
+    const newRecord = addRepair(sub.productId, {
       date: sub.repairDate,
       issueSummary: sub.issueSummary,
       symptoms: 'Verified by authorized service center.',
@@ -1065,19 +1086,78 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       ownerApproved: true,
     });
 
-    setServiceSubmissions((prev) =>
-      prev.map((s) => (s.id === submissionId ? { ...s, status: 'approved' } : s))
+    // 2. Mark submission as approved in state & localStorage immediately
+    const updatedSubmissions = serviceSubmissions.map((s) =>
+      s.id === submissionId ? { ...s, status: 'approved' as const } : s
     );
+    setServiceSubmissions(updatedSubmissions);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('relife_service_submissions_v2', JSON.stringify(updatedSubmissions));
+      } catch (err) {
+        console.warn('Failed to save approved status to localStorage:', err);
+      }
+    }
 
+    // 3. If product belongs to another user partition in localStorage, update that partition as well
+    if (typeof window !== 'undefined') {
+      const demoUsers = ['usr-aarav-sharma', 'usr-priya-patel', 'usr-vikram-malhotra'];
+      for (const uid of demoUsers) {
+        const key = `relife_products_${uid}`;
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          try {
+            const parsedProds: Product[] = JSON.parse(raw);
+            const targetProd = parsedProds.find((p) => p.id === sub.productId);
+            if (targetProd && !targetProd.repairs.some((r) => r.id === newRecord.id)) {
+              targetProd.repairs = [newRecord, ...targetProd.repairs];
+              localStorage.setItem(key, JSON.stringify(parsedProds));
+            }
+          } catch {
+            // ignore
+          }
+        }
+      }
+    }
+
+    // 4. Update Supabase if configured
     if (supabase && isSupabaseConfigured) {
       supabase.from('service_submissions').update({ status: 'approved' }).eq('id', submissionId).then(() => {});
     }
+
+    // 5. Find current product reference
+    const currentProd = products.find((p) => p.id === sub.productId) || {
+      id: sub.productId,
+      publicId: sub.publicId,
+      name: sub.productName,
+      brand: 'Certified Asset',
+      model: sub.productName,
+      category: 'Electronics',
+      purchasePrice: sub.totalCost * 4,
+      purchaseCurrency: 'USD',
+      purchaseDate: sub.repairDate,
+      seller: sub.shopName,
+      warrantyMonths: 12,
+      condition: 'good',
+      imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=80',
+      repairs: [newRecord],
+    } as unknown as Product;
+
+    return { repair: newRecord, product: currentProd };
   };
 
   const rejectTechnicianRepair = (submissionId: string) => {
-    setServiceSubmissions((prev) =>
-      prev.map((s) => (s.id === submissionId ? { ...s, status: 'rejected' } : s))
+    const updatedSubmissions = serviceSubmissions.map((s) =>
+      s.id === submissionId ? { ...s, status: 'rejected' as const } : s
     );
+    setServiceSubmissions(updatedSubmissions);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('relife_service_submissions_v2', JSON.stringify(updatedSubmissions));
+      } catch (err) {
+        console.warn('Failed to save rejected status to localStorage:', err);
+      }
+    }
 
     if (supabase && isSupabaseConfigured) {
       supabase.from('service_submissions').update({ status: 'rejected' }).eq('id', submissionId).then(() => {});

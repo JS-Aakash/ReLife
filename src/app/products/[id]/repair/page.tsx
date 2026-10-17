@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { ProvenanceBadge } from '@/components/ui/badge';
 import { ProtectedRoute } from '@/components/auth/protected-route';
+import { RepairImpactReceiptModal, RepairImpactReceiptData } from '@/components/receipt/repair-impact-receipt-modal';
 
 export default function LogRepairPage() {
   const params = useParams();
@@ -48,6 +49,8 @@ export default function LogRepairPage() {
   const [parts, setParts] = useState<RepairPart[]>([
     { name: '', partNumber: '', cost: 0 },
   ]);
+  const [receiptData, setReceiptData] = useState<RepairImpactReceiptData | null>(null);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   if (!product) {
     return (
@@ -80,7 +83,7 @@ export default function LogRepairPage() {
 
     const validParts = parts.filter((p) => p.name.trim().length > 0);
 
-    addRepair(product.id, {
+    const newRecord = addRepair(product.id, {
       date,
       issueSummary,
       symptoms,
@@ -112,7 +115,8 @@ export default function LogRepairPage() {
       origin: { y: 0.6 },
     });
 
-    router.push(`/products/${product.id}`);
+    setReceiptData({ product, repair: newRecord });
+    setIsReceiptModalOpen(true);
   };
 
   return (
@@ -424,6 +428,16 @@ export default function LogRepairPage() {
         </div>
       </form>
     </div>
+
+    {/* Repair Impact Receipt Modal */}
+    <RepairImpactReceiptModal
+      isOpen={isReceiptModalOpen}
+      onClose={() => {
+        setIsReceiptModalOpen(false);
+        router.push(`/products/${product.id}`);
+      }}
+      data={receiptData}
+    />
     </ProtectedRoute>
   );
 }
