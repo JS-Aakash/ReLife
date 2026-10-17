@@ -25,6 +25,7 @@ import {
   Info,
   Calendar,
   Check,
+  ShieldAlert,
 } from 'lucide-react';
 import { HealthGauge, ExplainableHealthFactors } from '@/components/ui/health-gauge';
 import { WarrantyBadge, CategoryBadge, ProvenanceBadge } from '@/components/ui/badge';
@@ -35,6 +36,7 @@ import { TransferModal } from '@/components/passport/transfer-modal';
 import { ResaleSettingsModal } from '@/components/passport/resale-settings-modal';
 import { DPPCertificateModal } from '@/components/passport/dpp-certificate-modal';
 import { ResaleValuationWidget } from '@/components/passport/resale-valuation-widget';
+import { ProductTimeMachine } from '@/components/passport/product-time-machine';
 import { getWarrantyInfo } from '@/lib/calculations';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { ProtectedRoute } from '@/components/auth/protected-route';
@@ -45,7 +47,7 @@ export default function ProductPassportDetailPage() {
   const router = useRouter();
   const { getProductById, deleteProduct, togglePublicShare } = useReLife();
 
-  const [activeTab, setActiveTab] = useState<'repairs' | 'documents' | 'history'>('repairs');
+  const [activeTab, setActiveTab] = useState<'repairs' | 'documents' | 'history' | 'time-machine'>('repairs');
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [resaleModalOpen, setResaleModalOpen] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
@@ -110,6 +112,24 @@ export default function ProductPassportDetailPage() {
 
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            href={`/warranty-rescue?productId=${product.id}`}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-50 border border-amber-300 text-amber-900 hover:bg-amber-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+            title="Generate Warranty Rescue Claim Package"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+            <span>Warranty Rescue</span>
+          </Link>
+
+          <Link
+            href={`/products/${product.id}/time-machine`}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 hover:bg-indigo-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+            title="Launch Interactive Product Time Machine"
+          >
+            <Clock className="w-3.5 h-3.5 text-indigo-700 shrink-0" />
+            <span>Time Machine</span>
+          </Link>
+
           <button
             onClick={() => setCertificateModalOpen(true)}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-300 text-emerald-900 hover:bg-emerald-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
@@ -278,14 +298,15 @@ export default function ProductPassportDetailPage() {
           {/* Circular Resale & Asset Preservation Valuation */}
           <ResaleValuationWidget product={product} />
 
-          {/* Tabs for Timeline, Documents, and Ownership Chain */}
+          {/* Tabs for Timeline, Documents, Ownership Chain, and Time Machine */}
           <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs space-y-6">
             <div className="flex items-center gap-2 border-b border-stone-200 pb-3 overflow-x-auto">
               {[
                 { key: 'repairs', label: `Repair Ledger (${product.repairs.length})`, icon: Wrench },
+                { key: 'time-machine', label: 'Time Machine', icon: Clock, badge: 'Interactive' },
                 { key: 'documents', label: `Document Vault (${product.documents.length})`, icon: FileText },
                 { key: 'history', label: `Ownership Chain (${product.ownershipHistory.length})`, icon: ShieldCheck },
-              ].map(({ key, label, icon: Icon }) => (
+              ].map(({ key, label, icon: Icon, badge }) => (
                 <button
                   key={key}
                   onClick={() => setActiveTab(key as any)}
@@ -297,6 +318,11 @@ export default function ProductPassportDetailPage() {
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
                   <span>{label}</span>
+                  {badge && (
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      {badge}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -304,6 +330,10 @@ export default function ProductPassportDetailPage() {
             {/* Active Tab Panel */}
             {activeTab === 'repairs' && (
               <RepairTimeline productId={product.id} repairs={product.repairs} isOwner={true} />
+            )}
+
+            {activeTab === 'time-machine' && (
+              <ProductTimeMachine product={product} />
             )}
 
             {activeTab === 'documents' && (

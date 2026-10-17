@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ReLife — The Living Digital Passport for Every Product',
+  title: 'ReLife - The Living Digital Passport for Every Product',
   description:
     'A futuristic product-lifecycle platform that gives every physical product a permanent digital identity, preserving ownership, warranty, maintenance, and repair history.',
   keywords: [
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'ReLife Platform Team' }],
   openGraph: {
-    title: 'ReLife — The Living Digital Passport for Every Product',
+    title: 'ReLife - The Living Digital Passport for Every Product',
     description:
       'Turn disposable products into repairable heirlooms with verifiable lifetime provenance, QR passports, and AI diagnostic copilot.',
     type: 'website',

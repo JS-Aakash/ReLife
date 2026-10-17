@@ -59,6 +59,7 @@ export function Navbar() {
   const navLinks = [
     { name: 'Dashboard', href: '/dashboard', icon: Layers },
     { name: 'Products', href: '/products', icon: QrCode },
+    { name: 'Warranty Rescue', href: '/warranty-rescue', icon: Shield, badge: 'New' },
     { name: 'Copilot', href: '/copilot', icon: Sparkles, badge: 'AI' },
     { name: 'Reminders', href: '/reminders', icon: Clock },
     { name: 'Sustainability', href: '/analytics', icon: Leaf },
@@ -67,11 +68,11 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 bg-white/95 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
+      <div className="max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6">
+        <div className="flex items-center justify-between h-16 gap-3">
           {/* Logo & Navigation */}
-          <div className="flex items-center gap-2.5 lg:gap-3 xl:gap-6 min-w-0">
-            <Link href="/" className="flex items-center gap-2 group shrink-0">
+          <div className="flex items-center gap-2 xl:gap-4 min-w-0">
+            <Link href="/" className="flex items-center gap-2 group shrink-0 mr-1 xl:mr-2">
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-800 to-teal-950 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
                 <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
               </div>
@@ -82,14 +83,14 @@ export function Navbar() {
                     Passport
                   </span>
                 </span>
-                <p className="text-[9px] text-stone-400 font-medium -mt-1 hidden xl:block">
+                <p className="text-[9px] text-stone-400 font-medium -mt-1 hidden 2xl:block">
                   Digital Product Passport
                 </p>
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 shrink-0">
+            {/* Desktop Navigation (xl+ screens, compact and strictly non-overlapping) */}
+            <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1 shrink-0">
               {navLinks.map((link) => {
                 const isActive =
                   pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -98,7 +99,7 @@ export function Navbar() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`inline-flex items-center gap-1 px-2 py-1.5 xl:px-2.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isActive
+                    className={`inline-flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isActive
                       ? 'bg-emerald-100 text-emerald-900 font-semibold shadow-2xs'
                       : 'text-stone-600 hover:text-stone-900 hover:bg-emerald-50'
                       }`}
@@ -118,8 +119,8 @@ export function Navbar() {
             </nav>
           </div>
 
-          {/* Right Header Actions */}
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          {/* Right Header Actions (Zero collision with left nav) */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Scan Tag / NFC Button */}
             <button
               onClick={() => setHardwareScannerOpen(true)}
@@ -127,7 +128,7 @@ export function Navbar() {
               title="Scan Optical QR Code or Simulate Physical NFC Tag"
             >
               <Scan className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-              <span className="hidden xl:inline">Scan Tag / NFC</span>
+              <span className="hidden 2xl:inline">Scan Tag</span>
             </button>
 
             {/* Notification Dropdown */}
@@ -140,7 +141,7 @@ export function Navbar() {
               title="Register New Product"
             >
               <Plus className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden xl:inline">Add Product</span>
+              <span className="hidden 2xl:inline">Add Product</span>
             </Link>
 
             {/* User Auth Profile / Dropdown */}
@@ -156,7 +157,7 @@ export function Navbar() {
                     alt={currentUser.name}
                     className="w-7 h-7 rounded-full object-cover border border-emerald-600/50 shrink-0"
                   />
-                  <div className="hidden xl:block text-left text-xs leading-none">
+                  <div className="hidden 2xl:block text-left text-xs leading-none">
                     <span className="font-bold text-stone-900 block truncate max-w-[80px] 2xl:max-w-[110px]">
                       {currentUser.name}
                     </span>
@@ -302,10 +303,10 @@ export function Navbar() {
               </div>
             )}
 
-            {/* Mobile menu button */}
+            {/* Mobile / Tablet menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 shrink-0"
+              className="xl:hidden p-2 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 shrink-0"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -314,9 +315,9 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile & Tablet Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-stone-200 bg-white px-4 pt-3 pb-6 space-y-2">
+        <div className="xl:hidden border-t border-stone-200 bg-white px-4 pt-3 pb-6 space-y-2">
           {isAuthenticated && currentUser ? (
             <div className="p-3 bg-stone-50 rounded-2xl border border-stone-200 flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5 min-w-0">

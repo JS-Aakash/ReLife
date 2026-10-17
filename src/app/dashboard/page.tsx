@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   Check,
   ExternalLink,
+  ShieldAlert,
 } from 'lucide-react';
 import { HealthGauge } from '@/components/ui/health-gauge';
 import { WarrantyBadge, ProvenanceBadge } from '@/components/ui/badge';
@@ -85,6 +86,15 @@ export default function DashboardPage() {
 
           {/* Action Bar */}
           <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <Link
+              href="/warranty-rescue"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+              title="Warranty Rescue & Formal Claims Builder"
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <span>Warranty Rescue</span>
+            </Link>
+
             <button
               onClick={() => setHardwareScannerOpen(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors shadow-2xs whitespace-nowrap shrink-0"
@@ -260,6 +270,14 @@ export default function DashboardPage() {
                       <HealthGauge score={product.healthScore} size="sm" showLabel={false} />
 
                       <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        <Link
+                          href={`/products/${product.id}/time-machine`}
+                          className="p-1.5 rounded-xl border border-stone-200 hover:border-indigo-300 hover:bg-indigo-50 text-stone-500 hover:text-indigo-800 transition-colors"
+                          title="Interactive Lifetime Time Machine"
+                        >
+                          <Clock className="w-4 h-4 text-indigo-600" />
+                        </Link>
+
                         <Link
                           href={`/copilot?productId=${product.id}`}
                           className="p-1.5 rounded-xl border border-stone-200 hover:border-emerald-300 hover:bg-emerald-50 text-stone-600 hover:text-emerald-800 transition-colors"

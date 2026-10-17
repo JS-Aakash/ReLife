@@ -18,6 +18,7 @@ import {
   ArrowRight,
   Sparkles,
   Award,
+  Clock,
 } from 'lucide-react';
 import { HealthGauge, ExplainableHealthFactors } from '@/components/ui/health-gauge';
 import { ProvenanceBadge, WarrantyBadge, CategoryBadge } from '@/components/ui/badge';
@@ -87,6 +88,15 @@ export default function PublicPassportPage() {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
+              <Link
+                href={`/products/${product.id}/time-machine`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 hover:bg-indigo-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+                title="Explore Lifetime Provenance in Interactive Time Machine"
+              >
+                <Clock className="w-3.5 h-3.5 text-indigo-700 shrink-0" />
+                <span>Time Machine</span>
+              </Link>
+
               <button
                 onClick={() => setCertificateModalOpen(true)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-300 text-emerald-900 hover:bg-emerald-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
