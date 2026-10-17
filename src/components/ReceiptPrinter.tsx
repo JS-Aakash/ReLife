@@ -99,8 +99,8 @@ const printingKeyframeTimes = [
 ];
 
 const statusLabels: Record<ReceiptPrinterStage, ReactNode> = {
-  processing: "Processing repair data",
-  printing: "Printing impact receipt",
+  processing: "Processing repair data...",
+  printing: "Slow printing impact receipt...",
   complete: "Receipt verified & sealed",
 };
 
@@ -374,7 +374,7 @@ function ReceiptPrinterOutput({
         transition={{
           opacity: { duration: animate ? 0.16 : 0, ease: easeOut },
           transform: {
-            duration: shouldMove ? 1.75 : 0,
+            duration: shouldMove ? 5.2 : 0,
             ease: shouldUseSteppedFeed ? "linear" : easeInOut,
             times: shouldUseSteppedFeed ? printingKeyframeTimes : undefined,
           },

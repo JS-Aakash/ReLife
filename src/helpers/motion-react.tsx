@@ -39,10 +39,7 @@ function MotionDiv({ animate, initial, exit, transition, className, style, child
   const transformStyle = isKeyframes ? undefined : (animate?.transform as string | undefined);
   const opacityStyle = animate?.opacity !== undefined ? animate.opacity : style?.opacity;
 
-  const durationSec = transition?.transform?.duration ?? transition?.opacity?.duration ?? 0.3;
-  const transitionStyle = isKeyframes
-    ? undefined
-    : `opacity ${transition?.opacity?.duration ?? 0.2}s ease, transform ${durationSec}s ease`;
+  const durationSec = transition?.transform?.duration ?? 5.2;
 
   return (
     <div
@@ -51,7 +48,8 @@ function MotionDiv({ animate, initial, exit, transition, className, style, child
         ...style,
         opacity: opacityStyle,
         transform: transformStyle ?? style?.transform,
-        transition: style?.transition || transitionStyle,
+        transition: isKeyframes ? undefined : `opacity 0.25s ease, transform ${durationSec}s ease`,
+        animationDuration: isKeyframes ? `${durationSec}s` : undefined,
       }}
       {...props}
     >
