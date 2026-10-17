@@ -24,6 +24,7 @@ import { getWarrantyInfo } from '@/lib/calculations';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { ProductCategory } from '@/lib/types';
 import { InvoiceScannerModal } from '@/components/scanner/invoice-scanner-modal';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function ProductsPage() {
   const { products } = useReLife();
@@ -81,7 +82,8 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <ProtectedRoute title="My Registered Assets" description="Sign in to view and manage your authenticated digital product passports and ownership certificates.">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
         <div>
@@ -312,5 +314,6 @@ export default function ProductsPage() {
       {/* Bill Scanner Modal */}
       <InvoiceScannerModal isOpen={scannerOpen} onClose={() => setScannerOpen(false)} />
     </div>
+    </ProtectedRoute>
   );
 }

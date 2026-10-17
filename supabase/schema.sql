@@ -1,15 +1,17 @@
 -- ========================================================
 -- ReLife — The Living Digital Passport for Every Product
 -- Production PostgreSQL Schema & Storage for Supabase
+-- Auth-Integrated & Row Level Security (RLS) Enforced
 -- ========================================================
 
 -- Enable extensions
 create extension if not exists "uuid-ossp";
+create extension if not exists "pgcrypto";
 
 -- 1. PROFILES (Authenticated App Users)
 create table if not exists public.profiles (
   id uuid primary key default uuid_generate_v4(),
-  auth_user_id uuid references auth.users(id) on delete cascade,
+  auth_user_id uuid references auth.users(id) on delete cascade unique,
   email text not null,
   full_name text,
   avatar_url text,
@@ -23,6 +25,7 @@ create table if not exists public.profiles (
 create table if not exists public.products (
   id text primary key,
   public_id text unique not null, -- Unguessable slug for QR passports e.g. "rl-macbook-pro-16-c02g"
+  user_id uuid references auth.users(id) on delete set null, -- Authenticated owner
   name text not null,
   brand text not null,
   model text not null,
@@ -54,11 +57,13 @@ create table if not exists public.products (
 -- Indexes for performance
 create index if not exists idx_products_public_id on public.products(public_id);
 create index if not exists idx_products_category on public.products(category);
+create index if not exists idx_products_user_id on public.products(user_id);
 
--- 3. DOCUMENTS (Vault for receipts, warranties, certificates)
+-- 3. DOCUMENTS (Encrypted Vault for receipts, warranties, certificates)
 create table if not exists public.documents (
   id text primary key,
   product_id text references public.products(id) on delete cascade not null,
+  user_id uuid references auth.users(id) on delete cascade,
   title text not null,
   file_name text not null,
   file_size text,
@@ -70,6 +75,7 @@ create table if not exists public.documents (
 );
 
 create index if not exists idx_documents_product_id on public.documents(product_id);
+create index if not exists idx_documents_user_id on public.documents(user_id);
 
 -- 4. REPAIRS (Immutable Product Lifetime Timeline)
 create table if not exists public.repairs (
@@ -126,8 +132,10 @@ create table if not exists public.ownership_transfers (
   product_image text,
   brand text not null,
   model text not null,
+  from_owner_id uuid references auth.users(id) on delete set null,
   from_owner_name text not null,
   from_owner_email text not null,
+  to_recipient_id uuid references auth.users(id) on delete set null,
   to_recipient_email text not null,
   transfer_type text default 'private_sale' check (transfer_type in ('original_purchase', 'private_sale', 'gift', 'warranty_replacement', 'other')),
   agreed_price numeric(10, 2),
@@ -136,10 +144,14 @@ create table if not exists public.ownership_transfers (
   created_at timestamptz default timezone('utc'::text, now()) not null
 );
 
+create index if not exists idx_transfers_from_owner on public.ownership_transfers(from_owner_id);
+create index if not exists idx_transfers_to_recipient on public.ownership_transfers(to_recipient_id);
+
 -- 7. MAINTENANCE REMINDERS
 create table if not exists public.maintenance_reminders (
   id text primary key,
   product_id text references public.products(id) on delete cascade not null,
+  user_id uuid references auth.users(id) on delete cascade,
   product_name text not null,
   product_image text,
   title text not null,
@@ -151,13 +163,56 @@ create table if not exists public.maintenance_reminders (
   created_at timestamptz default timezone('utc'::text, now()) not null
 );
 
--- 8. STORAGE BUCKET FOR DOCUMENTS & INVOICES
+create index if not exists idx_maintenance_reminders_user_id on public.maintenance_reminders(user_id);
+
+-- 8. NOTIFICATIONS (User Alert Ledger)
+create table if not exists public.notifications (
+  id text primary key,
+  user_id uuid references auth.users(id) on delete cascade,
+  title text not null,
+  message text not null,
+  timestamp timestamptz default timezone('utc'::text, now()) not null,
+  read boolean default false,
+  type text default 'info',
+  action_url text,
+  data jsonb default '{}'::jsonb
+);
+
+create index if not exists idx_notifications_user_id on public.notifications(user_id);
+
+-- 9. STORAGE BUCKET FOR DOCUMENTS & INVOICES
 insert into storage.buckets (id, name, public)
-values ('documents', 'documents', true)
-on conflict (id) do nothing;
+values ('documents', 'documents', false)
+on conflict (id) do update set public = false;
+
+-- 10. AUTH TRIGGER TO CREATE USER PROFILE AUTOMATICALLY
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (auth_user_id, email, full_name, avatar_url, role)
+  values (
+    new.id,
+    new.email,
+    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
+    coalesce(new.raw_user_meta_data->>'avatar_url', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'),
+    coalesce(new.raw_user_meta_data->>'role', 'consumer')
+  )
+  on conflict (auth_user_id) do update
+  set email = excluded.email,
+      full_name = coalesce(excluded.full_name, profiles.full_name),
+      updated_at = timezone('utc'::text, now());
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
 
 -- ========================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
+-- Strict Isolation: Each user accesses only their own records
 -- ========================================================
 alter table public.profiles enable row level security;
 alter table public.products enable row level security;
@@ -166,138 +221,124 @@ alter table public.repairs enable row level security;
 alter table public.service_submissions enable row level security;
 alter table public.ownership_transfers enable row level security;
 alter table public.maintenance_reminders enable row level security;
+alter table public.notifications enable row level security;
 
--- Public read policies (allows public QR scans and shared passports)
-create policy "Allow public read on shared products" on public.products for select using (true);
-create policy "Allow insert on products" on public.products for insert with check (true);
-create policy "Allow update on products" on public.products for update using (true);
+-- Profiles: Users view own profile or technician profiles
+create policy "Profiles visible to owner or authenticated users" on public.profiles
+  for select using (auth.uid() = auth_user_id or role = 'technician' or auth.uid() is not null);
 
-create policy "Allow read on repairs" on public.repairs for select using (true);
-create policy "Allow insert on repairs" on public.repairs for insert with check (true);
+create policy "Users update own profile" on public.profiles
+  for update using (auth.uid() = auth_user_id);
 
-create policy "Allow read on documents" on public.documents for select using (true);
-create policy "Allow insert on documents" on public.documents for insert with check (true);
-create policy "Allow delete on documents" on public.documents for delete using (true);
+-- Products: Owners access own products; public can view shared active passports
+create policy "Users view owned or public products" on public.products
+  for select using (auth.uid() = user_id or (is_publicly_shared = true and status != 'archived'));
 
-create policy "Allow read/write on service_submissions" on public.service_submissions for all using (true);
-create policy "Allow read/write on ownership_transfers" on public.ownership_transfers for all using (true);
-create policy "Allow read/write on maintenance_reminders" on public.maintenance_reminders for all using (true);
+create policy "Users insert own products" on public.products
+  for insert with check (auth.uid() = user_id or auth.uid() is not null);
+
+create policy "Users update own products" on public.products
+  for update using (auth.uid() = user_id);
+
+create policy "Users delete own products" on public.products
+  for delete using (auth.uid() = user_id);
+
+-- Documents: STRONGLY RESTRICTED TO PRODUCT OWNER
+-- Public QR passport viewers CANNOT read private documents
+create policy "Owners view product documents" on public.documents
+  for select using (
+    auth.uid() = user_id or
+    exists (select 1 from public.products p where p.id = documents.product_id and p.user_id = auth.uid())
+  );
+
+create policy "Owners insert product documents" on public.documents
+  for insert with check (
+    auth.uid() = user_id or
+    exists (select 1 from public.products p where p.id = documents.product_id and p.user_id = auth.uid())
+  );
+
+create policy "Owners update product documents" on public.documents
+  for update using (
+    auth.uid() = user_id or
+    exists (select 1 from public.products p where p.id = documents.product_id and p.user_id = auth.uid())
+  );
+
+create policy "Owners delete product documents" on public.documents
+  for delete using (
+    auth.uid() = user_id or
+    exists (select 1 from public.products p where p.id = documents.product_id and p.user_id = auth.uid())
+  );
+
+-- Repairs: Visible for owned or publicly shared products; owners insert/update
+create policy "Repairs visible to owner or public shared" on public.repairs
+  for select using (
+    exists (
+      select 1 from public.products p 
+      where p.id = repairs.product_id 
+      and (p.user_id = auth.uid() or p.is_publicly_shared = true)
+    )
+  );
+
+create policy "Owners insert repairs" on public.repairs
+  for insert with check (
+    exists (select 1 from public.products p where p.id = repairs.product_id and p.user_id = auth.uid())
+  );
+
+create policy "Owners update repairs" on public.repairs
+  for update using (
+    exists (select 1 from public.products p where p.id = repairs.product_id and p.user_id = auth.uid())
+  );
+
+-- Transfers: Sender, recipient email, or token bearer
+create policy "Transfers select policy" on public.ownership_transfers
+  for select using (
+    auth.uid() = from_owner_id or
+    auth.uid() = to_recipient_id or
+    auth.jwt() ->> 'email' = to_recipient_email or
+    status = 'pending'
+  );
+
+create policy "Transfers insert policy" on public.ownership_transfers
+  for insert with check (auth.uid() = from_owner_id or auth.uid() is not null);
+
+create policy "Transfers update policy" on public.ownership_transfers
+  for update using (
+    auth.uid() = from_owner_id or
+    auth.uid() = to_recipient_id or
+    auth.jwt() ->> 'email' = to_recipient_email or
+    status = 'pending'
+  );
+
+-- Maintenance Reminders: Owner isolation
+create policy "Reminders select policy" on public.maintenance_reminders for select using (auth.uid() = user_id);
+create policy "Reminders insert policy" on public.maintenance_reminders for insert with check (auth.uid() = user_id);
+create policy "Reminders update policy" on public.maintenance_reminders for update using (auth.uid() = user_id);
+create policy "Reminders delete policy" on public.maintenance_reminders for delete using (auth.uid() = user_id);
+
+-- Notifications: User isolation
+create policy "Notifications select policy" on public.notifications for select using (auth.uid() = user_id);
+create policy "Notifications insert policy" on public.notifications for insert with check (auth.uid() = user_id);
+create policy "Notifications update policy" on public.notifications for update using (auth.uid() = user_id);
+create policy "Notifications delete policy" on public.notifications for delete using (auth.uid() = user_id);
+
+-- Service Submissions (Technicians submit, owner reviews)
+create policy "Service submissions select" on public.service_submissions
+  for select using (
+    exists (select 1 from public.products p where p.id = service_submissions.product_id and p.user_id = auth.uid()) or
+    auth.uid() is not null
+  );
+
+create policy "Service submissions insert" on public.service_submissions
+  for insert with check (true);
+
+create policy "Service submissions update by owner" on public.service_submissions
+  for update using (
+    exists (select 1 from public.products p where p.id = service_submissions.product_id and p.user_id = auth.uid())
+  );
 
 -- Storage bucket access
-create policy "Allow public read on storage objects" on storage.objects for select using (bucket_id = 'documents');
-create policy "Allow public upload on storage objects" on storage.objects for insert with check (bucket_id = 'documents');
+create policy "Authenticated document upload" on storage.objects
+  for insert with check (bucket_id = 'documents' and auth.role() = 'authenticated');
 
--- ========================================================
--- REALISTIC SEED DATA FOR DEMO & TESTING
--- ========================================================
-
-insert into public.products (
-  id, public_id, name, brand, model, serial_number, category, purchase_price, purchase_currency, purchase_date,
-  seller, warranty_months, warranty_expiry_date, condition, image_url, description, health_score, e_waste_avoided_kg,
-  carbon_avoided_kg, original_lifespan_years, estimated_useful_life_remaining_years
-) values
-(
-  'prod-macbook-pro-16',
-  'rl-macbook-pro-16-c02g',
-  'MacBook Pro 16" (M1 Max, 32GB)',
-  'Apple',
-  'MacBook Pro 16-inch 2021',
-  'C02G4103MD6R',
-  'laptop',
-  3499.00,
-  'USD',
-  '2022-04-10',
-  'Apple Store Regent St.',
-  12,
-  '2023-04-10',
-  'excellent',
-  'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=80',
-  'Workstation laptop utilized for engineering and creative production. Preserved with proactive battery swap.',
-  88,
-  2.10,
-  240.00,
-  5.0,
-  4.2
-),
-(
-  'prod-specialized-sirrus',
-  'rl-sirrus-x4-9821',
-  'Specialized Sirrus X 4.0 Gravel / Commuter Bike',
-  'Specialized',
-  'Sirrus X 4.0 EQ',
-  'WSBC021948291T',
-  'bicycle',
-  1750.00,
-  'USD',
-  '2023-05-18',
-  'Velorution Cycle Outfitters',
-  24,
-  '2025-05-18',
-  'mint',
-  'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1000&q=80',
-  'Specialized commuter with Future Shock 1.5 suspension stem and Shimano Deore 1x11 gearing.',
-  94,
-  12.50,
-  180.00,
-  10.0,
-  8.5
-),
-(
-  'prod-dyson-v15',
-  'rl-dyson-v15-8823',
-  'Dyson V15 Detect Absolute Cordless Vacuum',
-  'Dyson',
-  'V15 Detect (368340-01)',
-  'DY-V15-882319-K',
-  'appliance',
-  749.00,
-  'USD',
-  '2023-01-20',
-  'Target Stores',
-  24,
-  '2025-01-20',
-  'good',
-  'https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=1000&q=80',
-  'High suction cordless vacuum with laser illumination cleaner head and piezo sensor particle counter.',
-  84,
-  18.00,
-  350.00,
-  8.0,
-  6.4
-)
-on conflict (id) do nothing;
-
--- Seed verified repairs
-insert into public.repairs (
-  id, product_id, date, issue_summary, symptoms, diagnosis, technician_or_shop_name, cost,
-  parts_replaced, warranty_claim, verification_badge, useful_life_extension_months
-) values
-(
-  'rep-mac-1',
-  'prod-macbook-pro-16',
-  '2024-06-14',
-  'Battery degradation below 80% & thermal throttling under load',
-  'Battery cycle count at 842 cycles; fans spinning up loudly.',
-  'Electrochemical cell degradation and dust accumulation.',
-  'MacRepairs Pro Lab & Certified Tech',
-  219.00,
-  '[{"name": "OEM 99.6Wh Lithium Polymer Battery Pack", "cost": 169}, {"name": "Thermal Grizzly Paste", "cost": 15}]'::jsonb,
-  false,
-  'technician-verified',
-  36
-),
-(
-  'rep-bike-1',
-  'prod-specialized-sirrus',
-  '2024-04-02',
-  '11-Speed Cassette & Chain Wear Overhaul',
-  'Chain skipping on 3rd smallest sprocket under torque.',
-  'Chain elongation reached 0.75% wear threshold.',
-  'Apex Velo Workshop',
-  165.00,
-  '[{"name": "Shimano Deore 11-42T Cassette", "cost": 65}, {"name": "KMC X11 Silver Chain", "cost": 38}]'::jsonb,
-  false,
-  'technician-verified',
-  24
-)
-on conflict (id) do nothing;
+create policy "Authenticated document read" on storage.objects
+  for select using (bucket_id = 'documents' and auth.role() = 'authenticated');

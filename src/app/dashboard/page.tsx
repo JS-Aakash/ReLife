@@ -25,6 +25,7 @@ import { WarrantyBadge, ProvenanceBadge } from '@/components/ui/badge';
 import { getWarrantyInfo } from '@/lib/calculations';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { InvoiceScannerModal } from '@/components/scanner/invoice-scanner-modal';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function DashboardPage() {
   const { products, reminders } = useReLife();
@@ -60,7 +61,8 @@ export default function DashboardPage() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <ProtectedRoute title="Custodian Dashboard" description="Sign in to view your private product passports, telemetry, warranty alerts, and repair logs.">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Welcome Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
         <div>
@@ -342,5 +344,6 @@ export default function DashboardPage() {
       {/* Bill Scanner Modal */}
       <InvoiceScannerModal isOpen={scannerOpen} onClose={() => setScannerOpen(false)} />
     </div>
+    </ProtectedRoute>
   );
 }

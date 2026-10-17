@@ -20,6 +20,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { ProvenanceBadge } from '@/components/ui/badge';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function LogRepairPage() {
   const params = useParams();
@@ -115,7 +116,8 @@ export default function LogRepairPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <ProtectedRoute title="Record Product Maintenance" description="Sign in as the verified hardware custodian to seal repair events into the digital passport.">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div>
         <Link
           href={`/products/${product.id}`}
@@ -417,5 +419,6 @@ export default function LogRepairPage() {
         </div>
       </form>
     </div>
+    </ProtectedRoute>
   );
 }

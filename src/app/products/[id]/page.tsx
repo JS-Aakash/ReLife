@@ -35,6 +35,7 @@ import { TransferModal } from '@/components/passport/transfer-modal';
 import { ResaleSettingsModal } from '@/components/passport/resale-settings-modal';
 import { getWarrantyInfo } from '@/lib/calculations';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function ProductPassportDetailPage() {
   const params = useParams();
@@ -79,7 +80,8 @@ export default function ProductPassportDetailPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <ProtectedRoute title="Private Product Custodian Vault" description="Sign in to view original purchase bills, private maintenance records, and initiate ownership transfers.">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Navigation & Breadcrumbs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
         <div className="flex items-center gap-3">
@@ -402,5 +404,6 @@ export default function ProductPassportDetailPage() {
         onClose={() => setResaleModalOpen(false)}
       />
     </div>
+    </ProtectedRoute>
   );
 }

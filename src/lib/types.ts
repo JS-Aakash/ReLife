@@ -31,6 +31,7 @@ export type VerificationBadge =
 export interface DocumentItem {
   id: string;
   productId: string;
+  userId?: string;
   title: string;
   fileName: string;
   fileSize: string;
@@ -113,6 +114,7 @@ export interface OwnershipMilestone {
 export interface Product {
   id: string;
   publicId: string; // e.g. "relife-mac-893a"
+  userId?: string; // Authenticated owner user_id
   name: string;
   brand: string;
   model: string;
@@ -152,6 +154,7 @@ export interface Product {
 
 export interface MaintenanceReminder {
   id: string;
+  userId?: string;
   productId: string;
   productName: string;
   productImage: string;
@@ -166,6 +169,7 @@ export interface MaintenanceReminder {
 
 export interface AppNotification {
   id: string;
+  userId?: string;
   title: string;
   message: string;
   timestamp: string;
@@ -204,12 +208,33 @@ export interface OwnershipTransferRequest {
   productImage: string;
   brand: string;
   model: string;
+  fromOwnerId?: string;
   fromOwnerName: string;
   fromOwnerEmail: string;
+  toRecipientId?: string;
   toRecipientEmail: string;
   transferType: 'private_sale' | 'gift' | 'other';
   agreedPrice?: number;
   status: 'pending' | 'accepted' | 'declined' | 'cancelled';
   expiresAt: string;
   createdAt: string;
+}
+
+export interface ReLifeUser {
+  id: string;
+  email: string;
+  name: string;
+  avatar: string;
+  role: 'consumer' | 'technician' | 'admin';
+  isDemoUser?: boolean;
+}
+
+export interface DemoPersona {
+  id: string;
+  name: string;
+  email: string;
+  role: 'consumer' | 'technician' | 'admin';
+  avatar: string;
+  badge: string;
+  description: string;
 }

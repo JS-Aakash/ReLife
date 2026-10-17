@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { MaintenanceReminder } from '@/lib/types';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function RemindersPage() {
   const { reminders, products, toggleReminder, addReminder } = useReLife();
@@ -66,7 +67,8 @@ export default function RemindersPage() {
   const pendingCount = reminders.filter((r) => !r.completed).length;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <ProtectedRoute title="Maintenance & Warranty Reminders" description="Sign in to view your product servicing schedules, preventative care tasks, and warranty milestones.">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
         <div>
@@ -306,5 +308,6 @@ export default function RemindersPage() {
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 }

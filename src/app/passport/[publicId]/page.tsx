@@ -117,7 +117,7 @@ export default function PublicPassportPage() {
                 <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-100">
                   <span className="text-[10px] font-bold uppercase text-stone-400 block">Hardware ID</span>
                   <span className="font-mono font-medium text-stone-700">
-                    {product.resaleDisclosure.showSerialNumber
+                    {product.resaleDisclosure?.showSerialNumber
                       ? product.serialNumber
                       : 'SN-•••••••• (Redacted)'}
                   </span>

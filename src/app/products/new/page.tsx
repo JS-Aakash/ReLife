@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { InvoiceScannerModal } from '@/components/scanner/invoice-scanner-modal';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -112,7 +113,8 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <ProtectedRoute title="Register New Hardware Passport" description="Sign in as an authenticated custodian to establish tamper-evident digital product passports.">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Back button */}
       <div>
         <Link
@@ -316,5 +318,6 @@ export default function NewProductPage() {
       {/* Bill Scanner Modal */}
       <InvoiceScannerModal isOpen={scannerOpen} onClose={() => setScannerOpen(false)} />
     </div>
+    </ProtectedRoute>
   );
 }

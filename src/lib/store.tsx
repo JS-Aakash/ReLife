@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   Product,
   RepairRecord,
@@ -10,174 +10,588 @@ import {
   ServiceProviderSubmission,
   OwnershipTransferRequest,
   ResaleDisclosureSettings,
+  ReLifeUser,
 } from './types';
 import { INITIAL_PRODUCTS, INITIAL_REMINDERS, INITIAL_NOTIFICATIONS } from './initial-data';
+import { DEMO_PERSONAS, DEFAULT_DEMO_USER } from './auth-personas';
 import { calculateHealthScore, calculateEnvironmentalImpact } from './calculations';
 import { generateId, generatePublicId } from './utils';
-import { supabase, isSupabaseConfigured } from './supabase';
+import {
+  supabase,
+  isSupabaseConfigured,
+  supabaseSignUp,
+  supabaseSignIn,
+  supabaseSignOut,
+} from './supabase';
 
-const STORAGE_KEY = 'relife_state_v1';
-const DEMO_MODE_KEY = 'relife_demo_mode_v1';
-
-interface ReLifeUser {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: 'consumer' | 'technician' | 'admin';
-}
+const ACTIVE_USER_KEY = 'relife_active_user_v2';
+const DEMO_MODE_KEY = 'relife_demo_mode_v2';
+const ACTIVE_PERSONA_KEY = 'relife_active_persona_v2';
 
 interface ReLifeContextType {
   products: Product[];
   reminders: MaintenanceReminder[];
   notifications: AppNotification[];
-  currentUser: ReLifeUser;
+  currentUser: ReLifeUser | null;
+  isAuthenticated: boolean;
+  authLoading: boolean;
+  activePersonaKey: 'elena' | 'liam' | 'alex' | 'custom' | null;
   serviceSubmissions: ServiceProviderSubmission[];
   transferRequests: OwnershipTransferRequest[];
   isLoaded: boolean;
   isSupabaseSynced: boolean;
   isDemoMode: boolean;
   unreadCount: number;
-  
-  // Demo Mode
+
+  // Auth actions
+  login: (email: string, password?: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (
+    email: string,
+    password?: string,
+    fullName?: string,
+    role?: 'consumer' | 'technician'
+  ) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  loginAsDemo: (personaKey: 'elena' | 'liam' | 'alex') => void;
+
+  // Demo Mode controls
   setDemoMode: (val: boolean) => void;
   toggleDemoMode: () => void;
-  
+
   // Product actions
-  addProduct: (product: Omit<Product, 'id' | 'publicId' | 'healthScore' | 'healthBreakdown' | 'eWasteAvoidedKg' | 'carbonAvoidedKg' | 'estimatedUsefulLifeRemainingYears' | 'originalLifespanYears' | 'documents' | 'repairs' | 'ownershipHistory' | 'status' | 'createdAt' | 'updatedAt'>) => Product;
+  addProduct: (
+    product: Omit<
+      Product,
+      | 'id'
+      | 'publicId'
+      | 'userId'
+      | 'healthScore'
+      | 'healthBreakdown'
+      | 'eWasteAvoidedKg'
+      | 'carbonAvoidedKg'
+      | 'estimatedUsefulLifeRemainingYears'
+      | 'originalLifespanYears'
+      | 'documents'
+      | 'repairs'
+      | 'ownershipHistory'
+      | 'status'
+      | 'createdAt'
+      | 'updatedAt'
+    >
+  ) => Product;
   updateProduct: (id: string, updates: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   getProductByPublicId: (publicId: string) => Product | undefined;
   getProductById: (id: string) => Product | undefined;
-  
+
   // Repairs & Timeline
-  addRepair: (productId: string, repair: Omit<RepairRecord, 'id' | 'createdAt' | 'productId'>) => RepairRecord;
-  
+  addRepair: (
+    productId: string,
+    repair: Omit<RepairRecord, 'id' | 'createdAt' | 'productId'>
+  ) => RepairRecord;
+
   // Documents Vault
-  addDocument: (productId: string, doc: Omit<DocumentItem, 'id' | 'uploadDate' | 'productId'>) => DocumentItem;
+  addDocument: (
+    productId: string,
+    doc: Omit<DocumentItem, 'id' | 'uploadDate' | 'productId' | 'userId'>
+  ) => DocumentItem;
   deleteDocument: (productId: string, docId: string) => void;
-  
+
   // Privacy & Resale
   updateResaleDisclosure: (productId: string, settings: Partial<ResaleDisclosureSettings>) => void;
   togglePublicShare: (productId: string, isShared: boolean) => void;
-  
+
   // Technician Workflow
-  submitTechnicianRepair: (submission: Omit<ServiceProviderSubmission, 'id' | 'submittedAt' | 'status'>) => ServiceProviderSubmission;
+  submitTechnicianRepair: (
+    submission: Omit<ServiceProviderSubmission, 'id' | 'submittedAt' | 'status'>
+  ) => ServiceProviderSubmission;
   approveTechnicianRepair: (submissionId: string) => void;
   rejectTechnicianRepair: (submissionId: string) => void;
-  
-  // Ownership Transfer
-  initiateTransfer: (productId: string, toEmail: string, transferType: 'private_sale' | 'gift' | 'other', agreedPrice?: number) => OwnershipTransferRequest;
+
+  // Ownership Transfer (Chain of Custody)
+  initiateTransfer: (
+    productId: string,
+    toEmail: string,
+    transferType: 'private_sale' | 'gift' | 'other',
+    agreedPrice?: number
+  ) => OwnershipTransferRequest;
   acceptTransfer: (token: string, newOwnerName: string, newOwnerEmail: string) => boolean;
   getTransferByToken: (token: string) => OwnershipTransferRequest | undefined;
-  
+
   // Reminders & Notifications
   toggleReminder: (id: string) => void;
-  addReminder: (reminder: Omit<MaintenanceReminder, 'id' | 'createdAt'>) => void;
+  addReminder: (reminder: Omit<MaintenanceReminder, 'id' | 'createdAt' | 'userId'>) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
-  
+
   // Reset
   resetToDemoData: () => void;
 }
 
 const ReLifeContext = createContext<ReLifeContextType | undefined>(undefined);
 
-const DEFAULT_USER: ReLifeUser = {
-  id: 'usr-elena-rostova',
-  name: 'Elena Rostova',
-  email: 'elena@relife-demo.org',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-  role: 'consumer',
-};
-
 export function ReLifeProvider({ children }: { children: React.ReactNode }) {
+  const [currentUser, setCurrentUser] = useState<ReLifeUser | null>(DEFAULT_DEMO_USER);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [activePersonaKey, setActivePersonaKey] = useState<'elena' | 'liam' | 'alex' | 'custom' | null>('elena');
+
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [reminders, setReminders] = useState<MaintenanceReminder[]>(INITIAL_REMINDERS);
   const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
-  const [currentUser] = useState<ReLifeUser>(DEFAULT_USER);
   const [serviceSubmissions, setServiceSubmissions] = useState<ServiceProviderSubmission[]>([]);
   const [transferRequests, setTransferRequests] = useState<OwnershipTransferRequest[]>([]);
+
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isSupabaseSynced, setIsSupabaseSynced] = useState<boolean>(false);
   const [isDemoMode, setIsDemoMode] = useState<boolean>(true);
 
-  // Initialize from LocalStorage & Supabase
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.products && Array.isArray(parsed.products) && parsed.products.length > 0) {
-          setProducts(parsed.products);
-        }
-        if (parsed.reminders && Array.isArray(parsed.reminders)) {
-          setReminders(parsed.reminders);
-        }
-        if (parsed.notifications && Array.isArray(parsed.notifications)) {
-          setNotifications(parsed.notifications);
-        }
-        if (parsed.serviceSubmissions && Array.isArray(parsed.serviceSubmissions)) {
-          setServiceSubmissions(parsed.serviceSubmissions);
-        }
-        if (parsed.transferRequests && Array.isArray(parsed.transferRequests)) {
-          setTransferRequests(parsed.transferRequests);
-        }
-      }
-
-      const storedDemo = localStorage.getItem(DEMO_MODE_KEY);
-      if (storedDemo !== null) {
-        setIsDemoMode(storedDemo === 'true');
-      }
-    } catch (e) {
-      console.warn('Could not read from localStorage, using initial demo seed', e);
-    } finally {
-      setIsLoaded(true);
+  // Helper to load user-partitioned data from LocalStorage & Supabase
+  const loadUserData = useCallback(async (user: ReLifeUser | null) => {
+    if (!user) {
+      setProducts([]);
+      setReminders([]);
+      setNotifications([]);
+      return;
     }
 
-    // Attempt Supabase Fetch
-    if (supabase) {
-      (async () => {
-        try {
-          const { data, error } = await supabase.from('products').select('*');
-          if (!error && data && data.length > 0) {
-            setIsSupabaseSynced(true);
-            setIsDemoMode(false);
-          } else if (error && error.code === 'PGRST205') {
-            console.info('Supabase cloud tables not yet created. Operating in robust demo persistence mode.');
-            setIsSupabaseSynced(false);
-          }
-        } catch {
-          setIsSupabaseSynced(false);
+    const userId = user.id;
+
+    // 1. Load from user-specific local storage partition
+    try {
+      const userProductsKey = `relife_products_${userId}`;
+      const userRemindersKey = `relife_reminders_${userId}`;
+      const userNotifsKey = `relife_notifs_${userId}`;
+
+      const savedProducts = localStorage.getItem(userProductsKey);
+      const savedReminders = localStorage.getItem(userRemindersKey);
+      const savedNotifs = localStorage.getItem(userNotifsKey);
+
+      if (savedProducts) {
+        setProducts(JSON.parse(savedProducts));
+      } else if (userId === DEMO_PERSONAS.elena.id) {
+        // Elena starts with rich initial products
+        setProducts(INITIAL_PRODUCTS);
+      } else {
+        // New users or Liam start with a clean personal slate
+        setProducts([]);
+      }
+
+      if (savedReminders) {
+        setReminders(JSON.parse(savedReminders));
+      } else if (userId === DEMO_PERSONAS.elena.id) {
+        setReminders(INITIAL_REMINDERS);
+      } else {
+        setReminders([]);
+      }
+
+      if (savedNotifs) {
+        setNotifications(JSON.parse(savedNotifs));
+      } else if (userId === DEMO_PERSONAS.elena.id) {
+        setNotifications(INITIAL_NOTIFICATIONS);
+      } else {
+        setNotifications([
+          {
+            id: generateId(),
+            title: 'Welcome to ReLife',
+            message: `Hello ${user.name}! Your secure digital product passport custodian vault is ready.`,
+            timestamp: new Date().toISOString(),
+            read: false,
+            type: 'info',
+          },
+        ]);
+      }
+    } catch (e) {
+      console.warn('Error reading user storage partition:', e);
+    }
+
+    // 2. If Supabase is connected and user is not in demo fallback mode, query Supabase
+    if (supabase && isSupabaseConfigured && !user.isDemoUser) {
+      try {
+        const { data: supaProducts, error } = await supabase
+          .from('products')
+          .select('*, documents(*), repairs(*)')
+          .eq('user_id', userId);
+
+        if (!error && supaProducts && supaProducts.length > 0) {
+          // Transform database fields to client model
+          const mapped: Product[] = supaProducts.map((p: any) => ({
+            id: p.id,
+            publicId: p.public_id,
+            userId: p.user_id,
+            name: p.name,
+            brand: p.brand,
+            model: p.model,
+            serialNumber: p.serial_number || '',
+            category: p.category,
+            purchasePrice: Number(p.purchase_price) || 0,
+            purchaseCurrency: p.purchase_currency || 'USD',
+            purchaseDate: p.purchase_date,
+            seller: p.seller || '',
+            warrantyMonths: p.warranty_months || 12,
+            warrantyExpiryDate: p.warranty_expiry_date,
+            condition: p.condition || 'good',
+            imageUrl: p.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=80',
+            description: p.description,
+            healthScore: p.health_score || 100,
+            healthBreakdown: p.health_breakdown || calculateHealthScore(p.purchase_date, p.category, p.purchase_price, []),
+            eWasteAvoidedKg: Number(p.e_waste_avoided_kg) || 0,
+            carbonAvoidedKg: Number(p.carbon_avoided_kg) || 0,
+            originalLifespanYears: Number(p.original_lifespan_years) || 5,
+            estimatedUsefulLifeRemainingYears: Number(p.estimated_useful_life_remaining_years) || 5,
+            resaleDisclosure: p.resale_disclosure || {
+              showSerialNumber: true,
+              showPurchasePrice: false,
+              showFullTimeline: true,
+              showDocumentProofs: true,
+              showHealthScoreBreakdown: true,
+              showTechnicianNotes: true,
+            },
+            ownershipHistory: p.ownership_history || [],
+            status: p.status || 'active',
+            isPubliclyShared: p.is_publicly_shared ?? true,
+            createdAt: p.created_at,
+            updatedAt: p.updated_at,
+            documents: (p.documents || []).map((d: any) => ({
+              id: d.id,
+              productId: d.product_id,
+              userId: d.user_id,
+              title: d.title,
+              fileName: d.file_name,
+              fileSize: d.file_size || '250 KB',
+              fileType: d.file_type,
+              uploadDate: d.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
+              url: d.url,
+              isVerifiedReceipt: d.is_verified_receipt,
+            })),
+            repairs: (p.repairs || []).map((r: any) => ({
+              id: r.id,
+              productId: r.product_id,
+              date: r.date,
+              issueSummary: r.issue_summary,
+              symptoms: r.symptoms || '',
+              diagnosis: r.diagnosis || '',
+              technicianOrShopName: r.technician_or_shop_name,
+              serviceProviderId: r.service_provider_id,
+              cost: Number(r.cost) || 0,
+              partsReplaced: r.parts_replaced || [],
+              warrantyClaim: r.warranty_claim || false,
+              verificationBadge: r.verification_badge || 'owner-reported',
+              verificationDetails: r.verification_details,
+              usefulLifeExtensionMonths: r.useful_life_extension_months || 12,
+              ownerApproved: r.owner_approved ?? true,
+              notes: r.notes || '',
+              createdAt: r.created_at,
+            })),
+          }));
+
+          setProducts(mapped);
+          setIsSupabaseSynced(true);
         }
-      })();
+      } catch (err) {
+        console.info('Supabase query returned, keeping local state:', err);
+      }
     }
   }, []);
 
-  // Save to LocalStorage on state change
+  // Initialize Auth Session on mount
   useEffect(() => {
-    if (!isLoaded) return;
-    try {
-      const payload = {
-        products,
-        reminders,
-        notifications,
-        serviceSubmissions,
-        transferRequests,
+    let isMounted = true;
+
+    async function initAuth() {
+      try {
+        // 1. Check if Supabase session exists
+        if (supabase && isSupabaseConfigured) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user && isMounted) {
+            const userObj: ReLifeUser = {
+              id: session.user.id,
+              email: session.user.email || '',
+              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Hardware Caretaker',
+              avatar: session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+              role: session.user.user_metadata?.role || 'consumer',
+              isDemoUser: false,
+            };
+            setCurrentUser(userObj);
+            setIsAuthenticated(true);
+            setIsDemoMode(false);
+            setActivePersonaKey('custom');
+            localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(userObj));
+            await loadUserData(userObj);
+            setAuthLoading(false);
+            setIsLoaded(true);
+            return;
+          }
+        }
+
+        // 2. Check saved session in localStorage
+        const savedUserStr = localStorage.getItem(ACTIVE_USER_KEY);
+        const savedPersona = localStorage.getItem(ACTIVE_PERSONA_KEY) as any;
+        const savedDemo = localStorage.getItem(DEMO_MODE_KEY);
+
+        if (savedUserStr && isMounted) {
+          const parsedUser = JSON.parse(savedUserStr);
+          setCurrentUser(parsedUser);
+          setIsAuthenticated(true);
+          setIsDemoMode(savedDemo !== null ? savedDemo === 'true' : Boolean(parsedUser.isDemoUser));
+          setActivePersonaKey(savedPersona || (parsedUser.isDemoUser ? 'elena' : 'custom'));
+          await loadUserData(parsedUser);
+        } else if (isMounted) {
+          // Default to Elena Rostova so judges instantly explore full demo records
+          setCurrentUser(DEFAULT_DEMO_USER);
+          setIsAuthenticated(true);
+          setIsDemoMode(true);
+          setActivePersonaKey('elena');
+          localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(DEFAULT_DEMO_USER));
+          localStorage.setItem(ACTIVE_PERSONA_KEY, 'elena');
+          await loadUserData(DEFAULT_DEMO_USER);
+        }
+      } catch (err) {
+        console.warn('Auth initialization error:', err);
+        if (isMounted) {
+          setCurrentUser(DEFAULT_DEMO_USER);
+          setIsAuthenticated(true);
+          setIsDemoMode(true);
+        }
+      } finally {
+        if (isMounted) {
+          setAuthLoading(false);
+          setIsLoaded(true);
+        }
+      }
+    }
+
+    initAuth();
+
+    // 3. Listen to Supabase Auth State changes
+    if (supabase && isSupabaseConfigured) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        if (!isMounted) return;
+        if (session?.user) {
+          const userObj: ReLifeUser = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Hardware Caretaker',
+            avatar: session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+            role: session.user.user_metadata?.role || 'consumer',
+            isDemoUser: false,
+          };
+          setCurrentUser(userObj);
+          setIsAuthenticated(true);
+          setIsDemoMode(false);
+          setActivePersonaKey('custom');
+          localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(userObj));
+          localStorage.setItem(DEMO_MODE_KEY, 'false');
+          localStorage.setItem(ACTIVE_PERSONA_KEY, 'custom');
+          await loadUserData(userObj);
+        } else if (_event === 'SIGNED_OUT') {
+          // Handled in logout
+        }
+      });
+
+      return () => {
+        isMounted = false;
+        subscription.unsubscribe();
       };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [loadUserData]);
+
+  // Sync active user's partition to LocalStorage
+  useEffect(() => {
+    if (!isLoaded || !currentUser) return;
+    try {
+      const userProductsKey = `relife_products_${currentUser.id}`;
+      const userRemindersKey = `relife_reminders_${currentUser.id}`;
+      const userNotifsKey = `relife_notifs_${currentUser.id}`;
+
+      localStorage.setItem(userProductsKey, JSON.stringify(products));
+      localStorage.setItem(userRemindersKey, JSON.stringify(reminders));
+      localStorage.setItem(userNotifsKey, JSON.stringify(notifications));
       localStorage.setItem(DEMO_MODE_KEY, String(isDemoMode));
     } catch (e) {
-      console.error('Failed to sync state to localStorage', e);
+      console.warn('Failed to save to localStorage partition:', e);
     }
-  }, [products, reminders, notifications, serviceSubmissions, transferRequests, isLoaded, isDemoMode]);
+  }, [products, reminders, notifications, currentUser, isLoaded, isDemoMode]);
 
-  // Actions
+  // Auth Action: Sign In
+  const login = async (email: string, password = ''): Promise<{ success: boolean; error?: string }> => {
+    setAuthLoading(true);
+
+    // If Supabase is configured and not a @relife-demo email, authenticate with Supabase Auth
+    if (supabase && isSupabaseConfigured && !email.endsWith('@relife-demo.org')) {
+      const res = await supabaseSignIn(email, password);
+      if (res.error) {
+        setAuthLoading(false);
+        return { success: false, error: res.error.message };
+      }
+      if (res.data?.user) {
+        const user = res.data.user;
+        const userObj: ReLifeUser = {
+          id: user.id,
+          email: user.email || email,
+          name: user.user_metadata?.full_name || email.split('@')[0],
+          avatar: user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+          role: user.user_metadata?.role || 'consumer',
+          isDemoUser: false,
+        };
+        setCurrentUser(userObj);
+        setIsAuthenticated(true);
+        setIsDemoMode(false);
+        setActivePersonaKey('custom');
+        localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(userObj));
+        localStorage.setItem(DEMO_MODE_KEY, 'false');
+        localStorage.setItem(ACTIVE_PERSONA_KEY, 'custom');
+        await loadUserData(userObj);
+        setAuthLoading(false);
+        return { success: true };
+      }
+    }
+
+    // Demo Mode Sign In Fallback
+    const match = Object.entries(DEMO_PERSONAS).find(
+      ([, p]) => p.email.toLowerCase() === email.toLowerCase()
+    );
+
+    if (match) {
+      const [key, persona] = match;
+      loginAsDemo(key as 'elena' | 'liam' | 'alex');
+      setAuthLoading(false);
+      return { success: true };
+    }
+
+    // Custom Local User
+    const customUser: ReLifeUser = {
+      id: 'usr_' + Math.random().toString(36).substring(2, 10),
+      name: email.split('@')[0],
+      email,
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+      role: 'consumer',
+      isDemoUser: true,
+    };
+    setCurrentUser(customUser);
+    setIsAuthenticated(true);
+    setIsDemoMode(true);
+    setActivePersonaKey('custom');
+    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(customUser));
+    localStorage.setItem(DEMO_MODE_KEY, 'true');
+    localStorage.setItem(ACTIVE_PERSONA_KEY, 'custom');
+    await loadUserData(customUser);
+    setAuthLoading(false);
+    return { success: true };
+  };
+
+  // Auth Action: Sign Up
+  const signup = async (
+    email: string,
+    password = '',
+    fullName = '',
+    role: 'consumer' | 'technician' = 'consumer'
+  ): Promise<{ success: boolean; error?: string }> => {
+    setAuthLoading(true);
+
+    if (supabase && isSupabaseConfigured && !email.endsWith('@relife-demo.org')) {
+      const res = await supabaseSignUp(email, password, fullName, role);
+      if (res.error) {
+        setAuthLoading(false);
+        return { success: false, error: res.error.message };
+      }
+      if (res.data?.user) {
+        const user = res.data.user;
+        const userObj: ReLifeUser = {
+          id: user.id,
+          email: user.email || email,
+          name: fullName || email.split('@')[0],
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+          role,
+          isDemoUser: false,
+        };
+        setCurrentUser(userObj);
+        setIsAuthenticated(true);
+        setIsDemoMode(false);
+        setActivePersonaKey('custom');
+        localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(userObj));
+        localStorage.setItem(DEMO_MODE_KEY, 'false');
+        localStorage.setItem(ACTIVE_PERSONA_KEY, 'custom');
+        await loadUserData(userObj);
+        setAuthLoading(false);
+        return { success: true };
+      }
+    }
+
+    // Local / Demo Sign Up
+    const newUser: ReLifeUser = {
+      id: 'usr_' + Math.random().toString(36).substring(2, 10),
+      name: fullName || email.split('@')[0],
+      email,
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+      role,
+      isDemoUser: true,
+    };
+    setCurrentUser(newUser);
+    setIsAuthenticated(true);
+    setIsDemoMode(true);
+    setActivePersonaKey('custom');
+    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(newUser));
+    localStorage.setItem(DEMO_MODE_KEY, 'true');
+    localStorage.setItem(ACTIVE_PERSONA_KEY, 'custom');
+    await loadUserData(newUser);
+    setAuthLoading(false);
+    return { success: true };
+  };
+
+  // Auth Action: Sign Out
+  const logout = async () => {
+    setAuthLoading(true);
+    if (supabase) {
+      try {
+        await supabaseSignOut();
+      } catch (err) {
+        console.warn('Signout error:', err);
+      }
+    }
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    setActivePersonaKey(null);
+    localStorage.removeItem(ACTIVE_USER_KEY);
+    localStorage.removeItem(ACTIVE_PERSONA_KEY);
+    setProducts([]);
+    setReminders([]);
+    setNotifications([]);
+    setAuthLoading(false);
+  };
+
+  // Auth Action: Instant Judge Demo Persona Login
+  const loginAsDemo = (personaKey: 'elena' | 'liam' | 'alex') => {
+    const persona = DEMO_PERSONAS[personaKey];
+    const userObj: ReLifeUser = {
+      id: persona.id,
+      name: persona.name,
+      email: persona.email,
+      avatar: persona.avatar,
+      role: persona.role,
+      isDemoUser: true,
+    };
+    setCurrentUser(userObj);
+    setIsAuthenticated(true);
+    setIsDemoMode(true);
+    setActivePersonaKey(personaKey);
+    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(userObj));
+    localStorage.setItem(DEMO_MODE_KEY, 'true');
+    localStorage.setItem(ACTIVE_PERSONA_KEY, personaKey);
+    loadUserData(userObj);
+  };
+
+  // Product Actions
   const addProduct = (
     data: Omit<
       Product,
       | 'id'
       | 'publicId'
+      | 'userId'
       | 'healthScore'
       | 'healthBreakdown'
       | 'eWasteAvoidedKg'
@@ -199,10 +613,15 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     const healthBreakdown = calculateHealthScore(data.purchaseDate, data.category, data.purchasePrice, []);
     const impact = calculateEnvironmentalImpact(data.category, []);
 
+    const ownerName = currentUser ? currentUser.name : 'Hardware Caretaker';
+    const ownerEmail = currentUser ? currentUser.email : 'owner@relife-passport.org';
+    const ownerId = currentUser ? currentUser.id : 'usr-anonymous';
+
     const newProduct: Product = {
       ...data,
       id,
       publicId,
+      userId: ownerId,
       originalLifespanYears: 5,
       estimatedUsefulLifeRemainingYears: 5,
       healthScore: healthBreakdown.overallScore,
@@ -215,8 +634,8 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
         {
           id: generateId(),
           productId: id,
-          ownerName: currentUser.name,
-          ownerEmailMasked: currentUser.email.replace(/(.{2})(.*)(@.*)/, '$1***$3'),
+          ownerName,
+          ownerEmailMasked: ownerEmail.replace(/(.{2})(.*)(@.*)/, '$1***$3'),
           startDate: data.purchaseDate || nowIso.split('T')[0],
           transferType: 'original_purchase',
         },
@@ -241,6 +660,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setNotifications((prev) => [
       {
         id: generateId(),
+        userId: ownerId,
         title: 'New Passport Created',
         message: `Registered ${newProduct.name} with unique QR Identity (${newProduct.publicId}).`,
         timestamp: nowIso,
@@ -251,13 +671,14 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
-    // Write to Supabase if available
-    if (supabase) {
+    // Write to Supabase with user_id
+    if (supabase && isSupabaseConfigured) {
       supabase
         .from('products')
         .insert({
           id: newProduct.id,
           public_id: newProduct.publicId,
+          user_id: ownerId,
           name: newProduct.name,
           brand: newProduct.brand,
           model: newProduct.model,
@@ -296,7 +717,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       prev.map((p) => {
         if (p.id !== id) return p;
         const updated = { ...p, ...updates, updatedAt: new Date().toISOString() };
-        
+
         if (updates.repairs || updates.purchaseDate || updates.purchasePrice) {
           const breakdown = calculateHealthScore(
             updated.purchaseDate,
@@ -311,7 +732,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           updated.carbonAvoidedKg = impact.carbonAvoidedKg;
         }
 
-        if (supabase) {
+        if (supabase && isSupabaseConfigured) {
           supabase
             .from('products')
             .update({
@@ -339,7 +760,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     setReminders((prev) => prev.filter((r) => r.productId !== id));
 
-    if (supabase) {
+    if (supabase && isSupabaseConfigured) {
       supabase.from('products').delete().eq('id', id).then(() => {});
     }
   };
@@ -347,7 +768,11 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
   const getProductById = (id: string) => products.find((p) => p.id === id);
   const getProductByPublicId = (publicId: string) => products.find((p) => p.publicId === publicId);
 
-  const addRepair = (productId: string, repairData: Omit<RepairRecord, 'id' | 'createdAt' | 'productId'>): RepairRecord => {
+  // Repairs & Timeline
+  const addRepair = (
+    productId: string,
+    repairData: Omit<RepairRecord, 'id' | 'createdAt' | 'productId'>
+  ): RepairRecord => {
     const id = generateId();
     const nowIso = new Date().toISOString();
     const newRecord: RepairRecord = {
@@ -377,8 +802,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           updatedAt: nowIso,
         };
 
-        // Sync to Supabase
-        if (supabase) {
+        if (supabase && isSupabaseConfigured) {
           supabase
             .from('repairs')
             .insert({
@@ -417,10 +841,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       })
     );
 
-    // Add celebration notification
     setNotifications((prev) => [
       {
         id: generateId(),
+        userId: currentUser?.id,
         title: 'Repair Recorded to Passport',
         message: `${repairData.issueSummary} recorded with badge: ${repairData.verificationBadge}.`,
         timestamp: nowIso,
@@ -434,13 +858,18 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     return newRecord;
   };
 
-  const addDocument = (productId: string, docData: Omit<DocumentItem, 'id' | 'uploadDate' | 'productId'>): DocumentItem => {
+  // Document Vault Actions (User-Isolated)
+  const addDocument = (
+    productId: string,
+    docData: Omit<DocumentItem, 'id' | 'uploadDate' | 'productId' | 'userId'>
+  ): DocumentItem => {
     const id = generateId();
     const nowIso = new Date().toISOString().split('T')[0];
     const newDoc: DocumentItem = {
       ...docData,
       id,
       productId,
+      userId: currentUser?.id,
       uploadDate: nowIso,
     };
 
@@ -455,12 +884,13 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       })
     );
 
-    if (supabase) {
+    if (supabase && isSupabaseConfigured) {
       supabase
         .from('documents')
         .insert({
           id: newDoc.id,
           product_id: productId,
+          user_id: currentUser?.id,
           title: newDoc.title,
           file_name: newDoc.fileName,
           file_size: newDoc.fileSize,
@@ -486,7 +916,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       })
     );
 
-    if (supabase) {
+    if (supabase && isSupabaseConfigured) {
       supabase.from('documents').delete().eq('id', docId).then(() => {});
     }
   };
@@ -496,7 +926,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       prev.map((p) => {
         if (p.id !== productId) return p;
         const newSettings = { ...p.resaleDisclosure, ...settings };
-        if (supabase) {
+        if (supabase && isSupabaseConfigured) {
           supabase.from('products').update({ resale_disclosure: newSettings }).eq('id', productId).then(() => {});
         }
         return { ...p, resaleDisclosure: newSettings };
@@ -508,7 +938,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setProducts((prev) =>
       prev.map((p) => {
         if (p.id !== productId) return p;
-        if (supabase) {
+        if (supabase && isSupabaseConfigured) {
           supabase.from('products').update({ is_publicly_shared: isShared }).eq('id', productId).then(() => {});
         }
         return { ...p, isPubliclyShared: isShared };
@@ -516,7 +946,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  // Service Provider submissions
+  // Technician Workflow
   const submitTechnicianRepair = (submissionData: Omit<ServiceProviderSubmission, 'id' | 'submittedAt' | 'status'>) => {
     const id = generateId();
     const nowIso = new Date().toISOString();
@@ -532,6 +962,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     setNotifications((prev) => [
       {
         id: generateId(),
+        userId: currentUser?.id,
         title: 'New Service Record Awaiting Approval',
         message: `${submissionData.shopName} logged a repair for ${submissionData.productName}. Please review and seal into passport.`,
         timestamp: nowIso,
@@ -542,7 +973,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
-    if (supabase) {
+    if (supabase && isSupabaseConfigured) {
       supabase.from('service_submissions').insert(newSubmission).then(() => {});
     }
 
@@ -578,7 +1009,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       prev.map((s) => (s.id === submissionId ? { ...s, status: 'approved' } : s))
     );
 
-    if (supabase) {
+    if (supabase && isSupabaseConfigured) {
       supabase.from('service_submissions').update({ status: 'approved' }).eq('id', submissionId).then(() => {});
     }
   };
@@ -588,12 +1019,12 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       prev.map((s) => (s.id === submissionId ? { ...s, status: 'rejected' } : s))
     );
 
-    if (supabase) {
+    if (supabase && isSupabaseConfigured) {
       supabase.from('service_submissions').update({ status: 'rejected' }).eq('id', submissionId).then(() => {});
     }
   };
 
-  // Ownership transfer
+  // Ownership Transfer (Chain of Custody Handshake)
   const initiateTransfer = (
     productId: string,
     toEmail: string,
@@ -604,6 +1035,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     if (!product) throw new Error('Product not found');
 
     const token = 'trans_' + Math.random().toString(36).substring(2, 10);
+    const fromOwnerName = currentUser ? currentUser.name : 'Elena Rostova';
+    const fromOwnerEmail = currentUser ? currentUser.email : 'elena@relife-demo.org';
+    const fromOwnerId = currentUser ? currentUser.id : undefined;
+
     const request: OwnershipTransferRequest = {
       id: generateId(),
       token,
@@ -612,8 +1047,9 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       productImage: product.imageUrl,
       brand: product.brand,
       model: product.model,
-      fromOwnerName: currentUser.name,
-      fromOwnerEmail: currentUser.email,
+      fromOwnerId,
+      fromOwnerName,
+      fromOwnerEmail,
       toRecipientEmail: toEmail,
       transferType,
       agreedPrice,
@@ -624,9 +1060,13 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
 
     setTransferRequests((prev) => [request, ...prev]);
 
+    // Update product status to indicate pending custody transfer
+    updateProduct(productId, { status: 'in_repair' });
+
     setNotifications((prev) => [
       {
         id: generateId(),
+        userId: fromOwnerId,
         title: 'Ownership Transfer Initiated',
         message: `Transfer link generated for ${toEmail}. Private owner invoices will be redacted.`,
         timestamp: new Date().toISOString(),
@@ -637,8 +1077,27 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       ...prev,
     ]);
 
-    if (supabase) {
-      supabase.from('ownership_transfers').insert(request).then(() => {});
+    if (supabase && isSupabaseConfigured) {
+      supabase
+        .from('ownership_transfers')
+        .insert({
+          id: request.id,
+          token: request.token,
+          product_id: request.productId,
+          product_name: request.productName,
+          product_image: request.productImage,
+          brand: request.brand,
+          model: request.model,
+          from_owner_id: fromOwnerId,
+          from_owner_name: request.fromOwnerName,
+          from_owner_email: request.fromOwnerEmail,
+          to_recipient_email: request.toRecipientEmail,
+          transfer_type: request.transferType,
+          agreed_price: request.agreedPrice,
+          status: request.status,
+          expires_at: request.expiresAt,
+        })
+        .then(() => {});
     }
 
     return request;
@@ -651,6 +1110,10 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     if (!request) return false;
 
     const nowIso = new Date().toISOString();
+    const recipientUserId = currentUser ? currentUser.id : 'usr_recipient_' + Math.random().toString(36).substring(2, 8);
+
+    // Filter documents: strip financial invoices to protect previous owner's private billing/cards
+    let transferredProduct: Product | null = null;
 
     setProducts((prev) =>
       prev.map((p) => {
@@ -670,30 +1133,53 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
 
         const updatedHistory = [newMilestone, ...p.ownershipHistory];
 
-        if (supabase) {
-          supabase
-            .from('products')
-            .update({ ownership_history: updatedHistory })
-            .eq('id', p.id)
-            .then(() => {});
-        }
-
-        return {
+        const updated: Product = {
           ...p,
+          userId: recipientUserId,
           documents: filteredDocs,
           ownershipHistory: updatedHistory,
           status: 'active',
           updatedAt: nowIso,
         };
+
+        transferredProduct = updated;
+
+        if (supabase && isSupabaseConfigured) {
+          supabase
+            .from('products')
+            .update({
+              user_id: recipientUserId,
+              ownership_history: updatedHistory,
+              status: 'active',
+              updated_at: nowIso,
+            })
+            .eq('id', p.id)
+            .then(() => {});
+        }
+
+        return updated;
       })
     );
 
+    // Update transfer request status
     setTransferRequests((prev) =>
-      prev.map((t) => (t.token === token ? { ...t, status: 'accepted' } : t))
+      prev.map((t) => (t.token === token ? { ...t, status: 'accepted', toRecipientId: recipientUserId } : t))
     );
 
-    if (supabase) {
-      supabase.from('ownership_transfers').update({ status: 'accepted' }).eq('token', token).then(() => {});
+    if (supabase && isSupabaseConfigured) {
+      supabase
+        .from('ownership_transfers')
+        .update({ status: 'accepted', to_recipient_id: recipientUserId })
+        .eq('token', token)
+        .then(() => {});
+    }
+
+    // If recipient is currently logged in, persist to recipient's local partition as well
+    if (transferredProduct && currentUser && currentUser.id === recipientUserId) {
+      const recipientProductsKey = `relife_products_${recipientUserId}`;
+      const existing = localStorage.getItem(recipientProductsKey);
+      const list: Product[] = existing ? JSON.parse(existing) : [];
+      localStorage.setItem(recipientProductsKey, JSON.stringify([transferredProduct, ...list.filter((x) => x.id !== (transferredProduct as Product).id)]));
     }
 
     return true;
@@ -704,7 +1190,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       prev.map((r) => {
         if (r.id !== id) return r;
         const nextCompleted = !r.completed;
-        if (supabase) {
+        if (supabase && isSupabaseConfigured) {
           supabase.from('maintenance_reminders').update({ completed: nextCompleted }).eq('id', id).then(() => {});
         }
         return { ...r, completed: nextCompleted };
@@ -712,38 +1198,60 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const addReminder = (data: Omit<MaintenanceReminder, 'id' | 'createdAt'>) => {
+  const addReminder = (data: Omit<MaintenanceReminder, 'id' | 'createdAt' | 'userId'>) => {
     const id = generateId();
     const newRem: MaintenanceReminder = {
       ...data,
       id,
+      userId: currentUser?.id,
       createdAt: new Date().toISOString(),
     };
     setReminders((prev) => [newRem, ...prev]);
 
-    if (supabase) {
-      supabase.from('maintenance_reminders').insert(newRem).then(() => {});
+    if (supabase && isSupabaseConfigured) {
+      supabase
+        .from('maintenance_reminders')
+        .insert({
+          id: newRem.id,
+          user_id: currentUser?.id,
+          product_id: newRem.productId,
+          product_name: newRem.productName,
+          product_image: newRem.productImage,
+          title: newRem.title,
+          description: newRem.description,
+          due_date: newRem.dueDate,
+          priority: newRem.priority,
+          type: newRem.type,
+          completed: newRem.completed,
+        })
+        .then(() => {});
     }
   };
 
   const markNotificationRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    if (supabase && isSupabaseConfigured) {
+      supabase.from('notifications').update({ read: true }).eq('id', id).then(() => {});
+    }
   };
 
   const markAllNotificationsRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    if (supabase && isSupabaseConfigured && currentUser) {
+      supabase.from('notifications').update({ read: true }).eq('user_id', currentUser.id).then(() => {});
+    }
   };
 
   const resetToDemoData = () => {
-    localStorage.removeItem(STORAGE_KEY);
+    loginAsDemo('elena');
+    localStorage.removeItem(`relife_products_${DEMO_PERSONAS.elena.id}`);
+    localStorage.removeItem(`relife_reminders_${DEMO_PERSONAS.elena.id}`);
+    localStorage.removeItem(`relife_notifs_${DEMO_PERSONAS.elena.id}`);
     setProducts(INITIAL_PRODUCTS);
     setReminders(INITIAL_REMINDERS);
     setNotifications(INITIAL_NOTIFICATIONS);
     setServiceSubmissions([]);
     setTransferRequests([]);
-    setIsDemoMode(true);
   };
 
   const toggleDemoMode = () => {
@@ -763,12 +1271,19 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
         reminders,
         notifications,
         currentUser,
+        isAuthenticated,
+        authLoading,
+        activePersonaKey,
         serviceSubmissions,
         transferRequests,
         isLoaded,
         isSupabaseSynced,
         isDemoMode,
         unreadCount,
+        login,
+        signup,
+        logout,
+        loginAsDemo,
         setDemoMode,
         toggleDemoMode,
         addProduct,

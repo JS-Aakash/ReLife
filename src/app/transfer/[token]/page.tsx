@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useReLife } from '@/lib/store';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -12,20 +12,34 @@ import {
   AlertCircle,
   Package,
   CheckCircle2,
+  User,
+  Shield,
+  Zap,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function ClaimTransferPage() {
   const params = useParams();
   const router = useRouter();
-  const { getTransferByToken, acceptTransfer } = useReLife();
+  const { getTransferByToken, acceptTransfer, currentUser } = useReLife();
 
   const token = params.token as string;
   const transfer = getTransferByToken(token);
 
   const [newOwnerName, setNewOwnerName] = useState('');
-  const [newOwnerEmail, setNewOwnerEmail] = useState(transfer ? transfer.toRecipientEmail : '');
+  const [newOwnerEmail, setNewOwnerEmail] = useState('');
+  const [confirmCheckbox, setConfirmCheckbox] = useState(false);
   const [acceptedSuccess, setAcceptedSuccess] = useState(false);
+
+  // Pre-fill from current user if logged in
+  useEffect(() => {
+    if (currentUser) {
+      setNewOwnerName(currentUser.name);
+      setNewOwnerEmail(currentUser.email);
+    } else if (transfer) {
+      setNewOwnerEmail(transfer.toRecipientEmail);
+    }
+  }, [currentUser, transfer]);
 
   if (!transfer) {
     return (
@@ -47,21 +61,23 @@ export default function ClaimTransferPage() {
     );
   }
 
+  const isAlreadyAccepted = transfer.status === 'accepted';
+
   const handleAccept = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newOwnerName || !newOwnerEmail) return;
+    if (!newOwnerName || !newOwnerEmail || !confirmCheckbox) return;
 
     const success = acceptTransfer(token, newOwnerName, newOwnerEmail);
     if (success) {
       confetti({
-        particleCount: 100,
-        spread: 70,
+        particleCount: 120,
+        spread: 80,
         origin: { y: 0.6 },
       });
       setAcceptedSuccess(true);
       setTimeout(() => {
         router.push(`/products/${transfer.productId}`);
-      }, 2000);
+      }, 2200);
     }
   };
 
@@ -69,11 +85,11 @@ export default function ClaimTransferPage() {
     <div className="min-h-screen bg-[#FBFBF9] py-12 px-4 sm:px-6">
       <div className="max-w-xl mx-auto space-y-6">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto shadow-xs">
             <ArrowRightLeft className="w-6 h-6" />
           </div>
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            Chain of Custody Transfer
+            Chain of Custody Handshake
           </span>
           <h1 className="text-2xl font-black text-stone-900 tracking-tight">
             Claim Digital Product Passport
@@ -84,22 +100,29 @@ export default function ClaimTransferPage() {
         </div>
 
         {/* Product Card */}
-        <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm flex items-center gap-4">
+        <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={transfer.productImage}
             alt={transfer.productName}
             className="w-20 h-20 rounded-2xl object-cover border border-stone-200 shadow-2xs shrink-0"
           />
-          <div>
+          <div className="min-w-0 flex-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
               {transfer.brand}
             </span>
-            <h3 className="text-base font-bold text-stone-900">{transfer.productName}</h3>
-            <p className="text-xs text-stone-500">{transfer.model}</p>
-            <span className="text-[10px] font-mono text-stone-400 mt-1 block">
-              Transfer Mode: <strong className="capitalize">{transfer.transferType.replace('_', ' ')}</strong>
-            </span>
+            <h3 className="text-base font-bold text-stone-900 truncate">{transfer.productName}</h3>
+            <p className="text-xs text-stone-500 truncate">{transfer.model}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-mono text-stone-500 bg-stone-100 px-2 py-0.5 rounded">
+                Mode: <strong className="capitalize">{transfer.transferType.replace('_', ' ')}</strong>
+              </span>
+              {isAlreadyAccepted && (
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-900">
+                  Transferred & Sealed
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -125,14 +148,15 @@ export default function ClaimTransferPage() {
             </span>
             <ul className="list-disc list-inside space-y-0.5 text-[11px] text-stone-600">
               <li>Previous owner payment bills</li>
+              <li>Credit card & pricing history</li>
               <li>Personal residential address</li>
               <li>Private owner notes</li>
             </ul>
           </div>
         </div>
 
-        {/* Claim Form */}
-        <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-sm">
+        {/* Claim Form or Already Claimed Notice */}
+        <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs">
           {acceptedSuccess ? (
             <div className="text-center py-6 space-y-3">
               <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
@@ -140,12 +164,35 @@ export default function ClaimTransferPage() {
               </div>
               <h3 className="text-lg font-bold text-stone-900">Passport Successfully Transferred!</h3>
               <p className="text-xs text-stone-500">
-                You are now the recognized caretaker. Redirecting to your passport...
+                You are now the recognized caretaker. Redirecting to your personal passport...
               </p>
+            </div>
+          ) : isAlreadyAccepted ? (
+            <div className="text-center py-6 space-y-3">
+              <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-stone-900">This Transfer Has Been Completed</h3>
+              <p className="text-xs text-stone-500 max-w-sm mx-auto">
+                This asset was accepted and permanently sealed into the recipient&apos;s digital passport fleet.
+              </p>
+              <Link
+                href={`/products/${transfer.productId}`}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-800 text-white hover:bg-emerald-900 transition-colors"
+              >
+                View Transferred Passport →
+              </Link>
             </div>
           ) : (
             <form onSubmit={handleAccept} className="space-y-4 text-xs">
-              <h2 className="text-sm font-bold text-stone-900">Enter Your Custodian Details</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold text-stone-900">Recipient Acceptance Form</h2>
+                {currentUser && (
+                  <span className="text-[11px] text-emerald-800 font-medium">
+                    Logged in as: <strong>{currentUser.name}</strong>
+                  </span>
+                )}
+              </div>
 
               <div>
                 <label className="block font-semibold text-stone-700 mb-1">Your Full Name</label>
@@ -170,10 +217,25 @@ export default function ClaimTransferPage() {
                 />
               </div>
 
+              {/* Explicit Legal / Registry Acceptance Checkbox */}
+              <label className="flex items-start gap-2.5 p-3 rounded-xl border border-emerald-200 bg-emerald-50/50 cursor-pointer">
+                <input
+                  type="checkbox"
+                  required
+                  checked={confirmCheckbox}
+                  onChange={(e) => setConfirmCheckbox(e.target.checked)}
+                  className="w-4 h-4 mt-0.5 rounded text-emerald-700 focus:ring-emerald-600"
+                />
+                <span className="text-[11px] text-emerald-950 leading-relaxed">
+                  <strong>Explicit Recipient Confirmation:</strong> I confirm receipt of this hardware item and accept custodianship. I acknowledge that previous owner purchase receipts and payment cards will be permanently redacted for privacy.
+                </span>
+              </label>
+
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                  disabled={!confirmCheckbox || !newOwnerName || !newOwnerEmail}
+                  className="w-full py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Accept & Claim Digital Product Passport</span>

@@ -17,20 +17,22 @@ export const supabase = isSupabaseConfigured
 
 /**
  * Upload a document or image to Supabase Storage bucket 'documents'
- * Falls back gracefully to data URL if storage bucket is not yet created.
+ * Path is prefixed with user ID for strict RLS access isolation.
  */
 export async function uploadToSupabaseStorage(
   file: File | Blob,
-  path: string
+  path: string,
+  userId?: string
 ): Promise<{ url: string; error?: string }> {
   if (!supabase) {
     return { url: '', error: 'Supabase client not initialized' };
   }
 
   try {
+    const finalPath = userId ? `${userId}/${path}` : path;
     const { data, error } = await supabase.storage
       .from('documents')
-      .upload(path, file, {
+      .upload(finalPath, file, {
         upsert: true,
       });
 
@@ -47,4 +49,40 @@ export async function uploadToSupabaseStorage(
   } catch (err: any) {
     return { url: '', error: err?.message || 'Storage upload failed' };
   }
+}
+
+/**
+ * Sign up a new user with Supabase Auth
+ */
+export async function supabaseSignUp(email: string, password: string, fullName: string, role = 'consumer') {
+  if (!supabase) return { data: { user: null, session: null }, error: { message: 'Supabase is not configured' } };
+  return await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        role,
+      },
+    },
+  });
+}
+
+/**
+ * Sign in existing user with email and password
+ */
+export async function supabaseSignIn(email: string, password: string) {
+  if (!supabase) return { data: { user: null, session: null }, error: { message: 'Supabase is not configured' } };
+  return await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+}
+
+/**
+ * Sign out current session
+ */
+export async function supabaseSignOut() {
+  if (!supabase) return;
+  return await supabase.auth.signOut();
 }

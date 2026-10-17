@@ -1,7 +1,7 @@
 import { Product, MaintenanceReminder, AppNotification } from './types';
 import { calculateHealthScore, calculateEnvironmentalImpact } from './calculations';
 
-export const INITIAL_PRODUCTS: Product[] = [
+const RAW_INITIAL_PRODUCTS: Product[] = [
   {
     id: 'prod-macbook-pro-16',
     publicId: 'rl-macbook-pro-16-c02g',
@@ -495,7 +495,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
 ];
 
-export const INITIAL_REMINDERS: MaintenanceReminder[] = [
+const RAW_INITIAL_REMINDERS: MaintenanceReminder[] = [
   {
     id: 'rem-sony-warranty',
     productId: 'prod-sony-xm5',
@@ -550,7 +550,7 @@ export const INITIAL_REMINDERS: MaintenanceReminder[] = [
   },
 ];
 
-export const INITIAL_NOTIFICATIONS: AppNotification[] = [
+const RAW_INITIAL_NOTIFICATIONS: AppNotification[] = [
   {
     id: 'notif-1',
     title: 'Technician Record Sealed',
@@ -572,9 +572,25 @@ export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   {
     id: 'notif-3',
     title: 'Welcome to ReLife Platform',
-    message: 'All 5 sample products are pre-loaded with full digital passports, verified repair milestones, and explainable health scores.',
+    message: 'Sample heirloom products are pre-loaded with full digital passports, verified repair milestones, and explainable health scores.',
     timestamp: '2024-01-01T00:00:00Z',
     read: true,
     type: 'info',
   },
 ];
+
+export const INITIAL_PRODUCTS: Product[] = RAW_INITIAL_PRODUCTS.map((p) => ({
+  ...p,
+  userId: 'usr-elena-rostova',
+  documents: p.documents.map((d) => ({ ...d, userId: 'usr-elena-rostova' })),
+}));
+
+export const INITIAL_REMINDERS: MaintenanceReminder[] = RAW_INITIAL_REMINDERS.map((r) => ({
+  ...r,
+  userId: 'usr-elena-rostova',
+}));
+
+export const INITIAL_NOTIFICATIONS: AppNotification[] = RAW_INITIAL_NOTIFICATIONS.map((n) => ({
+  ...n,
+  userId: 'usr-elena-rostova',
+}));
