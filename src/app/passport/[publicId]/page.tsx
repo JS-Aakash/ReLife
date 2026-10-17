@@ -124,7 +124,7 @@ export default function PublicPassportPage() {
             </div>
 
             <div className="md:col-span-7 space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-100">
                   <span className="text-[10px] font-bold uppercase text-stone-400 block">Brand</span>
                   <span className="font-semibold text-stone-800">{product.brand}</span>

@@ -336,11 +336,11 @@ export default function ProfilePage() {
                 Manage your product passports, export a complete encrypted JSON backup of your fleet maintenance records, or restore default manufacturer specifications.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleReset}
-                  className={`px-4 py-2.5 rounded-xl font-semibold border transition-all flex items-center gap-2 whitespace-nowrap ${
+                  className={`w-full sm:w-auto px-4 py-2.5 rounded-xl font-semibold border transition-all flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer ${
                     resetConfirm
                       ? 'border-amber-400 bg-amber-50 text-amber-900 animate-pulse'
                       : 'border-stone-300 text-stone-700 hover:bg-stone-50'
@@ -353,7 +353,7 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={handleExportData}
-                  className="px-4 py-2.5 rounded-xl font-semibold border border-stone-300 text-stone-700 hover:bg-stone-50 flex items-center gap-2 whitespace-nowrap"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-semibold border border-stone-300 text-stone-700 hover:bg-stone-50 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-stone-500 shrink-0" />
                   <span>Export Fleet JSON Backup</span>

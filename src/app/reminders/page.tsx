@@ -100,7 +100,7 @@ export default function RemindersPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 text-xs">
+      <div className="flex items-center gap-2 text-xs overflow-x-auto scrollbar-none pb-1">
         {[
           { key: 'pending', label: `Pending Action (${pendingCount})` },
           { key: 'completed', label: 'Completed' },

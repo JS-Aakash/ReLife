@@ -100,20 +100,20 @@ export default function ClaimTransferPage() {
         </div>
 
         {/* Product Card */}
-        <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs flex items-center gap-4">
+        <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={transfer.productImage}
             alt={transfer.productName}
-            className="w-20 h-20 rounded-2xl object-cover border border-stone-200 shadow-2xs shrink-0"
+            className="w-20 h-20 rounded-2xl object-cover border border-stone-200 shadow-2xs shrink-0 self-center sm:self-auto"
           />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 text-center sm:text-left">
             <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
               {transfer.brand}
             </span>
             <h3 className="text-base font-bold text-stone-900 truncate">{transfer.productName}</h3>
             <p className="text-xs text-stone-500 truncate">{transfer.model}</p>
-            <div className="mt-1 flex flex-wrap items-center gap-2">
+            <div className="mt-1 flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <span className="text-[10px] font-mono text-stone-500 bg-stone-100 px-2 py-0.5 rounded">
                 Mode: <strong className="capitalize">{transfer.transferType.replace('_', ' ')}</strong>
               </span>
@@ -127,7 +127,7 @@ export default function ClaimTransferPage() {
         </div>
 
         {/* Privacy Safeguards Breakdown */}
-        <div className="grid grid-cols-2 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
             <span className="font-bold flex items-center gap-1.5 text-emerald-900">
               <ShieldCheck className="w-4 h-4 text-emerald-700" />

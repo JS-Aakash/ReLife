@@ -103,7 +103,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Hero Metric Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         <div className="bg-gradient-to-br from-emerald-950 to-teal-950 text-white rounded-3xl p-5 shadow-sm space-y-2">
           <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 block">
             E-Waste Diverted
@@ -142,8 +142,8 @@ export default function AnalyticsPage() {
       {/* Category Breakdown & Spending Comparison */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left: Category Impact Visualization (7 cols) */}
-        <div className="lg:col-span-7 bg-white rounded-3xl border border-stone-200 p-6 shadow-xs space-y-5">
-          <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+        <div className="lg:col-span-7 bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wider text-stone-900">
                 E-Waste Diverted by Asset Category
@@ -152,7 +152,7 @@ export default function AnalyticsPage() {
                 Physical weight distribution across active device categories.
               </p>
             </div>
-            <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full self-start sm:self-auto">
               {activeCategories.length} Active Categories
             </span>
           </div>
@@ -167,11 +167,11 @@ export default function AnalyticsPage() {
                   href="/products"
                   className="block p-3 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-emerald-200 transition-all group cursor-pointer space-y-1.5 text-xs"
                 >
-                  <div className="flex items-center justify-between font-semibold">
-                    <span className="capitalize text-stone-800 group-hover:text-emerald-800 transition-colors">
+                  <div className="flex items-center justify-between font-semibold gap-2">
+                    <span className="capitalize text-stone-800 group-hover:text-emerald-800 transition-colors truncate">
                       {category} ({data.count} items)
                     </span>
-                    <span className="font-mono text-emerald-800">
+                    <span className="font-mono text-emerald-800 shrink-0">
                       {data.eWasteKg.toFixed(1)} kg ({percentage.toFixed(0)}%)
                     </span>
                   </div>
@@ -184,9 +184,9 @@ export default function AnalyticsPage() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-stone-400">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-stone-400 gap-1">
                     <span>{data.repairs} documented service events</span>
-                    <span>{data.carbonKg.toFixed(0)} kg CO₂e saved • View fleet →</span>
+                    <span className="text-emerald-700 font-medium">{data.carbonKg.toFixed(0)} kg CO₂e saved • View fleet →</span>
                   </div>
                 </Link>
               );

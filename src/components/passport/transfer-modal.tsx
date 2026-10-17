@@ -55,11 +55,11 @@ export function TransferModal({ product, isOpen, onClose }: TransferModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-stone-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-xs animate-in fade-in">
+      <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-stone-200 max-h-[92vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-3 border-b border-stone-100">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
               <ArrowRightLeft className="w-4 h-4" />
             </div>
             <div>
@@ -71,7 +71,7 @@ export function TransferModal({ product, isOpen, onClose }: TransferModalProps) 
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100"
+            className="p-1 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 shrink-0 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -80,7 +80,7 @@ export function TransferModal({ product, isOpen, onClose }: TransferModalProps) 
         {!generatedLink ? (
           <form onSubmit={handleSubmit} className="space-y-4 pt-4">
             {/* What is transferred vs redacted summary */}
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-emerald-950">
                 <span className="font-semibold block mb-1 flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
@@ -201,7 +201,7 @@ export function TransferModal({ product, isOpen, onClose }: TransferModalProps) 
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
               <Link
                 href={generatedLink.replace(/^https?:\/\/[^/]+/, '')}
                 target="_blank"
@@ -212,7 +212,7 @@ export function TransferModal({ product, isOpen, onClose }: TransferModalProps) 
               </Link>
               <button
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-xs font-medium bg-stone-900 text-white whitespace-nowrap shrink-0"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-medium bg-stone-900 text-white whitespace-nowrap shrink-0 cursor-pointer"
               >
                 Done
               </button>

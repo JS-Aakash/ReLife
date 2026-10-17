@@ -67,7 +67,7 @@ export default function SmartResalePassportPage() {
     <div className="min-h-screen bg-[#FBFBF9] py-8 print:py-0 print:bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
         {/* Navigation & Print Controls */}
-        <div className="no-print flex items-center justify-between pb-4 border-b border-stone-200">
+        <div className="no-print flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-200">
           <Link
             href={`/products/${product.id}`}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-500 hover:text-stone-900 transition-colors"

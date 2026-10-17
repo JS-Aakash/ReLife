@@ -130,7 +130,7 @@ export function DPPCertificateModal({ product, isOpen, onClose }: DPPCertificate
         {/* Printable Official Certificate Body */}
         <div
           id="dpp-certificate-printable"
-          className="p-6 sm:p-10 bg-gradient-to-b from-[#faf9f5] via-white to-[#f7f6f0] text-stone-900 relative border-8 border-double border-emerald-950/20 m-2 sm:m-4 rounded-2xl"
+          className="p-4 sm:p-8 md:p-10 bg-gradient-to-b from-[#faf9f5] via-white to-[#f7f6f0] text-stone-900 relative border-4 sm:border-8 border-double border-emerald-950/20 m-1 sm:m-4 rounded-2xl"
         >
           {/* Guilloche Corner Accents */}
           <div className="absolute top-2 left-2 text-[10px] font-mono text-emerald-900/40 uppercase tracking-widest font-bold">
@@ -270,7 +270,7 @@ export function DPPCertificateModal({ product, isOpen, onClose }: DPPCertificate
             </div>
 
             {/* Live QR Verification Badge */}
-            <div className="flex items-center gap-3 shrink-0 bg-white p-3 rounded-2xl border border-stone-200 shadow-2xs">
+            <div className="flex items-center gap-3 shrink-0 bg-white p-3 rounded-2xl border border-stone-200 shadow-2xs w-full sm:w-auto justify-center sm:justify-start">
               {qrCodeUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={qrCodeUrl} alt="Passport QR" className="w-20 h-20 rounded-lg shrink-0" />

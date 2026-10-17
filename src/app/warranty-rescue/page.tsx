@@ -225,10 +225,10 @@ ReLife Certified Passport Holder`;
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
             <button
               onClick={handlePrintPackage}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-white transition-colors shadow-2xs whitespace-nowrap"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-white transition-colors shadow-2xs whitespace-nowrap cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5 text-stone-300" />
               <span>Export Claim PDF Package</span>
@@ -512,7 +512,7 @@ ReLife Certified Passport Holder`;
             </div>
 
             {/* Factual Data Breakdown (Confirmed vs Assumption) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200">
                 <span className="text-[10px] font-bold uppercase text-stone-400 block">Purchase Date</span>
                 <span className="font-bold text-stone-900">{formatDate(selectedProduct.purchaseDate)}</span>
@@ -544,16 +544,16 @@ ReLife Certified Passport Holder`;
 
             {/* Editable Email / Cover Letter Draft */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between print:hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 print:hidden">
                 <span className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-emerald-700" />
                   <span>Editable Claim Correspondence Draft</span>
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 self-start sm:self-auto">
                   <button
                     type="button"
                     onClick={handleCopyEmail}
-                    className="inline-flex items-center gap-1 text-[11px] text-emerald-700 hover:text-emerald-800 font-semibold"
+                    className="inline-flex items-center gap-1 text-[11px] text-emerald-700 hover:text-emerald-800 font-semibold cursor-pointer"
                   >
                     {copiedEmail ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedEmail ? 'Copied' : 'Copy Text'}</span>
@@ -561,7 +561,7 @@ ReLife Certified Passport Holder`;
                   <button
                     type="button"
                     onClick={handleOpenMailClient}
-                    className="inline-flex items-center gap-1 text-[11px] text-stone-600 hover:text-stone-900 font-semibold ml-2"
+                    className="inline-flex items-center gap-1 text-[11px] text-stone-600 hover:text-stone-900 font-semibold ml-2 cursor-pointer"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>Open in Email App</span>

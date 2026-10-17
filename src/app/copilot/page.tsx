@@ -332,7 +332,7 @@ function CopilotContent() {
                   <Leaf className="w-4 h-4 text-emerald-700" />
                   <h4 className="font-bold text-emerald-950">Environmental Dividend of Repair</h4>
                 </div>
-                <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-center">
                   <div className="bg-white p-3 rounded-2xl border border-emerald-200/60">
                     <span className="text-base font-black text-emerald-900 block">
                       {diagnosis.environmentalBenefit.eWasteAvoidedKg} kg

@@ -299,8 +299,8 @@ export function InvoiceScannerModal({ isOpen, onClose, onExtracted }: InvoiceSca
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl border border-stone-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-xs animate-in fade-in">
+      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-8 shadow-2xl border border-stone-200">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-stone-100">
           <div className="flex items-center gap-3">
@@ -673,21 +673,21 @@ export function InvoiceScannerModal({ isOpen, onClose, onExtracted }: InvoiceSca
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-2 pt-4 border-t border-stone-100">
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2.5 pt-4 border-t border-stone-100">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50 whitespace-nowrap shrink-0"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-medium border border-stone-200 text-stone-600 hover:bg-stone-50 whitespace-nowrap shrink-0 cursor-pointer text-center"
               >
                 Cancel
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 {onExtracted && (
                   <button
                     type="button"
                     onClick={handleApplyToForm}
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 shadow-2xs flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+                    className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 shadow-2xs flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                     <span>Auto-Fill into Passport Form</span>
@@ -696,7 +696,7 @@ export function InvoiceScannerModal({ isOpen, onClose, onExtracted }: InvoiceSca
 
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   <Check className="w-4 h-4 shrink-0" />
                   <span>Confirm & Create Passport</span>

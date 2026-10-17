@@ -600,7 +600,7 @@ export function HardwareScannerModal({ isOpen, onClose }: HardwareScannerModalPr
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
                   Select an Asset to Simulate NFC Tap:
                 </span>
-                <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-md mx-auto">
                   <button
                     type="button"
                     onClick={() => handleSimulateNFCTap('rl-macbook-pro-16-c02g')}

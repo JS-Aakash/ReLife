@@ -266,37 +266,42 @@ export default function TechnicianPortalPage() {
                 </div>
 
                 {parts.map((p, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
+                  <div
+                    key={idx}
+                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2.5 sm:p-0 rounded-xl bg-stone-50 sm:bg-transparent border sm:border-0 border-stone-200"
+                  >
                     <input
                       type="text"
                       placeholder="Part Name"
                       value={p.name}
                       onChange={(e) => handlePartChange(idx, 'name', e.target.value)}
-                      className="flex-1 text-xs px-3 py-1.5 rounded-lg border border-stone-300"
+                      className="flex-1 text-xs px-3 py-1.5 rounded-lg border border-stone-300 bg-white"
                     />
-                    <input
-                      type="text"
-                      placeholder="Part #"
-                      value={p.partNumber || ''}
-                      onChange={(e) => handlePartChange(idx, 'partNumber', e.target.value)}
-                      className="w-24 text-xs font-mono px-3 py-1.5 rounded-lg border border-stone-300"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Cost ($)"
-                      value={p.cost || ''}
-                      onChange={(e) => handlePartChange(idx, 'cost', Number(e.target.value))}
-                      className="w-20 text-xs px-3 py-1.5 rounded-lg border border-stone-300"
-                    />
-                    {parts.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemovePart(idx)}
-                        className="p-1.5 text-stone-400 hover:text-red-600 rounded-md"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        placeholder="Part #"
+                        value={p.partNumber || ''}
+                        onChange={(e) => handlePartChange(idx, 'partNumber', e.target.value)}
+                        className="flex-1 sm:w-24 sm:flex-none text-xs font-mono px-3 py-1.5 rounded-lg border border-stone-300 bg-white"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Cost ($)"
+                        value={p.cost || ''}
+                        onChange={(e) => handlePartChange(idx, 'cost', Number(e.target.value))}
+                        className="w-20 text-xs px-3 py-1.5 rounded-lg border border-stone-300 bg-white"
+                      />
+                      {parts.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemovePart(idx)}
+                          className="p-1.5 text-stone-400 hover:text-red-600 rounded-md shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
