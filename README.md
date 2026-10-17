@@ -1,127 +1,119 @@
-# ReLife — The Living Digital Passport for Every Product
+# ReLife — Living Digital Product Passport & Lifecycle Preservation Platform
+
+[![Next.js](https://img.shields.io/badge/Next.js-16_App_Router-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL_RLS-emerald?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![Gemini AI](https://img.shields.io/badge/Google_Gemini-Multimodal_Vision-4285F4?style=for-the-badge&logo=google)](https://ai.google.dev/)
+[![Compliance](https://img.shields.io/badge/EU_ESPR-DPP_Compliant-gold?style=for-the-badge)](https://commission.europa.eu/)
 
 > **Turn disposable hardware into repairable heirlooms.**  
-> Give physical products a permanent, tamper-evident digital identity that preserves lifetime ownership, warranty status, and verified repair milestones.
+> ReLife empowers manufacturers, certified repair technicians, and hardware owners with permanent, tamper-evident Digital Product Passports (DPP). By capturing verified service history, OEM component refreshes, and lifetime ownership transfers, ReLife eliminates asymmetric information in secondary markets, unlocks warranty claims, and preserves real economic value across the physical circular economy.
 
 ---
 
-## 🌟 Key Innovations for Hackathon Judges
+## ⚡ Standout Platform Features
 
-1. **Living QR Identity & Public Safe Profiles:**  
-   Every product generates a unique, unguessable QR code and passport URL (`/passport/[publicId]`). Scanning a physical sticker opens an authentic, tamper-evident profile with private invoices and payment data automatically redacted.
-2. **Explainable Product Health Score:**  
-   An explainable maintainability index (0–100) with four transparent contributing factors:
-   - *Service Age & Lifespan Consumption* (0–25)
-   - *Repair Provenance & Documentation* (0–25)
-   - *Fault Recurrence & Component Stability* (0–25)
-   - *Cost-to-Value Sustainability Ratio* (0–25)
-3. **Repair vs. Replace AI Copilot (`/copilot`):**  
-   Diagnostic AI engine that provides safety warnings (e.g. hazardous swollen lithium cells), estimated component cost ranges, and an objective repair-versus-replacement economic comparison.
-4. **Trust & Provenance Badge System:**  
-   Every repair milestone carries an auditable provenance tier:
-   - 🛡️ **Technician Verified:** Backed by certified workshops and technician credentials.
-   - 📄 **Document Backed:** Verified by uploaded receipts and invoices.
-   - 👤 **Owner Reported:** Self-reported maintenance entries.
-5. **Smart Resale Passport (`/resale/[publicId]`):**  
-   "Carfax for consumer electronics & bicycles." Generates a shareable second-hand report with an Evidence Coverage Rating and print/PDF export capabilities.
-6. **AI Bill & Invoice Scanner:**  
-   Upload or drop store receipts to automatically extract product name, brand, model, purchase price, and warranty duration with editable verification before saving.
-7. **Transparent E-Waste Avoidance Tracker (`/analytics`):**  
-   Grounded Life Cycle Analysis (LCA) benchmarks calculating actual kilograms of hazardous e-waste diverted and embodied manufacturing CO₂ avoided.
-8. **Chain of Custody Handshake (`/transfer/[token]`):**  
-   Initiate secure ownership transfers to new buyers with recipient acceptance and private billing history redacted by default.
+### 1. Living Digital Product Passport (DPP)
+- **Physical-to-Digital Twin:** Every registered asset receives an unguessable cryptographic token linked to a scannable QR code and simulated NFC hardware tag.
+- **Dual-Surface Privacy Architecture:** 
+  - **Private Custodian Vault (`/products/[id]`):** Accessible only by the authenticated owner. Contains raw purchase bills, tax receipts, technician invoices, and warranty documents.
+  - **Public Safe Profile (`/passport/[publicId]`):** Safe for any third-party or second-hand buyer to inspect. Invoices, personal names, phone numbers, and payment details are strictly redacted while preserving verifiable repair pedigree.
+- **EU ESPR Certificate Generator:** One-click export of official Digital Product Passport certificates compliant with EU Ecodesign for Sustainable Products Regulations.
+
+### 2. Product Time Machine (`/products/[id]/time-machine`)
+- **Full-Lifespan Interactive Timeline:** A cinematic, chronological scrubber that maps an asset's entire biography from initial retail purchase to present-day telemetry.
+- **Animated Playback Engine:** Play through the journey of the hardware to watch health score drops during component failures and instant recovery spikes after certified service interventions.
+- **Deep Node Inspector:** Inspect specific replacement parts (with OEM part numbers), certified workshop credentials, diagnostic notes, associated receipts, and SHA-256 provenance hashes.
+- **Provenance Filters:** Instant filtering across certified repairs, warranty milestones, and ownership handshakes.
+
+### 3. Warranty Rescue Engine (`/warranty-rescue`)
+- **Automated Evidence Audit:** Ingests receipts, serial numbers, fault symptoms, and uploaded photo proofs to calculate an empirical **Claim Strength Score (0–100%)**.
+- **Missing Document Identification:** Identifies statutory documentation gaps (e.g., missing proof of purchase, unrecorded serial plates, insufficient technical symptoms) before submitting to manufacturers.
+- **Official Claim Dossier Generator:** Crafts formal, legally compliant warranty claims routed directly to manufacturer support desks (AppleCare, Specialized Rider Care, Fluke Service, Dyson, Dell ProSupport, Sony, Weller).
+- **1-Click PDF & Email Dispatch:** Exports an official, print-ready claim dossier complete with QR verification stamp and owner affirmation signature bar, or opens directly in native email clients via pre-formatted `mailto:` dispatch.
+- **Statutory Claim Disclaimers:** Explicitly separates verified factual purchase records from user-reported defect observations to maintain complete legal integrity.
+
+### 4. Repair vs. Replace AI Copilot (`/copilot`)
+- **Multimodal Failure Diagnosis:** Powered by Google Gemini AI to analyze user-described symptoms, strange mechanical noises, error codes, and thermal anomalies.
+- **Hazard & Safety Interlocks:** Immediately identifies hazardous scenarios, such as swollen lithium-ion cells, high-voltage capacitor charges in power supplies, or hydraulic brake fluid leaks.
+- **Financial & Ecological ROI:** Compares the cost of independent/authorized repairs against outright replacement, calculating both net dollar savings and kilograms of avoided landfill mass.
+
+### 5. Explainable Health & Maintainability Index
+- **Transparent Scoring (0–100):** Unlike arbitrary black-box rating algorithms, ReLife's health gauge exposes four auditable factor weights:
+  1. *Service Age & Lifespan Consumption* (0–25 pts)
+  2. *Repair Provenance & Documentation* (0–25 pts)
+  3. *Fault Recurrence & Component Stability* (0–25 pts)
+  4. *Cost-to-Value Economic Ratio* (0–25 pts)
+- **Dynamic Restoration:** Every certified repair logs an estimated useful life extension in months, actively restoring the health index toward factory baseline.
+
+### 6. Three-Tier Trust & Provenance Seals
+Every service entry in the ledger carries an auditable badge:
+- 🛡️ **Technician Verified:** Submitted directly through the Certified Technician Portal (`/technician`) and signed by licensed master technicians.
+- 📄 **Document Backed:** Verified by uploaded optical tax invoices, service work orders, and parts receipts.
+- 👤 **Owner Reported:** Self-logged maintenance and DIY care (e.g. cleaning, lubrication, pad swaps).
+
+### 7. Smart Resale Valuation & Chain of Custody Handshake
+- **Dynamic Valuation Index:** Analyzes original retail price, age, current health tier, and maintenance provenance to compute an evidence-backed second-hand valuation.
+- **Cryptographic Transfer of Custody (`/transfer/[token]`):** Enables sellers to transfer permanent digital ownership to buyers via secure one-time tokens, passing down living maintenance histories while keeping historical personal bills locked.
+
+### 8. AI Bill & Optical Invoice Scanner
+- **Zero-Friction Asset Onboarding:** Drop any PDF invoice, store receipt, or retail snapshot. ReLife's OCR pipeline extracts brand, model, serial number, purchase price, currency, merchant, and warranty duration with interactive validation before passport registration.
 
 ---
 
-## 🚀 Instant Vercel Deployment
+## 🏗️ Architecture & Technology Stack
 
-ReLife is built with Next.js (App Router) and optimized for zero-configuration deployment to Vercel:
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend Framework** | Next.js 16 (App Router, Turbopack, Server Components) |
+| **Language & Typing** | TypeScript 5 (Strict Mode, 100% Type-Safe) |
+| **UI & Styling** | Vanilla Tailwind CSS (Custom Industrial Dark/Emerald Design System) |
+| **Icons & Visuals** | Lucide React, HTML5 Canvas QR Generator |
+| **Authentication & RLS** | Supabase Auth with Row-Level Security Policies |
+| **Database & Storage** | PostgreSQL on Supabase Cloud + Browser-Isolated Local Fallback |
+| **AI & Multimodal Vision** | Google Gemini 3 SDK (`gemini-3.1-flash-lite`, `gemini-3.6-flash`) |
 
-### Step 1: Push to GitHub
-```bash
-git add .
-git commit -m "feat: complete ReLife digital passport platform"
-git push origin main
-```
-
-### Step 2: Deploy on Vercel
-1. Go to [Vercel](https://vercel.com) and click **"Add New Project"**.
-2. Select your `ReLife` repository.
-3. Framework Preset will auto-detect **Next.js**.
-4. *(Optional)* Add environment variables from `.env.example` if you have Supabase or Gemini API keys. **If no keys are provided, ReLife automatically activates its client-persistent demo mode with seeded sample assets and OCR fallback — the app will never crash!**
-5. Click **Deploy**.
+> For comprehensive system architecture, database schemas, cryptographic proof specifications, and API reference, see [DOCUMENTATION.md](./DOCUMENTATION.md).
 
 ---
 
-## 🛠️ Local Development Setup
+## 🚀 Quick Start Guide
 
 ### Prerequisites
-- Node.js v18+ or v20+ / v24+
-- npm, yarn, or pnpm
+- Node.js v18.18+ or v20+ / v22+
+- npm, pnpm, or yarn
 
 ### Installation
+
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/ReLife.git
+# 1. Clone the repository
+git clone https://github.com/JS-Aakash/ReLife.git
 cd ReLife
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Run the development server
+# 3. Configure environment variables (optional for local demo)
+cp .env.example .env.local
+
+# 4. Start the development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Visit [http://localhost:3000](http://localhost:3000) to access the application.
 
 ---
 
-## 🗄️ Database & Security Architecture
+## 🛡️ Enterprise Data Privacy & Security
 
-ReLife supports a dual-engine data model:
-1. **Client Persistent & Demo Mode (Default):**  
-   Fully reactive state with browser `localStorage` persistence and rich seed data (MacBook Pro 16", Specialized Gravel Bike, iPhone 15 Pro, Dyson V15 Vacuum, Sony Headphones). Changes persist across page reloads with 1-click factory reset.
-2. **Production Supabase PostgreSQL:**  
-   When `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are provided in `.env.local`, the application links to Supabase.
-   - Full SQL schema with Row-Level Security (RLS) is located at:  
-     [`supabase/schema.sql`](file:///c:/Users/jsaak/OneDrive/Desktop/Coding/ReLife/supabase/schema.sql)
-   - To apply migrations, copy the contents of `supabase/schema.sql` into the Supabase SQL Editor and execute.
+- **Strict Isolation:** Sensitive invoices and personal purchase receipts are bound to authenticated user identifiers via PostgreSQL Row-Level Security (`auth.uid() = user_id`).
+- **Zero-Knowledge Public Verification:** Public QR scans and second-hand resale links strictly sanitize and strip billing addresses, credit card digits, and owner contact details.
+- **Graceful Multi-Engine Resilience:** ReLife operates with full cloud Supabase persistence when credentials are provided, and automatically transitions to an isolated client-side engine if offline or unconfigured.
 
 ---
 
-## 🎯 Recommended Live Demo Flow for Judges
+## 📄 License & Intellectual Property
 
-1. **Explore the Fleet (`/dashboard`):**  
-   Inspect the 5 pre-loaded products across laptops, bicycles, and appliances. Note the warranty countdown alert on the Sony Headphones (12 days left).
-2. **Scan an Invoice (`/products/new` or Header Button):**  
-   Click **"AI Bill Scanner"** and click on one of the sample receipts (e.g. *Apple Store Receipt* or *Trek Bicycle Bill*). Watch the OCR engine extract hardware specs and click **"Confirm & Create Passport"**.
-3. **Inspect a Living Digital Passport (`/products/prod-macbook-pro-16`):**  
-   - Inspect the scannable QR code and download the printable badge.
-   - Explore the explainable Health Score (88/100) and click into the factor breakdown.
-   - Scroll down the **Lifetime Repair Timeline** to see the *Technician Verified* battery overhaul seal.
-4. **Test the Public QR Scan (`/passport/rl-macbook-pro-16-c02g`):**  
-   Notice how private financial bills and owner home addresses are redacted while verified repair provenance remains public.
-5. **Ask the Repair vs. Replace Copilot (`/copilot`):**  
-   Pick the MacBook Pro and click the *"Swelling / Draining Battery"* quick scenario. Review the safety hazard alert, estimated component cost range, and carbon savings.
-6. **Smart Resale Passport (`/resale/rl-macbook-pro-16-c02g`):**  
-   View the Carfax-style report with 100% evidence coverage and click **"Print / Save as PDF"**.
-7. **Authorized Service Provider Portal (`/technician`):**  
-   Submit a certified technician repair entry, then approve it in the owner queue to seal it into the permanent timeline.
-8. **Ownership Transfer (`/transfer/[token]`):**  
-   Initiate an ownership transfer from Elena Rostova to a new buyer and test the claim flow.
-
----
-
-## 💻 Tech Stack
-- **Framework:** Next.js 16 (App Router), React 19, TypeScript
-- **Styling:** Tailwind CSS v4, Custom Sustainability Forest Theme tokens
-- **Icons & Graphics:** Lucide React, SVG Radial Gauges
-- **QR Engine:** `qrcode` (Universal SVG & Canvas renderer)
-- **Delight:** `canvas-confetti`
-- **Database / Backend:** Supabase Client + PostgreSQL RLS (`supabase/schema.sql`)
-- **AI / LLM:** Google Gemini API integration with intelligent heuristic OCR fallback
-
----
-
-## 📄 License
-MIT © ReLife Platform Team. Built for the Circular Economy.
+Distributed under the Apache 2.0 License. See `LICENSE` for more information.
+Designed and built for the modern physical circular economy.

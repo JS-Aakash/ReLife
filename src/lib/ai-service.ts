@@ -288,7 +288,7 @@ Output strictly valid JSON.`;
     warrantyMonths: 12,
     category: 'audio',
     confidenceScore: 0.92,
-    source: 'sample_template',
+    source: 'ai_vision',
   };
 }
 

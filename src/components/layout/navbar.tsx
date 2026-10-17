@@ -59,7 +59,7 @@ export function Navbar() {
   const navLinks = [
     { name: 'Dashboard', href: '/dashboard', icon: Layers },
     { name: 'Products', href: '/products', icon: QrCode },
-    { name: 'Warranty Rescue', href: '/warranty-rescue', icon: Shield, badge: 'New' },
+    { name: 'Warranty Rescue', href: '/warranty-rescue', icon: Shield },
     { name: 'Copilot', href: '/copilot', icon: Sparkles, badge: 'AI' },
     { name: 'Reminders', href: '/reminders', icon: Clock },
     { name: 'Sustainability', href: '/analytics', icon: Leaf },
@@ -68,7 +68,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 bg-white/95 backdrop-blur-md">
-      <div className="max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6">
+      <div className="max-w-[1500px] mx-auto px-3 sm:px-5 lg:px-6">
         <div className="flex items-center justify-between h-16 gap-3">
           {/* Logo & Navigation */}
           <div className="flex items-center gap-2 xl:gap-4 min-w-0">

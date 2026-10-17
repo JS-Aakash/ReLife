@@ -19,6 +19,8 @@ import {
   Smartphone,
   ChevronRight,
   Scan,
+  ShieldAlert,
+  Clock,
 } from 'lucide-react';
 import { HealthGauge } from '@/components/ui/health-gauge';
 import { ProvenanceBadge } from '@/components/ui/badge';
@@ -239,12 +241,48 @@ export default function LandingPage() {
             </div>
             <h3 className="text-base font-bold text-stone-900">Explainable Product Health Score</h3>
             <p className="text-xs text-stone-500 leading-relaxed">
-              No black-box mystery numbers. Every score reveals the contributing factors: Service Age, Repair Integrity, Fault Recurrence, and Cost-to-Value ratios.
+              No black-box mystery numbers. Every score reveals contributing factors: Service Age, Repair Integrity, Fault Recurrence, and Cost-to-Value ratios.
             </p>
             <div className="pt-2 text-xs font-medium text-emerald-800 flex items-center gap-1">
               <span>View breakdown factors</span>
               <span>→</span>
             </div>
+          </div>
+
+          {/* Card 2: Warranty Rescue */}
+          <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs hover:border-emerald-500/40 hover:shadow-md transition-all space-y-3">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-800 flex items-center justify-center">
+              <ShieldAlert className="w-5 h-5 text-amber-600" />
+            </div>
+            <h3 className="text-base font-bold text-stone-900">Warranty Rescue & Claim Builder</h3>
+            <p className="text-xs text-stone-500 leading-relaxed">
+              Turn invoices, symptom notes, and photo evidence into formal, statutory claim dossiers with audited readiness scores and 1-click PDF export.
+            </p>
+            <Link
+              href="/warranty-rescue"
+              className="pt-2 text-xs font-medium text-emerald-800 flex items-center gap-1 hover:underline"
+            >
+              <span>Build Claim Package</span>
+              <span>→</span>
+            </Link>
+          </div>
+
+          {/* Card 3: Product Time Machine */}
+          <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs hover:border-emerald-500/40 hover:shadow-md transition-all space-y-3">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-800 flex items-center justify-center">
+              <Clock className="w-5 h-5 text-indigo-600" />
+            </div>
+            <h3 className="text-base font-bold text-stone-900">Interactive Product Time Machine</h3>
+            <p className="text-xs text-stone-500 leading-relaxed">
+              Explore your asset&apos;s full chronological biography. Scrub through inception, warranty milestones, faults, certified parts, and health trajectory.
+            </p>
+            <Link
+              href="/dashboard"
+              className="pt-2 text-xs font-medium text-emerald-800 flex items-center gap-1 hover:underline"
+            >
+              <span>Explore Provenance Scrubber</span>
+              <span>→</span>
+            </Link>
           </div>
 
           {/* Card 2: AI Repair Copilot */}

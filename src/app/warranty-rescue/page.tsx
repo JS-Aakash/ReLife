@@ -218,9 +218,6 @@ ReLife Certified Passport Holder`;
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-black text-stone-900 tracking-tight">Warranty Rescue</h1>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
-                  Claim Builder Engine
-                </span>
               </div>
               <p className="text-xs text-stone-500 mt-0.5">
                 Compile proof dossiers, audit missing statutory documents, and generate manufacturer-ready warranty packages.
@@ -289,13 +286,12 @@ ReLife Certified Passport Holder`;
                     SN: {selectedProduct.serialNumber || 'N/A'} • {selectedProduct.seller || 'Merchant'}
                   </p>
                   <div className="flex items-center gap-2 pt-0.5">
-                    <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded ${
-                      warranty?.status === 'active'
-                        ? 'bg-emerald-100 text-emerald-900'
-                        : warranty?.status === 'expiring_soon'
+                    <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded ${warranty?.status === 'active'
+                      ? 'bg-emerald-100 text-emerald-900'
+                      : warranty?.status === 'expiring_soon'
                         ? 'bg-amber-100 text-amber-900'
                         : 'bg-stone-200 text-stone-700'
-                    }`}>
+                      }`}>
                       {warranty?.label || 'Warranty Active'}
                     </span>
                     <span className="text-[10px] text-stone-400">
@@ -417,9 +413,8 @@ ReLife Certified Passport Holder`;
 
             {/* Checklist */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${
-                auditResults?.hasInvoice ? 'bg-emerald-50/70 border-emerald-300' : 'bg-red-50/70 border-red-300'
-              }`}>
+              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${auditResults?.hasInvoice ? 'bg-emerald-50/70 border-emerald-300' : 'bg-red-50/70 border-red-300'
+                }`}>
                 {auditResults?.hasInvoice ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 ) : (
@@ -435,9 +430,8 @@ ReLife Certified Passport Holder`;
                 </div>
               </div>
 
-              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${
-                auditResults?.hasSerial ? 'bg-emerald-50/70 border-emerald-300' : 'bg-amber-50/70 border-amber-300'
-              }`}>
+              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${auditResults?.hasSerial ? 'bg-emerald-50/70 border-emerald-300' : 'bg-amber-50/70 border-amber-300'
+                }`}>
                 {auditResults?.hasSerial ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 ) : (
@@ -453,9 +447,8 @@ ReLife Certified Passport Holder`;
                 </div>
               </div>
 
-              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${
-                auditResults?.hasDefectDetails ? 'bg-emerald-50/70 border-emerald-300' : 'bg-stone-50 border-stone-200'
-              }`}>
+              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${auditResults?.hasDefectDetails ? 'bg-emerald-50/70 border-emerald-300' : 'bg-stone-50 border-stone-200'
+                }`}>
                 {auditResults?.hasDefectDetails ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 ) : (
@@ -469,9 +462,8 @@ ReLife Certified Passport Holder`;
                 </div>
               </div>
 
-              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${
-                auditResults?.hasEvidencePhoto ? 'bg-emerald-50/70 border-emerald-300' : 'bg-stone-50 border-stone-200'
-              }`}>
+              <div className={`p-3 rounded-2xl border flex items-start gap-2.5 ${auditResults?.hasEvidencePhoto ? 'bg-emerald-50/70 border-emerald-300' : 'bg-stone-50 border-stone-200'
+                }`}>
                 {auditResults?.hasEvidencePhoto ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 ) : (
