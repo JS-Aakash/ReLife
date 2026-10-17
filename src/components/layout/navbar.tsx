@@ -20,10 +20,12 @@ import {
   LogOut,
   ChevronDown,
   Check,
+  Scan,
 } from 'lucide-react';
 import { NotificationDropdown } from './notification-dropdown';
 import { useReLife } from '@/lib/store';
 import { AuthModal } from '@/components/auth/auth-modal';
+import { HardwareScannerModal } from '@/components/scanner/hardware-scanner-modal';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -39,6 +41,7 @@ export function Navbar() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authTab, setAuthTab] = useState<'signin' | 'signup'>('signin');
+  const [hardwareScannerOpen, setHardwareScannerOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -116,7 +119,17 @@ export function Navbar() {
           </div>
 
           {/* Right Header Actions */}
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* Scan Tag / NFC Button */}
+            <button
+              onClick={() => setHardwareScannerOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+              title="Scan Optical QR Code or Simulate Physical NFC Tap"
+            >
+              <Scan className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+              <span className="hidden md:inline">Scan Tag / NFC</span>
+            </button>
+
             {/* Notification Dropdown */}
             <NotificationDropdown />
 
@@ -390,6 +403,12 @@ export function Navbar() {
         isOpen={authModalOpen}
         defaultTab={authTab}
         onClose={() => setAuthModalOpen(false)}
+      />
+
+      {/* Hardware Scanner & NFC Tap Modal */}
+      <HardwareScannerModal
+        isOpen={hardwareScannerOpen}
+        onClose={() => setHardwareScannerOpen(false)}
       />
     </header>
   );

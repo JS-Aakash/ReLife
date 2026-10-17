@@ -1326,7 +1326,15 @@ export const INITIAL_SERVICE_SUBMISSIONS: ServiceProviderSubmission[] = [
   },
 ];
 
+// Combined demo products catalog for public verification lookups
+export const ALL_DEMO_PRODUCTS: Product[] = [
+  ...AARAV_INITIAL_PRODUCTS,
+  ...PRIYA_INITIAL_PRODUCTS,
+  ...VIKRAM_INITIAL_PRODUCTS,
+];
+
 // Default fallback export
 export const INITIAL_PRODUCTS: Product[] = AARAV_INITIAL_PRODUCTS;
 export const INITIAL_REMINDERS: MaintenanceReminder[] = AARAV_INITIAL_REMINDERS;
 export const INITIAL_NOTIFICATIONS: AppNotification[] = AARAV_INITIAL_NOTIFICATIONS;
+

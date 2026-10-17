@@ -33,9 +33,12 @@ import { RepairTimeline } from '@/components/passport/repair-timeline';
 import { DocumentVault } from '@/components/passport/document-vault';
 import { TransferModal } from '@/components/passport/transfer-modal';
 import { ResaleSettingsModal } from '@/components/passport/resale-settings-modal';
+import { DPPCertificateModal } from '@/components/passport/dpp-certificate-modal';
+import { ResaleValuationWidget } from '@/components/passport/resale-valuation-widget';
 import { getWarrantyInfo } from '@/lib/calculations';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { ProtectedRoute } from '@/components/auth/protected-route';
+import { Award } from 'lucide-react';
 
 export default function ProductPassportDetailPage() {
   const params = useParams();
@@ -45,6 +48,7 @@ export default function ProductPassportDetailPage() {
   const [activeTab, setActiveTab] = useState<'repairs' | 'documents' | 'history'>('repairs');
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [resaleModalOpen, setResaleModalOpen] = useState(false);
+  const [certificateModalOpen, setCertificateModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const product = getProductById(params.id as string);
@@ -106,6 +110,15 @@ export default function ProductPassportDetailPage() {
 
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            onClick={() => setCertificateModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-300 text-emerald-900 hover:bg-emerald-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+            title="View & Export Official EU ESPR Passport Certificate"
+          >
+            <Award className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+            <span>Official Certificate</span>
+          </button>
+
           <button
             onClick={() => setResaleModalOpen(true)}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors shadow-2xs whitespace-nowrap shrink-0"
@@ -262,6 +275,9 @@ export default function ProductPassportDetailPage() {
             <ExplainableHealthFactors breakdown={product.healthBreakdown} />
           </div>
 
+          {/* Circular Resale & Asset Preservation Valuation */}
+          <ResaleValuationWidget product={product} />
+
           {/* Tabs for Timeline, Documents, and Ownership Chain */}
           <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs space-y-6">
             <div className="flex items-center gap-2 border-b border-stone-200 pb-3 overflow-x-auto">
@@ -405,6 +421,12 @@ export default function ProductPassportDetailPage() {
         product={product}
         isOpen={resaleModalOpen}
         onClose={() => setResaleModalOpen(false)}
+      />
+
+      <DPPCertificateModal
+        product={product}
+        isOpen={certificateModalOpen}
+        onClose={() => setCertificateModalOpen(false)}
       />
     </div>
     </ProtectedRoute>

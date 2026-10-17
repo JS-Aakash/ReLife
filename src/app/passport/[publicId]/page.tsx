@@ -17,9 +17,11 @@ import {
   HelpCircle,
   ArrowRight,
   Sparkles,
+  Award,
 } from 'lucide-react';
 import { HealthGauge, ExplainableHealthFactors } from '@/components/ui/health-gauge';
 import { ProvenanceBadge, WarrantyBadge, CategoryBadge } from '@/components/ui/badge';
+import { DPPCertificateModal } from '@/components/passport/dpp-certificate-modal';
 import { getWarrantyInfo } from '@/lib/calculations';
 import { formatDate } from '@/lib/utils';
 
@@ -27,6 +29,7 @@ export default function PublicPassportPage() {
   const params = useParams();
   const { getProductByPublicId } = useReLife();
   const [activeTab, setActiveTab] = useState<'repairs' | 'health'>('repairs');
+  const [certificateModalOpen, setCertificateModalOpen] = useState(false);
 
   const product = getProductByPublicId(params.publicId as string);
 
@@ -83,7 +86,15 @@ export default function PublicPassportPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => setCertificateModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-300 text-emerald-900 hover:bg-emerald-100 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+                title="View & Export Official EU ESPR Passport Certificate"
+              >
+                <Award className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                <span>Official Certificate</span>
+              </button>
               <CategoryBadge category={product.category} />
               <WarrantyBadge status={warranty.status} daysRemaining={warranty.daysRemaining} />
             </div>
@@ -260,6 +271,12 @@ export default function PublicPassportPage() {
           </Link>
         </div>
       </div>
+
+      <DPPCertificateModal
+        product={product}
+        isOpen={certificateModalOpen}
+        onClose={() => setCertificateModalOpen(false)}
+      />
     </div>
   );
 }

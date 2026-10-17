@@ -17,6 +17,7 @@ import {
   Wrench,
   ShieldCheck,
   Check,
+  Sparkles,
 } from 'lucide-react';
 import { isSupabaseConfigured } from '@/lib/supabase';
 
@@ -55,7 +56,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
       setTimeout(() => {
         onClose();
         if (onSuccess) onSuccess();
-      }, 500);
+      }, 400);
     } else {
       setErrorMessage(res.error || 'Failed to sign in. Please verify your credentials.');
     }
@@ -80,7 +81,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
       setTimeout(() => {
         onClose();
         if (onSuccess) onSuccess();
-      }, 500);
+      }, 400);
     } else {
       setErrorMessage(res.error || 'Failed to create account.');
     }
@@ -95,39 +96,60 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
     }, 400);
   };
 
+  const autofillPreset = (personaKey: 'aarav' | 'priya' | 'vikram') => {
+    if (personaKey === 'aarav') {
+      setEmail('aarav.sharma@relife.in');
+      setPassword('custodian2026!');
+    } else if (personaKey === 'priya') {
+      setEmail('priya.patel@relife.in');
+      setPassword('fleet2026!');
+    } else if (personaKey === 'vikram') {
+      setEmail('vikram.malhotra@zenithrepairs.in');
+      setPassword('service2026!');
+    }
+    setErrorMessage(null);
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-white rounded-3xl border border-stone-200 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        {/* Top Header */}
-        <div className="bg-gradient-to-r from-emerald-950 via-[#0a261c] to-[#071912] p-6 text-white relative shrink-0">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-950/75 backdrop-blur-xs p-3 sm:p-4 md:p-6 flex items-start sm:items-center justify-center min-h-screen py-6 sm:py-10">
+      {/* Backdrop overlay dismiss */}
+      <div
+        className="fixed inset-0"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      <div className="relative w-full max-w-lg bg-white rounded-3xl border border-stone-200 shadow-2xl overflow-hidden flex flex-col my-auto z-10 animate-in fade-in zoom-in-95 duration-200 max-h-[calc(100vh-3rem)]">
+        {/* Compact Top Header */}
+        <div className="bg-gradient-to-r from-emerald-950 via-[#0a261c] to-[#071912] px-5 py-4 text-white relative shrink-0">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1 rounded-full text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="absolute top-3.5 right-3.5 p-1.5 rounded-full text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex items-center gap-2.5 mb-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shrink-0">
-              <Shield className="w-5 h-5" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shrink-0">
+              <Shield className="w-4 h-4" />
             </div>
             <div>
               <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-emerald-400 block">
                 ReLife Vault Access
               </span>
-              <h2 className="text-lg font-black tracking-tight text-white">
+              <h2 className="text-base font-black tracking-tight text-white leading-tight">
                 {tab === 'signup' ? 'Create Custodian Account' : 'Sign In to Your Fleet'}
               </h2>
             </div>
           </div>
 
-          <p className="text-xs text-emerald-200/80 leading-relaxed">
+          <p className="text-[11px] text-emerald-200/80 leading-snug mt-1.5">
             Access your private digital product passports, invoices, warranty alerts, and repair ledger.
           </p>
 
           {/* Cloud Sync Status Badge */}
-          <div className="mt-3 flex items-center gap-1.5 text-[10px] text-emerald-300">
+          <div className="mt-2 flex items-center gap-1.5 text-[10px] text-emerald-300">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <span>
               {isSupabaseConfigured
@@ -159,21 +181,21 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
 
         {/* Feedback alerts */}
         {errorMessage && (
-          <div className="mx-6 mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800 flex items-start gap-2 shrink-0">
+          <div className="mx-5 mt-3 p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800 flex items-start gap-2 shrink-0">
             <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {successMessage && (
-          <div className="mx-6 mt-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2 shrink-0">
+          <div className="mx-5 mt-3 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2 shrink-0">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{successMessage}</span>
           </div>
         )}
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto">
+        <div className="p-5 sm:p-6 overflow-y-auto space-y-4">
           {tab === 'signup' ? (
             /* Sign Up Form */
             <form onSubmit={handleSignUp} className="space-y-3.5 text-xs">
@@ -268,7 +290,54 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
           ) : (
             /* Sign In Form */
             <div className="space-y-4">
-              <form onSubmit={handleSignIn} className="space-y-3.5 text-xs">
+              {/* Demo autofill preset badges */}
+              <div className="bg-stone-50 border border-stone-200 p-2.5 rounded-2xl space-y-1.5">
+                <div className="flex items-center justify-between text-[10px] font-bold text-stone-600">
+                  <span className="uppercase tracking-wider">Demo Account Presets</span>
+                  <span className="text-emerald-700 font-medium">Click to prefill:</span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => autofillPreset('aarav')}
+                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${
+                      email === 'aarav.sharma@relife.in'
+                        ? 'bg-emerald-100 border-emerald-400 text-emerald-900 shadow-2xs'
+                        : 'bg-white border-stone-200 text-stone-700 hover:border-emerald-300'
+                    }`}
+                    title="Aarav Sharma (Registered Owner)"
+                  >
+                    Aarav (Owner)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => autofillPreset('priya')}
+                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${
+                      email === 'priya.patel@relife.in'
+                        ? 'bg-blue-100 border-blue-400 text-blue-900 shadow-2xs'
+                        : 'bg-white border-stone-200 text-stone-700 hover:border-blue-300'
+                    }`}
+                    title="Priya Patel (Fleet Operations Lead)"
+                  >
+                    Priya (Fleet)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => autofillPreset('vikram')}
+                    className={`px-2 py-1.5 rounded-lg border text-center text-[11px] font-bold transition-all truncate ${
+                      email === 'vikram.malhotra@zenithrepairs.in'
+                        ? 'bg-amber-100 border-amber-400 text-amber-900 shadow-2xs'
+                        : 'bg-white border-stone-200 text-stone-700 hover:border-amber-300'
+                    }`}
+                    title="Vikram Malhotra (Certified Technician)"
+                  >
+                    Vikram (Tech)
+                  </button>
+                </div>
+              </div>
+
+              {/* Input Form */}
+              <form onSubmit={handleSignIn} className="space-y-3 text-xs">
                 <div>
                   <label className="block font-semibold text-stone-700 mb-1">Email Address</label>
                   <div className="relative">
@@ -285,19 +354,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block font-semibold text-stone-700">Password</label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmail('aarav.sharma@relife.in');
-                        setPassword('custodian2026!');
-                      }}
-                      className="text-[10px] text-emerald-700 hover:underline font-semibold whitespace-nowrap"
-                    >
-                      Fill Aarav Credentials
-                    </button>
-                  </div>
+                  <label className="block font-semibold text-stone-700 mb-1">Password</label>
                   <div className="relative">
                     <KeyRound className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
                     <input
@@ -314,7 +371,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50 mt-4 whitespace-nowrap"
+                  className="w-full py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50 mt-2 whitespace-nowrap"
                 >
                   {isLoading ? (
                     <span>Authenticating...</span>
@@ -327,10 +384,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                 </button>
               </form>
 
-              {/* Pre-configured profiles */}
+              {/* Pre-configured profiles (1-Click Instant Sign In) */}
               <div className="pt-3 border-t border-stone-100 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                  Or Sign In with Pre-Configured Profile:
+                  Or 1-Click Instant Access (Demo Personas):
                 </span>
                 <div className="space-y-1.5">
                   <button
@@ -351,12 +408,12 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
                         <span className="text-xs font-bold text-stone-900 truncate">{DEMO_PERSONAS.aarav.name}</span>
-                        <span className="text-[9px] font-extrabold uppercase px-1 py-0.2 rounded bg-emerald-100 text-emerald-900 shrink-0">
+                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 shrink-0">
                           Owner
                         </span>
                       </div>
-                      <span className="text-[10px] text-stone-400 block truncate">
-                        4 Passports • 2 Verified Repairs
+                      <span className="text-[10px] text-stone-500 block truncate font-mono">
+                        aarav.sharma@relife.in • pwd: custodian2026!
                       </span>
                     </div>
                   </button>
@@ -379,12 +436,12 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
                         <span className="text-xs font-bold text-stone-900 truncate">{DEMO_PERSONAS.priya.name}</span>
-                        <span className="text-[9px] font-extrabold uppercase px-1 py-0.2 rounded bg-blue-100 text-blue-900 shrink-0">
+                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-100 text-blue-900 shrink-0">
                           Fleet Lead
                         </span>
                       </div>
-                      <span className="text-[10px] text-stone-400 block truncate">
-                        4 Passports • Mobile & Imaging Fleet
+                      <span className="text-[10px] text-stone-500 block truncate font-mono">
+                        priya.patel@relife.in • pwd: fleet2026!
                       </span>
                     </div>
                   </button>
@@ -407,12 +464,12 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'signin', onSuccess }:
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
                         <span className="text-xs font-bold text-stone-900 truncate">{DEMO_PERSONAS.vikram.name}</span>
-                        <span className="text-[9px] font-extrabold uppercase px-1 py-0.2 rounded bg-amber-100 text-amber-900 shrink-0">
+                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 shrink-0">
                           Technician
                         </span>
                       </div>
-                      <span className="text-[10px] text-stone-400 block truncate">
-                        4 Lab Assets • Service Verification
+                      <span className="text-[10px] text-stone-500 block truncate font-mono">
+                        vikram.malhotra@zenithrepairs.in • pwd: service2026!
                       </span>
                     </div>
                   </button>

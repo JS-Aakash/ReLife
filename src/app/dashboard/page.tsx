@@ -27,12 +27,14 @@ import { WarrantyBadge, ProvenanceBadge } from '@/components/ui/badge';
 import { getWarrantyInfo } from '@/lib/calculations';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { InvoiceScannerModal } from '@/components/scanner/invoice-scanner-modal';
+import { HardwareScannerModal } from '@/components/scanner/hardware-scanner-modal';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { products, reminders, toggleReminder } = useReLife();
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [hardwareScannerOpen, setHardwareScannerOpen] = useState(false);
 
   // Compute aggregate statistics
   const totalProducts = products.length;
@@ -82,12 +84,21 @@ export default function DashboardPage() {
           </div>
 
           {/* Action Bar */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <button
+              onClick={() => setHardwareScannerOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+              title="Scan QR Code or Tap Physical NFC Tag"
+            >
+              <Scan className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+              <span>Scan Tag / NFC</span>
+            </button>
+
             <button
               onClick={() => setScannerOpen(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors shadow-2xs whitespace-nowrap shrink-0"
             >
-              <Scan className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+              <Sparkles className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
               <span>AI Bill Scanner</span>
             </button>
 
@@ -394,6 +405,9 @@ export default function DashboardPage() {
 
         {/* Bill Scanner Modal */}
         <InvoiceScannerModal isOpen={scannerOpen} onClose={() => setScannerOpen(false)} />
+
+        {/* Hardware QR & NFC Tap Scanner Modal */}
+        <HardwareScannerModal isOpen={hardwareScannerOpen} onClose={() => setHardwareScannerOpen(false)} />
       </div>
     </ProtectedRoute>
   );

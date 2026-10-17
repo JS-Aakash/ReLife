@@ -14,6 +14,7 @@ import {
 } from './types';
 import {
   INITIAL_PRODUCTS,
+  ALL_DEMO_PRODUCTS,
   INITIAL_REMINDERS,
   INITIAL_NOTIFICATIONS,
   AARAV_INITIAL_PRODUCTS,
@@ -145,14 +146,14 @@ interface ReLifeContextType {
 const ReLifeContext = createContext<ReLifeContextType | undefined>(undefined);
 
 export function ReLifeProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<ReLifeUser | null>(DEFAULT_DEMO_USER);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [currentUser, setCurrentUser] = useState<ReLifeUser | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
-  const [activePersonaKey, setActivePersonaKey] = useState<DemoPersonaKey | 'custom' | null>('aarav');
+  const [activePersonaKey, setActivePersonaKey] = useState<DemoPersonaKey | 'custom' | null>(null);
 
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [reminders, setReminders] = useState<MaintenanceReminder[]>(INITIAL_REMINDERS);
-  const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [reminders, setReminders] = useState<MaintenanceReminder[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [serviceSubmissions, setServiceSubmissions] = useState<ServiceProviderSubmission[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('relife_service_submissions_v2');
@@ -382,21 +383,25 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
           setActivePersonaKey((savedPersona as DemoPersonaKey) || (parsedUser.isDemoUser ? 'aarav' : 'custom'));
           await loadUserData(parsedUser);
         } else if (isMounted) {
-          // Default to Aarav Sharma so users instantly explore full records
-          setCurrentUser(DEFAULT_DEMO_USER);
-          setIsAuthenticated(true);
-          setIsDemoMode(true);
-          setActivePersonaKey('aarav');
-          localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(DEFAULT_DEMO_USER));
-          localStorage.setItem(ACTIVE_PERSONA_KEY, 'aarav');
-          await loadUserData(DEFAULT_DEMO_USER);
+          // Default to logged-out state on fresh visits as requested
+          setCurrentUser(null);
+          setIsAuthenticated(false);
+          setIsDemoMode(false);
+          setActivePersonaKey(null);
+          setProducts([]);
+          setReminders([]);
+          setNotifications([]);
         }
       } catch (err) {
         console.warn('Auth initialization error:', err);
         if (isMounted) {
-          setCurrentUser(DEFAULT_DEMO_USER);
-          setIsAuthenticated(true);
-          setIsDemoMode(true);
+          setCurrentUser(null);
+          setIsAuthenticated(false);
+          setIsDemoMode(false);
+          setActivePersonaKey(null);
+          setProducts([]);
+          setReminders([]);
+          setNotifications([]);
         }
       } finally {
         if (isMounted) {
@@ -466,8 +471,28 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password = ''): Promise<{ success: boolean; error?: string }> => {
     setAuthLoading(true);
 
-    // If Supabase is configured and not a @relife-demo email, authenticate with Supabase Auth
-    if (supabase && isSupabaseConfigured && !email.endsWith('@relife-demo.org')) {
+    const trimmedEmail = email.trim().toLowerCase();
+
+    // 1. Check Demo Personas first so judges entering demo credentials always instantly succeed
+    const match = Object.entries(DEMO_PERSONAS).find(
+      ([, p]) => p.email.toLowerCase() === trimmedEmail
+    );
+
+    if (match) {
+      const [key] = match;
+      loginAsDemo(key as DemoPersonaKey);
+      setAuthLoading(false);
+      return { success: true };
+    }
+
+    // 2. If Supabase is configured and not a demo email domain, authenticate with Supabase Auth
+    if (
+      supabase &&
+      isSupabaseConfigured &&
+      !trimmedEmail.endsWith('@relife.in') &&
+      !trimmedEmail.endsWith('@zenithrepairs.in') &&
+      !trimmedEmail.endsWith('@relife-demo.org')
+    ) {
       const res = await supabaseSignIn(email, password);
       if (res.error) {
         setAuthLoading(false);
@@ -496,19 +521,7 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Demo Mode Sign In Fallback
-    const match = Object.entries(DEMO_PERSONAS).find(
-      ([, p]) => p.email.toLowerCase() === email.toLowerCase()
-    );
-
-    if (match) {
-      const [key, persona] = match;
-      loginAsDemo(key as 'elena' | 'liam' | 'alex');
-      setAuthLoading(false);
-      return { success: true };
-    }
-
-    // Custom Local User
+    // 3. Custom Local User
     const customUser: ReLifeUser = {
       id: 'usr_' + Math.random().toString(36).substring(2, 10),
       name: email.split('@')[0],
@@ -812,8 +825,8 @@ export function ReLifeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getProductById = (id: string) => products.find((p) => p.id === id);
-  const getProductByPublicId = (publicId: string) => products.find((p) => p.publicId === publicId);
+  const getProductById = (id: string) => products.find((p) => p.id === id) || ALL_DEMO_PRODUCTS.find((p) => p.id === id);
+  const getProductByPublicId = (publicId: string) => products.find((p) => p.publicId === publicId) || ALL_DEMO_PRODUCTS.find((p) => p.publicId === publicId);
 
   // Repairs & Timeline
   const addRepair = (
