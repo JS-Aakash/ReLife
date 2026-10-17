@@ -154,8 +154,8 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/75 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-lg bg-stone-900 rounded-3xl border border-stone-700/80 shadow-2xl p-4 sm:p-6 my-auto text-stone-100 space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-[#0b0d0c] rounded-3xl border border-stone-800 shadow-2xl p-4 sm:p-6 my-auto text-stone-100 space-y-4">
         {/* Modal Top Navigation */}
         <div className="flex items-center justify-between pb-3 border-b border-stone-800">
           <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
                   <div className="w-6 h-6 rounded-md bg-emerald-600 flex items-center justify-center text-white font-black text-xs shadow-inner">
                     RL
                   </div>
-                  <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-neutral-200 uppercase tracking-wider">
                     ReLife Impact Printer 3000
                   </span>
                 </div>
@@ -208,16 +208,16 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
                   depth="shallow"
                   size="sm"
                   onClick={handleShare}
-                  className="bg-emerald-800 hover:bg-emerald-700 text-white border-emerald-950 text-[10px]"
+                  className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border-neutral-900 text-[10px]"
                 >
                   {copied ? (
                     <>
-                      <Check className="w-3 h-3 text-emerald-300" />
+                      <Check className="w-3 h-3 text-emerald-400" />
                       <span>Copied!</span>
                     </>
                   ) : (
                     <>
-                      <Share2 className="w-3 h-3" />
+                      <Share2 className="w-3 h-3 text-neutral-300" />
                       <span>Share</span>
                     </>
                   )}
@@ -232,12 +232,12 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
                       <p className="font-semibold text-emerald-400 truncate max-w-[200px]">
                         {product.name}
                       </p>
-                      <p className="text-[10px] text-stone-400">
+                      <p className="text-[10px] text-neutral-400">
                         Passport: {product.publicId}
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="text-xs font-mono font-bold text-stone-100">
+                      <div className="text-xs font-mono font-bold text-white">
                         {formatCurrency(repairCost)}
                       </div>
                       <span className="text-[9px] uppercase tracking-wider text-emerald-400 font-bold">
@@ -253,61 +253,61 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
 
             {/* Paper Output Slot with Smooth/Stepped Feed */}
             <ReceiptPrinter.Output className="w-full">
-              <ReceiptPrinter.Paper className="w-full text-stone-900 bg-[#fbfaf6] shadow-xl border-x border-stone-200">
+              <ReceiptPrinter.Paper className="w-full text-neutral-950 bg-white shadow-2xl border-x border-neutral-200">
                 {/* Receipt Thermal Paper Content */}
                 <div className="space-y-4 text-xs font-mono">
                   {/* Header */}
-                  <div className="text-center pb-2 border-b border-dashed border-stone-400">
-                    <div className="font-black text-sm tracking-wider uppercase">
+                  <div className="text-center pb-2 border-b border-dashed border-neutral-300">
+                    <div className="font-black text-sm tracking-wider uppercase text-neutral-950">
                       RELIFE DIGITAL PASSPORT
                     </div>
-                    <div className="text-[10px] text-stone-600">
+                    <div className="text-[10px] text-neutral-700 font-bold tracking-wide">
                       CIRCULAR REPAIR & IMPACT RECEIPT
                     </div>
-                    <div className="text-[9px] text-stone-500 mt-0.5">
+                    <div className="text-[9px] text-neutral-500 mt-0.5">
                       Date: {formatDate(repair.date || new Date().toISOString())}
                     </div>
                   </div>
 
                   {/* Device Meta */}
-                  <div className="space-y-1 text-[11px] pb-2 border-b border-dashed border-stone-300">
+                  <div className="space-y-1 text-[11px] pb-2 border-b border-dashed border-neutral-300">
                     <div className="flex justify-between">
-                      <span className="text-stone-500">ASSET:</span>
-                      <span className="font-bold text-stone-900 truncate max-w-[170px] text-right">
+                      <span className="text-neutral-500 font-semibold">ASSET:</span>
+                      <span className="font-bold text-neutral-950 truncate max-w-[170px] text-right">
                         {product.name}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-stone-500">CATEGORY:</span>
-                      <span className="font-semibold">{product.category}</span>
+                      <span className="text-neutral-500 font-semibold">CATEGORY:</span>
+                      <span className="font-bold text-neutral-900">{product.category}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-stone-500">PASSPORT ID:</span>
-                      <span className="font-mono text-[10px]">{product.publicId}</span>
+                      <span className="text-neutral-500 font-semibold">PASSPORT ID:</span>
+                      <span className="font-mono text-[10px] font-bold text-neutral-800">{product.publicId}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-stone-500">PROVIDER:</span>
-                      <span className="font-semibold truncate max-w-[170px] text-right">
+                      <span className="text-neutral-500 font-semibold">PROVIDER:</span>
+                      <span className="font-bold text-neutral-950 truncate max-w-[170px] text-right">
                         {repair.technicianOrShopName || (submission ? submission.shopName : 'Authorized Caretaker')}
                       </span>
                     </div>
                   </div>
 
                   {/* Repair Summary */}
-                  <div className="space-y-1 pb-2 border-b border-dashed border-stone-300">
-                    <div className="text-[10px] uppercase font-bold text-stone-500">
+                  <div className="space-y-1 pb-2 border-b border-dashed border-neutral-300">
+                    <div className="text-[10px] uppercase font-black text-neutral-600 tracking-wide">
                       SERVICE RENDERED:
                     </div>
-                    <p className="text-[11px] leading-snug font-medium text-stone-800">
+                    <p className="text-[11px] leading-snug font-medium text-neutral-900">
                       {repair.issueSummary}
                     </p>
                     {repair.partsReplaced && repair.partsReplaced.length > 0 && (
                       <div className="pt-1 space-y-0.5">
-                        <div className="text-[9px] text-stone-500 uppercase">Parts Installed:</div>
+                        <div className="text-[9px] text-neutral-500 uppercase font-bold">Parts Installed:</div>
                         {repair.partsReplaced.map((part, i) => (
-                          <div key={i} className="flex justify-between text-[10px]">
-                            <span className="truncate max-w-[180px]">• {part.name}</span>
-                            <span className="font-semibold">{formatCurrency(part.cost || 0)}</span>
+                          <div key={i} className="flex justify-between text-[10px] text-neutral-800">
+                            <span className="truncate max-w-[180px] font-medium">• {part.name}</span>
+                            <span className="font-bold text-neutral-950">{formatCurrency(part.cost || 0)}</span>
                           </div>
                         ))}
                       </div>
@@ -315,55 +315,78 @@ export function RepairImpactReceiptModal({ isOpen, onClose, data }: Props) {
                   </div>
 
                   {/* Financial Metrics */}
-                  <div className="space-y-1.5 pb-2 border-b-2 border-stone-900">
-                    <div className="flex justify-between font-bold text-xs pt-1">
+                  <div className="space-y-1.5 pb-2 border-b-2 border-neutral-950 text-neutral-950">
+                    <div className="flex justify-between font-black text-xs pt-1">
                       <span>THIS REPAIR COST:</span>
                       <span>{formatCurrency(repairCost)}</span>
                     </div>
-                    <div className="flex justify-between text-stone-600 text-[11px]">
+                    <div className="flex justify-between text-neutral-800 text-[11px] font-bold">
                       <span>REPLACEMENT COST AVOIDED:</span>
-                      <span className="font-bold text-emerald-700">
+                      <span className="font-black text-emerald-800 text-xs">
                         +{formatCurrency(netSavings)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-stone-600 text-[11px]">
+                    <div className="flex justify-between text-neutral-700 text-[11px] font-medium">
                       <span>CUMULATIVE REPAIR SPEND:</span>
-                      <span className="font-semibold">{formatCurrency(cumulativeSpending)}</span>
+                      <span className="font-bold text-neutral-950">{formatCurrency(cumulativeSpending)}</span>
                     </div>
                   </div>
 
                   {/* Environmental Impact Box */}
-                  <div className="p-2.5 rounded bg-emerald-50/90 border border-emerald-300 text-emerald-950 space-y-1.5">
-                    <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-900">
-                      <Leaf className="w-3 h-3 text-emerald-700" />
+                  <div className="p-2.5 rounded-lg bg-emerald-50/90 border border-emerald-300/80 text-emerald-950 space-y-1.5 shadow-2xs">
+                    <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-950">
+                      <Leaf className="w-3.5 h-3.5 text-emerald-700" />
                       <span>Environmental Dividend</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-center pt-1">
-                      <div className="bg-white/80 p-1.5 rounded border border-emerald-200">
-                        <div className="text-base font-black text-emerald-800">
-                          {carbonAvoided} <span className="text-[10px]">kg</span>
+                      <div className="bg-white p-2 rounded-md border border-emerald-200/90 shadow-2xs">
+                        <div className="text-base font-black text-emerald-950">
+                          {carbonAvoided} <span className="text-[10px] font-bold">kg</span>
                         </div>
-                        <div className="text-[9px] text-emerald-700 font-medium">CO₂e Avoided</div>
+                        <div className="text-[9px] text-emerald-800 font-bold uppercase tracking-tight">CO₂e Avoided</div>
                       </div>
-                      <div className="bg-white/80 p-1.5 rounded border border-emerald-200">
-                        <div className="text-base font-black text-teal-800">
-                          {eWasteAvoided} <span className="text-[10px]">kg</span>
+                      <div className="bg-white p-2 rounded-md border border-emerald-200/90 shadow-2xs">
+                        <div className="text-base font-black text-teal-950">
+                          {eWasteAvoided} <span className="text-[10px] font-bold">kg</span>
                         </div>
-                        <div className="text-[9px] text-teal-700 font-medium">E-Waste Diverted</div>
+                        <div className="text-[9px] text-teal-800 font-bold uppercase tracking-tight">E-Waste Diverted</div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Authentic Seal & QR Footer */}
-                  <div className="pt-2 text-center space-y-1.5">
-                    <div className="text-[9px] text-stone-500 uppercase tracking-widest">
-                      SEALED TO CRYPTOGRAPHIC PASSPORT
+                  {/* Authentic Seal & Thermal Barcode Footer */}
+                  <div className="pt-2 text-center space-y-2">
+                    <div className="flex items-center justify-center gap-1 text-[9px] text-neutral-900 font-black uppercase tracking-widest">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>SEALED TO CRYPTOGRAPHIC PASSPORT</span>
                     </div>
-                    <div className="text-[8px] font-mono text-stone-400 break-all">
+                    <div className="text-[8px] font-mono text-neutral-600 font-semibold break-all bg-neutral-100 py-1 px-2 rounded border border-neutral-200">
                       HASH: 0x{Math.random().toString(16).substring(2, 10).toUpperCase()}
                       {Math.random().toString(16).substring(2, 10).toUpperCase()}
                     </div>
-                    <p className="text-[9px] text-stone-500 italic">
+                    {/* Authentic thermal barcode lines */}
+                    <div className="flex justify-center items-center gap-[2px] h-5 py-0.5 opacity-85" aria-hidden="true">
+                      <span className="w-[2px] h-full bg-neutral-950" />
+                      <span className="w-[1px] h-full bg-neutral-950" />
+                      <span className="w-[3px] h-full bg-neutral-950" />
+                      <span className="w-[1px] h-full bg-neutral-950" />
+                      <span className="w-[4px] h-full bg-neutral-950" />
+                      <span className="w-[2px] h-full bg-neutral-950" />
+                      <span className="w-[1px] h-full bg-neutral-950" />
+                      <span className="w-[3px] h-full bg-neutral-950" />
+                      <span className="w-[2px] h-full bg-neutral-950" />
+                      <span className="w-[1px] h-full bg-neutral-950" />
+                      <span className="w-[4px] h-full bg-neutral-950" />
+                      <span className="w-[2px] h-full bg-neutral-950" />
+                      <span className="w-[3px] h-full bg-neutral-950" />
+                      <span className="w-[1px] h-full bg-neutral-950" />
+                      <span className="w-[2px] h-full bg-neutral-950" />
+                      <span className="w-[4px] h-full bg-neutral-950" />
+                      <span className="w-[1px] h-full bg-neutral-950" />
+                      <span className="w-[3px] h-full bg-neutral-950" />
+                      <span className="w-[2px] h-full bg-neutral-950" />
+                    </div>
+                    <p className="text-[9px] text-neutral-600 font-medium italic">
                       Thank you for choosing repair over replacement.
                     </p>
                   </div>

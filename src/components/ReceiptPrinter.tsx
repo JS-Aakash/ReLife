@@ -94,18 +94,18 @@ const printingTransformKeyframes = [
 ];
 
 const printingKeyframeTimes = [
-  0, 0.075, 0.105, 0.18, 0.21, 0.285, 0.315, 0.39, 0.42, 0.495, 0.525, 0.6,
-  0.63, 0.705, 0.735, 0.81, 0.84, 0.915, 0.945, 1,
+  0, 0.75, 0.105, 0.18, 0.21, 0.285, 0.315, 0.39, 0.42, 0.495, 0.525, 0.6,
+  0.63, 0.305, 0.335, 0.365, 0.395, 0.425, 0.455, 0.485,
 ];
 
 const statusLabels: Record<ReceiptPrinterStage, ReactNode> = {
   processing: "Processing repair data...",
-  printing: "Slow printing impact receipt...",
+  printing: "Printing impact receipt...",
   complete: "Receipt verified & sealed",
 };
 
 const machineClassName =
-  "relative isolate w-full overflow-hidden rounded-[var(--printer-radius)] border border-grayscale-12 bg-[color-mix(in_oklab,var(--color-grayscale-11)_30%,var(--color-grayscale-12))] p-[var(--printer-inset)] pb-8 shadow-[0_20px_36px_-20px_color-mix(in_oklab,var(--color-grayscale-12)_55%,transparent),0_6px_14px_-8px_color-mix(in_oklab,var(--color-grayscale-12)_24%,transparent),inset_0_1px_0_color-mix(in_oklab,var(--color-grayscale-1)_14%,transparent),inset_0_-1px_0_color-mix(in_oklab,var(--color-grayscale-12)_55%,transparent)] [--printer-inner-radius:calc(var(--printer-radius)_-_var(--printer-inset))] [--printer-inset:0.75rem] [--printer-radius:1.5rem] before:pointer-events-none before:absolute before:inset-0 before:z-0 before:rounded-[inherit] before:bg-[url('/textures/plastic-noise.svg')] before:bg-[length:180px_180px] before:bg-repeat before:opacity-30 before:mix-blend-multiply before:content-[''] dark:border-grayscale-3 dark:bg-grayscale-4 dark:shadow-[0_20px_36px_-20px_color-mix(in_oklab,var(--color-grayscale-3)_55%,transparent),0_6px_14px_-8px_color-mix(in_oklab,var(--color-grayscale-3)_24%,transparent),inset_0_1px_0_color-mix(in_oklab,var(--color-grayscale-12)_14%,transparent),inset_0_-1px_0_color-mix(in_oklab,var(--color-grayscale-3)_55%,transparent)]";
+  "relative isolate w-full overflow-hidden rounded-[var(--printer-radius)] border border-neutral-800 bg-black p-[var(--printer-inset)] pb-8 shadow-[0_24px_48px_-12px_rgba(0,0,0,1),inset_0_1px_1px_rgba(255,255,255,0.08),inset_0_-2px_4px_rgba(0,0,0,1)] [--printer-inner-radius:calc(var(--printer-radius)_-_var(--printer-inset))] [--printer-inset:0.75rem] [--printer-radius:1.5rem] before:pointer-events-none before:absolute before:inset-0 before:z-0 before:rounded-[inherit] before:bg-[url('/textures/plastic-noise.svg')] before:bg-[length:180px_180px] before:bg-repeat before:opacity-10 before:content-['']";
 
 function useReceiptPrinter(component: string) {
   const context = useContext(ReceiptPrinterContext);
@@ -161,7 +161,7 @@ function ReceiptPrinterMachine({
       {children}
       <div
         aria-hidden="true"
-        className="absolute inset-x-6 bottom-[var(--printer-inset)] z-40 h-2 rounded-[0.25rem] border border-grayscale-12 bg-grayscale-12 shadow-inner shadow-grayscale-12 dark:border-grayscale-1 dark:bg-grayscale-1 dark:shadow-grayscale-1"
+        className="absolute inset-x-6 bottom-[var(--printer-inset)] z-40 h-2.5 rounded-[0.25rem] border border-neutral-900 bg-black shadow-[inset_0_2px_4px_rgba(0,0,0,1)]"
       />
     </div>
   );
@@ -175,7 +175,7 @@ function ReceiptPrinterHeader({
   return (
     <div
       className={cn(
-        "relative z-10 flex h-11 items-start justify-between",
+        "relative z-10 flex h-11 items-start justify-between text-neutral-200",
         className,
       )}
       {...props}
@@ -193,7 +193,7 @@ function ReceiptPrinterScreen({
   return (
     <div
       className={cn(
-        "relative z-10 isolate overflow-hidden rounded-[var(--printer-inner-radius)] border border-grayscale-12 bg-grayscale-12 p-4 text-grayscale-1 shadow-inner shadow-grayscale-12/80 after:pointer-events-none after:absolute after:inset-0 after:z-20 after:rounded-[inherit] after:shadow-[inset_0_0_24px_4px_color-mix(in_oklab,var(--color-grayscale-12)_52%,transparent)] after:content-[''] dark:border-grayscale-1 dark:bg-grayscale-2 dark:text-grayscale-12 dark:shadow-grayscale-1/80 dark:after:shadow-[inset_0_0_24px_4px_color-mix(in_oklab,var(--color-grayscale-1)_52%,transparent)]",
+        "relative z-10 isolate overflow-hidden rounded-[var(--printer-inner-radius)] border border-neutral-800/90 bg-[#050706] p-4 text-emerald-400 shadow-inner shadow-black/95 after:pointer-events-none after:absolute after:inset-0 after:z-20 after:rounded-[inherit] after:shadow-[inset_0_0_24px_4px_rgba(0,0,0,0.95)] after:content-['']",
         className,
       )}
       {...props}
@@ -223,7 +223,7 @@ function StatusIndicator({
         {isComplete ? (
           <motion.span
             animate={{ opacity: 1, transform: "scale(1)" }}
-            className="col-start-1 row-start-1 grid place-items-center text-green-9"
+            className="col-start-1 row-start-1 grid place-items-center text-emerald-400"
             exit={{
               opacity: animate ? 0 : 1,
               transform: move ? "scale(0.96)" : "scale(1)",
@@ -240,7 +240,7 @@ function StatusIndicator({
         ) : (
           <motion.span
             animate={{ opacity: 1, transform: "scale(1)" }}
-            className="col-start-1 row-start-1 grid place-items-center text-grayscale-8 dark:text-grayscale-11"
+            className="col-start-1 row-start-1 grid place-items-center text-stone-400"
             exit={{
               opacity: animate ? 0 : 1,
               transform: move ? "scale(0.96)" : "scale(1)",
@@ -289,7 +289,7 @@ function ReceiptPrinterStatus({
         <AnimatePresence initial={false} mode="sync">
           <motion.div
             animate={{ opacity: 1, transform: "translateY(0px)" }}
-            className="col-start-1 row-start-1 truncate font-medium text-grayscale-8 text-xs leading-none dark:text-grayscale-11"
+            className="col-start-1 row-start-1 truncate font-medium text-neutral-300 text-xs font-mono leading-none"
             exit={{
               opacity: animate ? 0 : 1,
               transform: shouldMove ? "translateY(-4px)" : "translateY(0px)",
@@ -318,7 +318,7 @@ function ReceiptPrinterPaper({
   return (
     <article
       className={cn(
-        "relative z-10 min-h-80 bg-grayscale-1 bg-[url('/textures/receipt-paper.svg')] bg-cover px-5 pt-6 pb-8 font-mono text-grayscale-12 bg-blend-soft-light dark:bg-grayscale-12 dark:text-grayscale-1",
+        "relative z-10 min-h-80 bg-white px-5 pt-6 pb-8 font-mono text-neutral-950 shadow-2xl border-x border-neutral-200/80",
         className,
       )}
       style={{ clipPath: receiptClipPath, ...style }}
@@ -352,7 +352,7 @@ function ReceiptPrinterOutput({
       {isReceiptVisible ? (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-6 -top-1 z-20 h-2 bg-grayscale-12/75 blur-[6px] dark:bg-grayscale-1/75"
+          className="pointer-events-none absolute inset-x-6 -top-1 z-20 h-2.5 bg-black blur-[3px]"
         />
       ) : null}
 
@@ -369,12 +369,12 @@ function ReceiptPrinterOutput({
                 : "translateY(calc(-100% + 2px))",
         }}
         aria-hidden={stage !== "complete"}
-        className="relative isolate before:pointer-events-none before:absolute before:inset-x-3 before:top-3 before:bottom-4 before:z-0 before:rounded-sm before:shadow-[0_8px_24px_color-mix(in_oklab,var(--color-grayscale-12)_24%,transparent)] before:content-[''] after:pointer-events-none after:absolute after:right-[8%] after:bottom-0 after:left-[8%] after:z-0 after:h-3 after:translate-y-1.5 after:rounded-full after:bg-grayscale-12/10 after:blur-lg after:content-[''] dark:before:shadow-[0_8px_24px_color-mix(in_oklab,var(--color-grayscale-1)_20%,transparent)] dark:after:bg-grayscale-1/10"
+        className="relative isolate drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
         initial={false}
         transition={{
           opacity: { duration: animate ? 0.16 : 0, ease: easeOut },
           transform: {
-            duration: shouldMove ? 5.2 : 0,
+            duration: shouldMove ? 6.5 : 0,
             ease: shouldUseSteppedFeed ? "linear" : easeInOut,
             times: shouldUseSteppedFeed ? printingKeyframeTimes : undefined,
           },

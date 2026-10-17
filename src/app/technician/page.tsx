@@ -111,8 +111,8 @@ export default function TechnicianPortalPage() {
     const sub = serviceSubmissions.find((s) => s.id === id);
     const result = approveTechnicianRepair(id);
     confetti({
-      particleCount: 70,
-      spread: 60,
+      particleCount: 30,
+      spread: 70,
       origin: { y: 0.6 },
     });
     if (result && result.repair && result.product) {
@@ -440,13 +440,12 @@ export default function TechnicianPortalPage() {
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-stone-900">{sub.productName}</span>
                       <span
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                          sub.status === 'approved'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : sub.status === 'rejected'
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${sub.status === 'approved'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : sub.status === 'rejected'
                             ? 'bg-red-100 text-red-800'
                             : 'bg-amber-100 text-amber-800'
-                        }`}
+                          }`}
                       >
                         {sub.status.replace(/_/g, ' ')}
                       </span>
